@@ -5,9 +5,25 @@
 		},
 		{
 			"path": "../../Python/ALMAFE-CTS-Control"
+		},
+		{
+			"path": "../../Python/ALMAFE-AMBDeviceLibrary"
+		},
+		{
+			"path": "../../ALMA-FEControl/FrontEndAMBDLL"
+		},
+		{
+			"path": "../../ALMA-FEControl/FrontEndAMBLib"
 		}
 	],
-	"settings": {},
+	"settings": {
+		"python.defaultInterpreterPath": "python",
+		"python.autoComplete.extraPaths": [
+		
+		],
+		"python.analysis.extraPaths": [],
+		"terminal.explorerKind": "external"
+	},
 	"launch": {
 		"version": "0.2.0",
 		"configurations": []

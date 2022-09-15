@@ -1,0 +1,49 @@
+.polarization-header {
+  font-size: calc(20px);
+  text-align: center;
+  color: yellow;
+}
+.component-header {
+  font-size: calc(18px);
+  text-align: left;
+  color: turquoise;
+}
+.component-data {
+  font-size: calc(12px);
+  color: white;
+  text-align: left;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.component-title  {
+  font-size: calc(12px);
+  text-align: left;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.component-input {
+  width: 7ch;
+  height: 20px;
+}
+.spacer {
+  margin:0; 
+  padding:0; 
+  height:15px;
+}
+.custom-btn {
+  height: auto;
+  padding-top: 0% !important;
+  padding-bottom: 0% !important;
+}
+.custom-ind-btn {
+  height: auto;
+  padding-top: 0% !important;
+  padding-bottom: 0% !important;
+  color: white !important;
+}
+.custom-lock-btn {
+  height: auto;
+  padding-top: 0% !important;
+  padding-bottom: 0% !important;
+  width: 80px;
+}

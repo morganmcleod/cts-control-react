@@ -1,5 +1,6 @@
+import './components.css'
 import React from "react";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Container, Button } from "react-bootstrap";
 const axios = require('axios').default
 
 class SIS extends React.Component {
@@ -13,13 +14,11 @@ class SIS extends React.Component {
       Imag: 0.0,
       averaging: props.averaging ? props.averaging : 1
     };
-    this.pol = props.pol ? props.pol : 0;
-    this.sis = props.sis ? props.sis : 1;
-    this.interval = props.interval ? props.interval : 5000;
+    this.pol = props.pol ?? 0;
+    this.sis = props.sis ?? 1;
+    this.interval = props.interval ?? 5000;
     this.timer = 0;
     this.handleTimer = this.handleTimer.bind(this);
-    this.setVjHandler = this.setVjHandler.bind(this);
-    this.setImagHandler = this.setImagHandler.bind(this);
   }
   componentDidMount() {
     this.fetch();
@@ -62,6 +61,7 @@ class SIS extends React.Component {
     axios.put("/cca/sis", params)
       .then(res => {
         const result = res.data;
+        console.log(result);
       })
   }
   setImagHandler() {
@@ -73,56 +73,51 @@ class SIS extends React.Component {
     axios.put("/cca/sis", params)
       .then(res => {
         const result = res.data;
+        console.log(result);
       })
   }
   render() {
     let setVjProps = {
       size: 'sm',
-      onClick: this.setVjHandler
+      onClick: event => this.setVjHandler()
     }
     let setImagProps = {
       size: 'sm',
-      onClick: this.setImagHandler
+      onClick: event => this.setImagHandler()
     }
     return (
-      <div style={{ fontSize: "16px"}}>
+      <Container className="component-data">
         <Row>
-          <Col style={{ width: "150px" }}></Col>
-          <Col style={{ fontSize: '22px'}}>SIS</Col>
-          <Col></Col>
-          <Col></Col>
+          <Col className="component-header">SIS {this.sis}</Col>
         </Row>
-        <Row>
-          <Col style={{width: "150px"}}>Vj [mV]</Col>
+        <Row xs={5}>
+          <Col xs={4} className="component-title">Vj [mV]:</Col>
           <Col>{this.state.Vj}</Col>
-          <Col><input type="text" name="setVj" style={{width: "50px"}}/></Col>
-          <Col><Button {...setVjProps}>SET</Button></Col>
+          <Col><input type="text" name="setVj" className="component-input"/></Col>
+          <Col><Button className="custom-btn" {...setVjProps}>SET</Button></Col>
         </Row>
-        <Row>          
-          <Col style={{width: "150px"}}>Ij mV</Col>
+        <Row xs={5}>          
+          <Col xs={4} className="component-title">Ij [mV]:</Col>
           <Col>{this.state.Ij}</Col>
           <Col></Col>
           <Col></Col>
         </Row>
         <Row>
-          <Col style={{ width: "150px" }}></Col>
-          <Col style={{ fontSize: '22px' }}>Magnet</Col>
-          <Col></Col>
-          <Col></Col>
+          <Col className="component-header">Magnet {this.sis}</Col>
         </Row>
-        <Row>
-          <Col style={{width: "150px"}}>Imag</Col>
+        <Row xs={5}>
+          <Col xs={4} className="component-title">Imag [mA]:</Col>
           <Col>{this.state.Imag}</Col>
-          <Col><input type="text" name="setImag" style={{width: "50px"}}/></Col>
-          <Col><Button {...setImagProps}>SET</Button></Col>
+          <Col><input type="text" name="setImag" className="component-input"/></Col>
+          <Col><Button className="custom-btn" {...setImagProps}>SET</Button></Col>
         </Row>
-        <Row>
-          <Col style={{width: "150px"}}>Imag mV</Col>
+        <Row xs={5}>
+          <Col xs={4} className="component-title">Vmag [mV]:</Col>
           <Col>{this.state.Vmag}</Col>
           <Col></Col>
           <Col></Col>
         </Row>
-        </div>
+      </Container>
     );
   }
 }

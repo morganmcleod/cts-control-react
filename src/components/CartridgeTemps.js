@@ -1,5 +1,6 @@
+import './components.css'
 import React from "react";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Container } from "react-bootstrap";
 const axios = require('axios').default
 
 class CartridgeTemps extends React.Component {
@@ -45,63 +46,31 @@ class CartridgeTemps extends React.Component {
       })
   }
   render() {
-    return (<div>
-      <Row>
-          <Col>
-          </Col>
-          <Col>
-            Temperatures
-          </Col>
-      </Row>
-      <Row>
-        <Col>
-        temp0:
-        </Col>
-        <Col>
-          {this.state.temp0}
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-        temp1:
-        </Col>
-        <Col>
-          {this.state.temp1}
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-        temp2:
-        </Col>
-        <Col>
-          {this.state.temp2}
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-        temp3:
-        </Col>
-        <Col>
-          {this.state.temp3}
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-        temp4:
-        </Col>
-        <Col>
-          {this.state.temp4}
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-        temp5:
-        </Col>
-        <Col>
-          {this.state.temp5}
-        </Col>
-      </Row>
-    </div>);
+    return (
+      <Container className="component-data">
+        <Row>
+            <Col className="component-header">Temperatures</Col>
+        </Row>
+        <Row>
+          <Col className="component-title">MixerP0:</Col>
+          <Col>{this.state.temp2}</Col>
+          <Col className="component-title">P1:</Col>
+          <Col>{this.state.temp5}</Col>
+        </Row>
+        <Row>
+          <Col className="component-title" >4K:</Col>
+          <Col>{this.state.temp0}</Col>
+          <Col className="component-title">15K:</Col>
+          <Col>{this.state.temp4}</Col>
+        </Row>
+        <Row>
+          <Col className="component-title">110K:</Col>
+          <Col>{this.state.temp1}</Col>
+          <Col></Col>
+          <Col></Col>
+        </Row>
+      </Container>
+    );
   }
 }
 export default CartridgeTemps;
