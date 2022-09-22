@@ -96,6 +96,14 @@ class LNA extends React.Component {
         })
     }
   }
+  setAllHandler() {
+    this.setValueHandler('VD1');
+    this.setValueHandler('VD2');
+    this.setValueHandler('VD3');
+    this.setValueHandler('ID1');
+    this.setValueHandler('ID2');
+    this.setValueHandler('ID3');
+  }
   render() {
     return (
       <Grid container className="component-data">
@@ -114,32 +122,27 @@ class LNA extends React.Component {
         <Grid item xs={3} className="component-title">VD1 [V]:</Grid>
         <Grid item xs={3}>{this.state.VD1}</Grid>
         <Grid item xs={3}><input type="text" name="setVD1" className="component-input"/></Grid>
-        <Grid item xs={3}><Button className="custom-btn" size='sm' onClick={(e) => this.setValueHandler('VD1')}>SET</Button></Grid>
+        <Grid item xs={3}><Button className="custom-btn" size='sm' onClick={(e) => this.setAllHandler()}>SET</Button></Grid>
 
         <Grid item xs={3} className="component-title">VD2 [V]:</Grid>
         <Grid item xs={3}>{this.state.VD2}</Grid>
-        <Grid item xs={3}><input type="text" name="setVD2" className="component-input"/></Grid>
-        <Grid item xs={3}><Button className="custom-btn" size='sm' onClick={(e) => this.setValueHandler('VD2')}>SET</Button></Grid>
-
+        <Grid item xs={6}><input type="text" name="setVD2" className="component-input"/></Grid>
+        
         <Grid item xs={3} className="component-title">VD3 [V]:</Grid>
         <Grid item xs={3}>{this.state.VD3}</Grid>
-        <Grid item xs={3}><input type="text" name="setVD3" className="component-input"/></Grid>
-        <Grid item xs={3}><Button className="custom-btn" size='sm' onClick={(e) => this.setValueHandler('VD3')}>SET</Button></Grid>
+        <Grid item xs={6}><input type="text" name="setVD3" className="component-input"/></Grid>
 
         <Grid item xs={3} className="component-title">ID1 [mA]:</Grid>
         <Grid item xs={3}>{this.state.ID1}</Grid>
-        <Grid item xs={3}><input type="text" name="setID1" className="component-input"/></Grid>
-        <Grid item xs={3}><Button className="custom-btn" size='sm' onClick={(e) => this.setValueHandler('ID1')}>SET</Button></Grid>
+        <Grid item xs={6}><input type="text" name="setID1" className="component-input"/></Grid>
 
         <Grid item xs={3} className="component-title">ID2 [mA]:</Grid>
         <Grid item xs={3}>{this.state.ID2}</Grid>
-        <Grid item xs={3}><input type="text" name="setID2" className="component-input"/></Grid>
-        <Grid item xs={3}><Button className="custom-btn" size='sm' onClick={(e) => this.setValueHandler('ID2')}>SET</Button></Grid>
+        <Grid item xs={6}><input type="text" name="setID2" className="component-input"/></Grid>
 
         <Grid item xs={3} className="component-title">ID3 [mA]:</Grid>
         <Grid item xs={3}>{this.state.ID3}</Grid>
-        <Grid item xs={3}><input type="text" name="setID3" className="component-input"/></Grid>
-        <Grid item xs={3}><Button className="custom-btn" size='sm' onClick={(e) => this.setValueHandler('ID3')}>SET</Button></Grid>
+        <Grid item xs={6}><input type="text" name="setID3" className="component-input"/></Grid>
 
         <Grid item xs={3} className="component-title">VG1 [V]:</Grid>
         <Grid item xs={9}>{this.state.VG1}</Grid>

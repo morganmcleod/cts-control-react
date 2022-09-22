@@ -7,6 +7,22 @@ import Grid from '@mui/material/Grid'
 import React from "react";
 
 class LO extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      freqLOGHz: "",
+      locked: ""
+    }
+  }
+  componentDidMount() {
+    eventBus.on("locking", (data) => 
+        this.setState({freqLOGHz: data.freqLOGHz + " GHz : "}));
+    eventBus.on("locked", (data) => 
+        this.setState({locked: data.locked ? "LOCKED" : "UNLOCKED"}));
+  }
+  componentWillUnmount() {
+    eventBus.remove("locking");
+  }
   render() {
     return (
       <Grid container> 

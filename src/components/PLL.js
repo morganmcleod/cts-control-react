@@ -69,11 +69,13 @@ class PLL extends React.Component {
             lockButtonText: "SUCCESS",
             lockButtonVariantiant: "success"
           });
+          eventBus.dispatch("locked", {locked: true});
         } else {
           this.setState({
             lockButtonText: "FAILED",
             lockButtonVariantiant: "danger"
           });
+          eventBus.dispatch("locked", {locked: false});
         }
         this.lockTimer = setInterval(this.handleLockTimer, 1500);
       })

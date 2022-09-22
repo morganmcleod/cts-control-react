@@ -1,6 +1,6 @@
 .polarization-header {
   font-size: calc(20px);
-  text-align: left;
+  text-align: center;
   color: yellow;
 }
 .component-header {
@@ -14,13 +14,15 @@
   text-align: left;
   padding-top: 3px;
   padding-bottom: 3px;
+  font-weight: bold;
 }
 .component-title  {
   font-size: calc(12px);
-  color: lightgreen;
+  color: lightgray;
   text-align: left;
   padding-top: 3px;
   padding-bottom: 3px;
+  font-weight: normal;
 }
 .component-input {
   width: 7ch;
@@ -43,4 +45,13 @@
   padding-top: 0% !important;
   padding-bottom: 0% !important;
   width: 80px;
+}
+.LO-info {
+  background-color: #282c34;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(20px);
+  color: yellow;
 }

@@ -32,7 +32,11 @@ class YTO extends React.Component {
   setCourseTune(courseTune) {
     let ytoFreq = 0;
     if (this.state.lowGHz > 0 && this.state.highGHz > this.state.lowGHz) {
+<<<<<<< HEAD
       ytoFreq = (this.state.lowGHz + ((courseTune / 4095) * (this.state.highGHz - this.state.lowGHz))).toFixed(3);
+=======
+      ytoFreq = (this.state.lowGHz + (courseTune / 4095) / (this.state.highGHz - this.state.lowGHz)).toFixed(3);
+>>>>>>> acfcf64... fix
     }
     this.setState({
       courseTune: courseTune,

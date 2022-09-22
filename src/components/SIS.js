@@ -1,7 +1,7 @@
 import './components.css'
 import React from "react";
 import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button';
+import { Button } from "react-bootstrap";
 const axios = require('axios').default
 
 class SIS extends React.Component {
@@ -93,16 +93,7 @@ class SIS extends React.Component {
        <Grid item xs={3} className="component-title">Vj [mV]:</Grid>
        <Grid item xs={3}>{this.state.Vj.toFixed(3)}</Grid>
        <Grid item xs={3}><input type="text" name="setVj" className="component-input"/></Grid>
-       <Grid item xs={3}>
-        <Button 
-          variant="contained" 
-          size="small" 
-          className="custom-btn" 
-          color="primary"
-          {...setVjProps}>
-          SET
-        </Button>
-      </Grid>
+       <Grid item xs={3}><Button className="custom-btn" size='sm' {...setVjProps}>SET</Button></Grid>
 
        <Grid item xs={3} className="component-title">Ij [mA]:</Grid>
        <Grid item xs={9}>{this.state.Ij.toFixed(3)}</Grid>
@@ -112,14 +103,7 @@ class SIS extends React.Component {
        <Grid item xs={3} className="component-title">Imag [mA]:</Grid>
        <Grid item xs={3}>{this.state.Imag.toFixed(2)}</Grid>
        <Grid item xs={3}><input type="text" name="setImag" className="component-input"/></Grid>
-       <Grid item xs={3}>
-        <Button variant="contained"
-          size="small" 
-          className="custom-btn" 
-          {...setImagProps}>
-          SET
-        </Button>
-      </Grid>
+       <Grid item xs={3}><Button className="custom-btn" size='sm' {...setImagProps}>SET</Button></Grid>
 
        <Grid item xs={3} className="component-title">Vmag [mV]:</Grid>
        <Grid item xs={9}>{this.state.Vmag.toFixed(2)}</Grid>
