@@ -1,6 +1,6 @@
 .polarization-header {
   font-size: calc(20px);
-  text-align: center;
+  text-align: left;
   color: yellow;
 }
 .component-header {
@@ -9,7 +9,7 @@
   color: turquoise;
 }
 .component-data {
-  font-size: calc(12px);
+  font-size: calc(13px);
   color: white;
   text-align: left;
   padding-top: 3px;
@@ -17,6 +17,7 @@
 }
 .component-title  {
   font-size: calc(12px);
+  color: lightgreen;
   text-align: left;
   padding-top: 3px;
   padding-bottom: 3px;
@@ -24,11 +25,7 @@
 .component-input {
   width: 7ch;
   height: 20px;
-}
-.spacer {
-  margin:0; 
-  padding:0; 
-  height:15px;
+  text-align: left;
 }
 .custom-btn {
   height: auto;

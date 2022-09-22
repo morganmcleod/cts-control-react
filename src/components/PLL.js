@@ -1,6 +1,8 @@
 import './components.css'
 import React from "react";
-import { Row, Col, Container, Button, ToggleButton } from "react-bootstrap";
+import eventBus from './EventBus';
+import Grid from '@mui/material/Grid'
+import { Button, ToggleButton } from "react-bootstrap";
 const axios = require('axios').default
 
 class PLL extends React.Component {
@@ -34,14 +36,15 @@ class PLL extends React.Component {
   fetch() {
     axios.get(`/lo/pll`)
       .then(res => {
-        const yto = res.data;
-        this.setState(yto);
+        const pll = res.data;
+        this.setState(pll);
+        eventBus.dispatch("YTO courseTune", { courseTune: pll.courseTune });
       })
     axios.get('/lo/pll/config')
-    .then(res => {
-      const config = res.data;
-      this.setState(config);
-    })
+      .then(res => {
+        const config = res.data;
+        this.setState(config);
+      })
   }
   lockHandler() {
     if (this.state.isLocking)
@@ -52,9 +55,10 @@ class PLL extends React.Component {
       lockButtonVariantiant: "warning"
     });
     const params = {
-      freqLOGHz: Number(this.state.inputLOFreq),
-      coldMultipler: 3
+      freqLOGHz: Number(this.state.inputLOFreq)
     }
+    eventBus.dispatch("locking", params);
+
     axios.put("/lo/pll/lock", params)
       .then(res => {
         const result = res.data;
@@ -158,113 +162,117 @@ class PLL extends React.Component {
       onClick: event => this.pllAdjustHandler()
     }
     return (
-      <Container className="component-data">
-        <Row>
-          <Col className="component-header">PLL</Col>
-        </Row>
-        <Row xs={5}>
-          <Col xs={4}>
-            <Button 
-              variant={lockIndicateVariant}
-              className="custom-btn"
-              size="sm"
-              disabled
-            >{lockIndicateText}</Button>
-          </Col>
-          <Col><
-            input type="text" 
+      <Grid container spacing={0} className="component-data">
+        <Grid item xs={12} className="component-header">PLL</Grid>        
+
+        <Grid item xs={4}>
+          <Button 
+            variant={lockIndicateVariant}
+            className="custom-btn"
+            size="sm"
+            disabled
+          >{lockIndicateText}</Button>
+        </Grid>
+        <Grid item xs={4} className="input-grid">
+          <input type="text" 
             name="loFreq" 
             className="component-input"
             onChange={event => {this.setState({inputLOFreq: event.target.value})}}
-            value={this.state.inputLOFreq}
-            /></Col>
-          <Col>GHz</Col>
-          <Col>
-            <Button 
-              variant = {this.state.lockButtonVariantiant}
-              className="custom-lock-btn"
-              {...lockProps}
-            >{this.state.lockButtonText}</Button>
-          </Col>
-        </Row>
-        <Row xs={5}>
-          <Col xs={4} className="component-title">Unlock seen:</Col>
-          <Col>
-            <Button 
-              variant={unlockDetectVariant}
-              className="custom-btn"
-              size="sm"
-              disabled 
-            >{unlockDetectText}</Button>
-          </Col>
-          <Col></Col>
-          <Col><Button className="custom-lock-btn" size="sm" {...clearUnlockProps}>CLEAR</Button></Col>
-        </Row>
-        <Row xs={5}>
-          <Col xs={4} className="component-title">Correction:</Col>
-          <Col>{this.state.corrV}&nbsp;V</Col>
-          <Col></Col>
-          <Col><Button className="custom-lock-btn" size="sm" {...pllAdjustProps}>ADJUST</Button></Col>
-        </Row>
-        <Row xs={5}>
-          <Col xs={4} className="component-title">Ref Tot Pwr:</Col>
-          <Col>{this.state.refTP}</Col>
-          <Col>PLL:</Col>
-          <Col>
-            <ToggleButton
-              className="custom-lock-btn" 
-              id="nullPLL"
-              size="sm"
-              type="checkbox"
-              variant={nullVariant}
-              checked={this.state.nullPLL}
-              onChange={(event) => {this.setNullHandler(!this.state.nullPLL)}}
-            >{nullText}</ToggleButton>
-          </Col>        
-        </Row>
-        <Row xs={5}>
-          <Col xs={4} className="component-title">IF Tot Pwr:</Col>
-          <Col>{this.state.IFTP}</Col>
-        </Row>
-        <Row xs={5}>
-          <Col xs={4} className="component-title">Temperature:</Col>
-          <Col>{this.state.temperature}&nbsp;C</Col>
-        </Row>
-        <Row xs={5}>
-          <Col xs={4} className="component-title">Loop BW:</Col>
-          <Col>
-            <ToggleButton
-              className='custom-btn'
-              id="loopBW"
-              size="sm"
-              type="checkbox"
-              variant="info"
-              checked={this.state.loopBW}
-              onChange={(e) => this.setLoopBWHandler(1 - this.state.loopBW)}
-            >{loopBWText}</ToggleButton>
-          </Col>
-          <Col xs={4}>MHz / Volt</Col>
-        </Row>
-        <Row xs={5}>
-          <Col xs={4} className="component-title">Lock SB:</Col>
-          <Col md="auto">
-            <ToggleButton
-              className='custom-btn'
-              style={{width: "65px"}}
-              id="lockSB"
-              size="sm"
-              type="checkbox"
-              variant="info"
-              checked={this.state.lockSB}
-              onChange={(e) => this.setLockSBHandler(1 - this.state.lockSB)}
-            >{lockSBText}</ToggleButton>
-          </Col>
-          <Col xs={4}>Ref.</Col>
-        </Row>
-      </Container>
+            value={this.state.inputLOFreq}>
+          </input>
+            &nbsp;GHz
+        </Grid>
+        <Grid item xs={4}>
+          <Button 
+            variant = {this.state.lockButtonVariantiant}
+            className="custom-lock-btn"
+            {...lockProps}
+          >{this.state.lockButtonText}</Button>
+        </Grid>
+
+        <Grid item xs={4} className="component-title">Unlock seen:</Grid>
+        <Grid item xs={4}>
+          <Button 
+            variant={unlockDetectVariant}
+            className="custom-btn"
+            size="sm"
+            disabled 
+          >{unlockDetectText}</Button>
+        </Grid>
+        <Grid item xs={4}>
+          <Button 
+            className="custom-lock-btn" 
+            size="sm" 
+            {...clearUnlockProps}>
+              CLEAR
+          </Button>
+        </Grid>
+        
+        <Grid item xs={4} className="component-title">Correction:</Grid>
+        <Grid item xs={4}>{this.state.corrV}&nbsp;V</Grid>
+        <Grid item xs={4}>
+          <Button 
+          className="custom-lock-btn" 
+          size="sm" 
+          {...pllAdjustProps}>
+            ADJUST
+          </Button>
+        </Grid>
+
+        <Grid item xs={4} className="component-title">Ref Tot Pwr:</Grid>
+        <Grid item xs={2}>{this.state.refTP}&nbsp;V</Grid>
+        <Grid item xs={2} className="component-title">PLL:</Grid>
+        <Grid item xs={4}>
+          <ToggleButton
+            className="custom-lock-btn" 
+            id="nullPLL"
+            size="sm"
+            type="checkbox"
+            variant={nullVariant}
+            checked={this.state.nullPLL}
+            onChange={(event) => {this.setNullHandler(!this.state.nullPLL)}}>
+              {nullText}
+          </ToggleButton>
+        </Grid>
+
+        <Grid item xs={4} className="component-title">IF Tot Pwr:</Grid>
+        <Grid item xs={8}>{this.state.IFTP}&nbsp;V</Grid>
+
+        <Grid item xs={4} className="component-title">Temperature:</Grid>
+        <Grid item xs={8}>{this.state.temperature}&nbsp;C</Grid>
+
+        <Grid item xs={4} className="component-title">Loop BW:</Grid>
+        <Grid item xs={8}>
+          <ToggleButton
+            className='custom-btn'
+            id="loopBW"
+            size="sm"
+            type="checkbox"
+            variant="info"
+            checked={this.state.loopBW}
+            onChange={(e) => this.setLoopBWHandler(1 - this.state.loopBW)}>
+              {loopBWText}
+          </ToggleButton>
+          &nbsp;&nbsp;MHz / V
+        </Grid>
+
+        <Grid item xs={4} className="component-title">Lock SB:</Grid>
+        <Grid item xs={8}>
+          <ToggleButton
+            className='custom-btn'
+            style={{width: "65px"}}
+            id="lockSB"
+            size="sm"
+            type="checkbox"
+            variant="info"
+            checked={this.state.lockSB}
+            onChange={(e) => this.setLockSBHandler(1 - this.state.lockSB)}>
+              {lockSBText}
+          </ToggleButton>            
+          &nbsp;&nbsp;Ref.
+        </Grid>
+      </Grid>
     );
   }
 };
-
-// "/pll/config"
 export default PLL;

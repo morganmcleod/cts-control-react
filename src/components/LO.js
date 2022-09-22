@@ -1,23 +1,20 @@
 import './components.css'
+import AMC from './AMC'
 import YTO from './YTO'
 import PLL from './PLL'
 import PA from './PA'
+import Grid from '@mui/material/Grid'
 import React from "react";
-import { Row, Col, Container } from "react-bootstrap";
 
 class LO extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     return (
-      <Container> 
-        <Row>
-          <Col><YTO/></Col>
-          <Col><PA/></Col>          
-          <Col><PLL/></Col>
-        </Row>      
-      </Container>
+      <Grid container> 
+        <Grid item xs={3}><AMC/></Grid>
+        <Grid item xs={3}><YTO/></Grid>
+        <Grid item xs={3}><PA/></Grid>          
+        <Grid item xs={3}><PLL/></Grid>
+      </Grid>
     )
   }
 }

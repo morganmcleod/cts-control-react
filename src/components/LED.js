@@ -1,6 +1,7 @@
 import './components.css'
 import React from "react";
-import { Row, Col, Container, ToggleButton } from "react-bootstrap";
+import Grid from '@mui/material/Grid'
+import { ToggleButton } from "react-bootstrap";
 const axios = require('axios').default
 
 class LED extends React.Component {
@@ -46,22 +47,22 @@ class LED extends React.Component {
   render() {
     let buttonId = "LEDenabled" + this.pol;
     return (
-      <Container className="component-data">
-        <Row>
-          <Col className="component-header">LNA LED</Col>
-        </Row>
-        <Row>
-          <Col><ToggleButton
+      <Grid container className="component-data">
+        <Grid item xs={12} className="component-header">LED pol {this.pol}</Grid>
+        <Grid item xs={12}>
+          <ToggleButton
             className='custom-btn'
             id={buttonId}
             size="sm"
             type="checkbox"
             variant="info"
             checked={this.state.enable}
-            onChange={(e) => this.setEnableHandler(e.currentTarget.checked)}>{this.state.enableText}</ToggleButton>
-          </Col>
-        </Row>
-      </Container>
+            onChange={(e) => this.setEnableHandler(e.currentTarget.checked)}
+          >
+          {this.state.enableText}
+          </ToggleButton>
+        </Grid>
+      </Grid>
     );
   }
 }

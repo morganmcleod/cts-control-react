@@ -1,6 +1,8 @@
 import './components.css'
 import React from "react";
-import { Row, Col, Container, Button } from "react-bootstrap";
+import Grid from '@mui/material/Grid'
+import eventBus from './EventBus';
+import { Button } from "react-bootstrap";
 const axios = require('axios').default
 
 class YTO extends React.Component {
@@ -11,13 +13,31 @@ class YTO extends React.Component {
       highGHz: 0.0,
       inputLowGHz: "",
       inputHighGHz: "",
-      courseTune: 0
+      courseTune: 0,
     }
   }
   componentDidMount() {
     this.fetch();
+    eventBus.on("YTO courseTune", (data) => 
+      this.setCourseTune(data.courseTune));
+    eventBus.on("PLL mults", (data) =>
+      this.setState({
+        coldMult: data.coldMult,
+        warmMult: data.warmMult
+      }));
   }
   componentWillUnmount() {
+    eventBus.remove("YTO courseTune");
+  }
+  setCourseTune(courseTune) {
+    let ytoFreq = 0;
+    if (this.state.lowGHz > 0 && this.state.highGHz > this.state.lowGHz) {
+      ytoFreq = (this.state.lowGHz + ((courseTune / 4095) * (this.state.highGHz - this.state.lowGHz))).toFixed(3);
+    }
+    this.setState({
+      courseTune: courseTune,
+      ytoFreq: ytoFreq
+    });    
   }
   fetch() {
     axios.get(`/lo/yto`)
@@ -26,8 +46,8 @@ class YTO extends React.Component {
         this.setState({ 
           lowGHz: yto.lowGHz,
           highGHz: yto.highGHz,
-          courseTune: yto.courseTune,
         });
+        this.setCourseTune(yto.courseTune);
         if (this.state.inputLowGHz === "") {
           this.setState({ 
             inputLowGHz: yto.lowGHz,
@@ -56,7 +76,7 @@ class YTO extends React.Component {
       .then(res => {
         const result = res.data;
         console.log(result);
-        this.setState({courseTune : params.courseTune});
+        this.fetch();
       })
   }
   render() {
@@ -73,57 +93,58 @@ class YTO extends React.Component {
       onClick: event => this.tweakYTO(-1)
     }
     return (
-      <Container className="component-data">
-        <Row>
-          <Col className="component-header">YTO</Col>
-        </Row>
-        <Row xs={5}>
-          <Col xs={4} className="component-title">low:</Col>
-          <Col> {this.state.lowGHz}</Col>
-          <Col><
-            input type="text"
+      <Grid container spacing={0} className="component-data">
+        <Grid item xs={12} className="component-header">YTO</Grid>        
+
+        <Grid item xs={3} className="component-title">low [GHz]:</Grid>
+        <Grid item xs={3}>{this.state.lowGHz}</Grid>
+        <Grid item xs={6}>
+          <input type="text"
             name="setLow" 
             className="component-input"
             onChange={event => {this.setState({inputLowGHz: event.target.value})}}
             value = {this.state.inputLowGHz}
-          /></Col>
-          <Col></Col>
-        </Row>
-        <Row xs={5}>
-          <Col xs={4} className="component-title">high:</Col>
-          <Col> {this.state.highGHz}</Col>
-          <Col><
-            input type="text" 
+          />
+        </Grid>
+
+        <Grid item xs={3} className="component-title">high [Ghz]:</Grid>
+        <Grid item xs={3}>{this.state.highGHz}</Grid>
+        <Grid item xs={3}>
+          <input type="text" 
             name="setHigh" 
             className="component-input"
             onChange={event => {this.setState({inputHighGHz: event.target.value})}}
             value = {this.state.inputHighGHz}
-          /></Col>
-          <Col>
-            <Button 
-              className="custom-btn" 
-              {...setLimitsProps}
-            >SET</Button>
-          </Col>
-        </Row>
-        <Row xs={5}>
-          <Col xs={4} className="component-title">courseTune:</Col>
-          <Col> {this.state.courseTune}</Col>
-          <Col>
-            <Button 
-              className="custom-btn"
-              style={{width: "39px"}}
-              {...decYTOProps}
-            >--</Button>
-          </Col>
-          <Col>
-            <Button 
-              className="custom-btn" 
-              style={{width: "39px"}}
-              {...incYTOProps}
-            >++</Button></Col>
-        </Row>
-      </Container>
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Button 
+            className="custom-btn" 
+            {...setLimitsProps}
+          >SET</Button>
+        </Grid>
+
+        <Grid item xs={3} className="component-title">courseTune:</Grid>
+        <Grid item xs={3}>{this.state.courseTune}</Grid>
+        <Grid item xs={3}>
+          <Button 
+            className="custom-btn"
+            style={{width: "39px"}}
+            {...decYTOProps}
+          >-1</Button>
+        </Grid>
+        <Grid item xs={3}>
+          <Button 
+            className="custom-btn" 
+            style={{width: "39px"}}
+            {...incYTOProps}
+          >+1</Button>
+        </Grid>
+
+        <Grid item xs={3} className="component-title">frequency:</Grid>
+        <Grid item xs={8}>{this.state.ytoFreq} GHz</Grid>
+        
+      </Grid>
     );
   }
 };

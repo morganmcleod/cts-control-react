@@ -1,11 +1,8 @@
 import './components.css'
 import SIS from './SIS'
 import LNA from './LNA'
-import LED from './LED'
-import Heater from './Heater';
-import CartridgeTemps from './CartridgeTemps';
+import Grid from '@mui/material/Grid'
 import React from "react";
-import { Row, Col, Container } from "react-bootstrap";
 
 class Polarization extends React.Component {
   constructor(props) {
@@ -14,30 +11,13 @@ class Polarization extends React.Component {
   }
   render() {
     return (
-      <Container> 
-        <Row>
-           <Col className="polarization-header">Polarization {this.pol}</Col>
-        </Row>
-        <Row>
-          <Col><SIS pol={this.pol} sis="1"/></Col>
-          <Col><SIS pol={this.pol} sis="2"/></Col>
-        </Row>
-        <div className ="spacer"></div>
-        <Row>
-          <Col><LNA pol={this.pol} lna="1"/></Col>
-          <Col><LNA pol={this.pol} lna="2"/></Col>
-        </Row>
-        <div className ="spacer"></div>
-        <Row>
-          {this.pol === "0" &&
-            <Col><CartridgeTemps/></Col>
-          }
-          <Col><LED pol={this.pol} /></Col>
-          {this.pol === "1" &&
-            <Col><Heater/></Col>
-          }
-        </Row>
-      </Container>
+      <Grid container> 
+        <Grid item xs={12} className="polarization-header">Polarization {this.pol}</Grid>
+        <Grid item xs={6}><SIS pol={this.pol} sis="1"/></Grid>
+        <Grid item xs={6}><SIS pol={this.pol} sis="2"/></Grid>
+        <Grid item xs={6}><LNA pol={this.pol} lna="1"/></Grid>
+        <Grid item xs={6}><LNA pol={this.pol} lna="2"/></Grid>
+      </Grid>
     )
   }
 }

@@ -1,6 +1,7 @@
 import './components.css'
 import React from "react";
-import { Row, Col, Container, ToggleButton } from "react-bootstrap";
+import Grid from '@mui/material/Grid'
+import { ToggleButton } from "react-bootstrap";
 const axios = require('axios').default
 
 class Heater extends React.Component {
@@ -46,26 +47,25 @@ class Heater extends React.Component {
   }
   render() {
     return (
-      <Container className="component-data">
-        <Row>
-          <Col className="component-header">SIS HEATER</Col>
-        </Row>
-        <Row xs={5}>
-          <Col><ToggleButton
+      <Grid container className="component-data">
+        <Grid item xs={12} className="component-header">SIS HEATER</Grid>
+        <Grid item xs={12}>
+          <ToggleButton
             className='custom-btn'
             id="HeaterEnabled"
             size="sm"
             type="checkbox"
             variant="info"
             checked={this.state.enable}
-            onChange={(e) => this.setEnableHandler(e.currentTarget.checked)}>{this.state.enableText}</ToggleButton>
-          </Col>
-        </Row>
-        <Row xs={5}>
-          <Col md={"auto"} className="component-title">current [mA]:</Col>
-          <Col>{this.state.current}</Col>          
-        </Row>
-      </Container>);
+            onChange={(e) => this.setEnableHandler(e.currentTarget.checked)}
+          >
+          {this.state.enableText}
+          </ToggleButton>
+        </Grid>
+        <Grid item xs={4} className="component-title">current:</Grid>
+        <Grid item xs={8}>{this.state.current} mA</Grid>          
+      </Grid>
+    );
   }
 }
 export default Heater;

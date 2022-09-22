@@ -1,6 +1,7 @@
 import './components.css'
 import React from "react";
-import { Row, Col, Container, Button } from "react-bootstrap";
+import Grid from '@mui/material/Grid'
+import { Button } from "react-bootstrap";
 const axios = require('axios').default
 
 class PA extends React.Component {
@@ -82,86 +83,82 @@ class PA extends React.Component {
       onClick: event => this.setPAHandler(1)
     }
     return (
-      <Container className="component-data">
-        <Row>
-          <Col className="component-header">Power Amp</Col>
-        </Row>
-        <Row>
-          <Col></Col>
-          <Col className="component-title">VD</Col>
-          <Col className="component-title">VG</Col>
-          <Col className="component-title">ID [mA]</Col>
-        </Row>
-        <Row>
-          <Col className="component-title">Pol0:</Col>
-          <Col>{this.state.VDp0}</Col>
-          <Col>{this.state.VGp0}</Col>
-          <Col>{this.state.IDp0}</Col>
-        </Row>
-        <Row>
-          <Col className="component-title">Pol1:</Col>
-          <Col>{this.state.VDp1}</Col>
-          <Col>{this.state.VGp1}</Col>
-          <Col>{this.state.IDp1}</Col>
-        </Row>
-        <Row>
-          <Col className="component-title">Pol0:</Col>
-          <Col><
-            input type="text" 
-            name="set_VDp0" 
-            className="component-input"
-            onChange={event => {this.setState({inputVDp0: event.target.value})}}
-            value={this.state.inputVDp0}
-            />
-          </Col>
-          <Col><
-            input type="text" 
-            name="set_VGp0" 
-            className="component-input"
-            onChange={event => {this.setState({inputVGp0: event.target.value})}}
-            value={this.state.inputVGp0}
-            />
-          </Col>
-          <Col>
-            <Button
-              className="custom-btn"
-              {...setP0Props}
-            >SET</Button>
-          </Col>          
-        </Row>
-        <Row>
-          <Col className="component-title">Pol1:</Col>
-          <Col><
-            input type="text" 
+      <Grid container spacing = {0.4} className="component-data">
+        <Grid item xs={12} className="component-header">Power Amp</Grid>        
+
+        <Grid container spacing = {0.4} className="component-title">
+          <Grid item xs={3}></Grid>
+          <Grid item xs={3}>VD</Grid>
+          <Grid item xs={3}>VG</Grid>
+          <Grid item xs={3}>ID [mA]</Grid>
+        </Grid>
+
+        <Grid item xs={3} className="component-title">Pol0:</Grid>
+        <Grid item xs={3}>{this.state.VDp0}</Grid>
+        <Grid item xs={3}>{this.state.VGp0}</Grid>
+        <Grid item xs={3}>{this.state.IDp0}</Grid>
+
+        <Grid item xs={3} className="component-title">Pol1:</Grid>
+        <Grid item xs={3}>{this.state.VDp1}</Grid>
+        <Grid item xs={3}>{this.state.VGp1}</Grid>
+        <Grid item xs={3}>{this.state.IDp1}</Grid>
+      
+        <Grid item xs={3} className="component-title">Pol0:</Grid>
+        <Grid item xs={3}><
+          input type="text" 
+          name="set_VDp0" 
+          className="component-input"
+          onChange={event => {this.setState({inputVDp0: event.target.value})}}
+          value={this.state.inputVDp0}
+          />
+        </Grid>
+        <Grid item xs={3}><
+          input type="text" 
+          name="set_VGp0" 
+          className="component-input"
+          onChange={event => {this.setState({inputVGp0: event.target.value})}}
+          value={this.state.inputVGp0}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Button
+            className="custom-btn"
+            {...setP0Props}
+          >SET</Button>
+        </Grid>          
+
+
+        <Grid item xs={3} className="component-title">Pol1:</Grid>
+        <Grid item xs={3}>
+          <input type="text" 
             name="set_VDp1" 
             className="component-input"
             onChange={event => {this.setState({inputVDp1: event.target.value})}}
             value={this.state.inputVDp1}
-            />
-          </Col>
-          <Col><
-            input type="text" 
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <input type="text" 
             name="set_VGp1" 
             className="component-input"
             onChange={event => {this.setState({inputVGp1: event.target.value})}}
             value={this.state.inputVGp1}
-            />
-          </Col>
-          <Col>
-            <Button
-              className="custom-btn"
-              {...setP1Props}
-            >SET</Button>
-          </Col>          
-        </Row>
-        <div className ="spacer"></div>
-        <Row>
-          <Col className="component-title">3V&nbsp;supply:</Col>
-          <Col>{this.state.supply3V}</Col>
-          <Col className="component-title">5V&nbsp;supply:</Col>
-          <Col>{this.state.supply5V}</Col>
-        </Row>
-      </Container>
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Button
+            className="custom-btn"
+            {...setP1Props}
+          >SET</Button>
+        </Grid>
+
+        <Grid item xs={3} className="component-title">3V&nbsp;supply:</Grid>
+        <Grid item xs={9}>{this.state.supply3V}</Grid>
+        
+        <Grid item xs={3} className="component-title">5V&nbsp;supply:</Grid>
+        <Grid item xs={9}>{this.state.supply5V}</Grid>
+
+      </Grid>
     );
   }
 }
