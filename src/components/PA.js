@@ -1,7 +1,8 @@
 import './components.css'
 import React from "react";
 import Grid from '@mui/material/Grid'
-import { Button } from "react-bootstrap";
+import Button from '@mui/material/Button'
+import OutlinedInput from '@mui/material/OutlinedInput';
 const axios = require('axios').default
 
 class PA extends React.Component {
@@ -59,6 +60,9 @@ class PA extends React.Component {
           })
         }
       })
+      .catch(error => {
+        console.log(error);
+      })
   }
   setPAHandler(pol) {
     const params = {
@@ -71,6 +75,9 @@ class PA extends React.Component {
         const result = res.data;
         console.log(result);
         this.fetch();
+      })
+      .catch(error => {
+        console.log(error);
       })
   }
   render() {
@@ -104,52 +111,67 @@ class PA extends React.Component {
         <Grid item xs={3}>{this.state.IDp1}</Grid>
       
         <Grid item xs={3} className="component-title">Pol0:</Grid>
-        <Grid item xs={3}><
-          input type="text" 
-          name="set_VDp0" 
-          className="component-input"
-          onChange={event => {this.setState({inputVDp0: event.target.value})}}
-          value={this.state.inputVDp0}
+        <Grid item xs={3}>
+          <OutlinedInput
+            name="set_VDp0"
+            size="small"
+            margin="none"
+            className="component-input"
+            onChange={e => {this.setState({inputVDp0: e.target.value})}}
+            value = {this.state.inputVDp0}
           />
         </Grid>
-        <Grid item xs={3}><
-          input type="text" 
-          name="set_VGp0" 
-          className="component-input"
-          onChange={event => {this.setState({inputVGp0: event.target.value})}}
-          value={this.state.inputVGp0}
+        <Grid item xs={3}>
+          <OutlinedInput
+            name="set_VGp0"
+            size="small"
+            margin="none"
+            className="component-input"
+            onChange={e => {this.setState({inputVGp0: e.target.value})}}
+            value = {this.state.inputVGp0}
           />
         </Grid>
         <Grid item xs={3}>
           <Button
             className="custom-btn"
+            variant="contained"
+            size="small"
             {...setP0Props}
-          >SET</Button>
+          >
+            SET
+          </Button>
         </Grid>          
-
 
         <Grid item xs={3} className="component-title">Pol1:</Grid>
         <Grid item xs={3}>
-          <input type="text" 
-            name="set_VDp1" 
+          <OutlinedInput
+            name="set_VDp1"
+            size="small"
+            margin="none"
             className="component-input"
-            onChange={event => {this.setState({inputVDp1: event.target.value})}}
-            value={this.state.inputVDp1}
+            onChange={e => {this.setState({inputVDp1: e.target.value})}}
+            value = {this.state.inputVDp1}
           />
         </Grid>
         <Grid item xs={3}>
-          <input type="text" 
-            name="set_VGp1" 
+          <OutlinedInput
+            name="set_VGp1"
+            size="small"
+            margin="none"
             className="component-input"
-            onChange={event => {this.setState({inputVGp1: event.target.value})}}
-            value={this.state.inputVGp1}
+            onChange={e => {this.setState({inputVGp1: e.target.value})}}
+            value = {this.state.inputVGp1}
           />
         </Grid>
         <Grid item xs={3}>
           <Button
             className="custom-btn"
+            variant="contained"
+            size="small"
             {...setP1Props}
-          >SET</Button>
+          >
+            SET
+          </Button>
         </Grid>
 
         <Grid item xs={3} className="component-title">3V&nbsp;supply:</Grid>

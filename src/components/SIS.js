@@ -1,7 +1,8 @@
 import './components.css'
 import React from "react";
 import Grid from '@mui/material/Grid'
-import { Button } from "react-bootstrap";
+import Button from '@mui/material/Button'
+import OutlinedInput from '@mui/material/OutlinedInput';
 const axios = require('axios').default
 
 class SIS extends React.Component {
@@ -52,6 +53,9 @@ class SIS extends React.Component {
           averaging: sis.averaging
         })
       })
+      .catch(error => {
+        console.log(error);
+      })
   }
   setVjHandler() {
     const params = {
@@ -63,6 +67,9 @@ class SIS extends React.Component {
       .then(res => {
         const result = res.data;
         console.log(result);
+      })
+      .catch(error => {
+        console.log(error);
       })
   }
   setImagHandler() {
@@ -76,6 +83,9 @@ class SIS extends React.Component {
         const result = res.data;
         console.log(result);
       })
+      .catch(error => {
+        console.log(error);
+      })
   }
   render() {
     let setVjProps = {
@@ -88,25 +98,59 @@ class SIS extends React.Component {
     }
     return (
       <Grid container className="component-data">
-       <Grid item xs={12}className="component-header">SIS {this.sis}</Grid>
+        <Grid item xs={12}className="component-header">SIS {this.sis}</Grid>
 
-       <Grid item xs={3} className="component-title">Vj [mV]:</Grid>
-       <Grid item xs={3}>{this.state.Vj.toFixed(3)}</Grid>
-       <Grid item xs={3}><input type="text" name="setVj" className="component-input"/></Grid>
-       <Grid item xs={3}><Button className="custom-btn" size='sm' {...setVjProps}>SET</Button></Grid>
+        <Grid item xs={3} className="component-title">Vj [mV]:</Grid>
+        <Grid item xs={2}>{this.state.Vj.toFixed(3)}</Grid>
+        <Grid item xs={3}>
+          <OutlinedInput
+            name="setVj"
+            size="small"
+            margin="none"
+            className="component-input"
+          />
+        </Grid>
+        <Grid item xs={0.5}/>
+        <Grid item xs={3.5}>
+          <Button 
+            className="custom-btn"
+            variant="contained"
+            size="small"
+            {...setVjProps}
+          >
+            SET
+          </Button>
+        </Grid>
 
-       <Grid item xs={3} className="component-title">Ij [mA]:</Grid>
-       <Grid item xs={9}>{this.state.Ij.toFixed(3)}</Grid>
+        <Grid item xs={3} className="component-title">Ij [mA]:</Grid>
+        <Grid item xs={9}>{this.state.Ij.toFixed(3)}</Grid>
 
-       <Grid item xs={12} className="component-header">Magnet {this.sis}</Grid>
+        <Grid item xs={12} className="component-header">Magnet {this.sis}</Grid>
 
-       <Grid item xs={3} className="component-title">Imag [mA]:</Grid>
-       <Grid item xs={3}>{this.state.Imag.toFixed(2)}</Grid>
-       <Grid item xs={3}><input type="text" name="setImag" className="component-input"/></Grid>
-       <Grid item xs={3}><Button className="custom-btn" size='sm' {...setImagProps}>SET</Button></Grid>
-
-       <Grid item xs={3} className="component-title">Vmag [mV]:</Grid>
-       <Grid item xs={9}>{this.state.Vmag.toFixed(2)}</Grid>
+        <Grid item xs={3} className="component-title">Imag [mA]:</Grid>
+        <Grid item xs={2}>{this.state.Imag.toFixed(2)}</Grid>
+        <Grid item xs={3}>
+          <OutlinedInput
+            name="setImag"
+            size="small"
+            margin="none"
+            className="component-input"
+          />
+        </Grid>
+        <Grid item xs={0.5}/>
+        <Grid item xs={3.5}>
+          <Button 
+            className="custom-btn"
+            variant="contained"
+            size="small"
+            {...setImagProps}
+          >
+            SET
+          </Button> 
+        </Grid>
+        
+        <Grid item xs={3} className="component-title">Vmag [mV]:</Grid>
+        <Grid item xs={9}>{this.state.Vmag.toFixed(2)}</Grid>
       </Grid>
     );
   }

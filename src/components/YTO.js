@@ -1,8 +1,9 @@
 import './components.css'
 import React from "react";
 import Grid from '@mui/material/Grid'
+import Button from '@mui/material/Button'
+import OutlinedInput from '@mui/material/OutlinedInput';
 import eventBus from './EventBus';
-import { Button } from "react-bootstrap";
 const axios = require('axios').default
 
 class YTO extends React.Component {
@@ -32,11 +33,7 @@ class YTO extends React.Component {
   setCourseTune(courseTune) {
     let ytoFreq = 0;
     if (this.state.lowGHz > 0 && this.state.highGHz > this.state.lowGHz) {
-<<<<<<< HEAD
       ytoFreq = (this.state.lowGHz + ((courseTune / 4095) * (this.state.highGHz - this.state.lowGHz))).toFixed(3);
-=======
-      ytoFreq = (this.state.lowGHz + (courseTune / 4095) / (this.state.highGHz - this.state.lowGHz)).toFixed(3);
->>>>>>> acfcf64... fix
     }
     this.setState({
       courseTune: courseTune,
@@ -59,6 +56,9 @@ class YTO extends React.Component {
           });
         }
       })
+      .catch(error => {
+        console.log(error);
+      })
   }
   setLimitsHandler() {
     const params = {
@@ -71,6 +71,9 @@ class YTO extends React.Component {
         console.log(result);
         this.fetch();
       })
+      .catch(error => {
+        console.log(error);
+      })
   }
   tweakYTO(amount) {
     const params = {
@@ -81,6 +84,9 @@ class YTO extends React.Component {
         const result = res.data;
         console.log(result);
         this.fetch();
+      })
+      .catch(error => {
+        console.log(error);
       })
   }
   render() {
@@ -101,49 +107,68 @@ class YTO extends React.Component {
         <Grid item xs={12} className="component-header">YTO</Grid>        
 
         <Grid item xs={3} className="component-title">low [GHz]:</Grid>
-        <Grid item xs={3}>{this.state.lowGHz}</Grid>
-        <Grid item xs={6}>
-          <input type="text"
-            name="setLow" 
+        <Grid item xs={2}>{this.state.lowGHz}</Grid>
+        <Grid item xs={3}>
+          <OutlinedInput
+            name="setLow"
+            size="small"
+            margin="none"
             className="component-input"
-            onChange={event => {this.setState({inputLowGHz: event.target.value})}}
+            onChange={e => {this.setState({inputLowGHz: e.target.value})}}
             value = {this.state.inputLowGHz}
           />
         </Grid>
-
+        <Grid item xs={4}/>
+        
         <Grid item xs={3} className="component-title">high [Ghz]:</Grid>
-        <Grid item xs={3}>{this.state.highGHz}</Grid>
+        <Grid item xs={2}>{this.state.highGHz}</Grid>
         <Grid item xs={3}>
-          <input type="text" 
-            name="setHigh" 
+          <OutlinedInput
+            name="setHigh"
+            size="small"
+            margin="none"
             className="component-input"
-            onChange={event => {this.setState({inputHighGHz: event.target.value})}}
+            onChange={e => {this.setState({inputHighGHz: e.target.value})}}
             value = {this.state.inputHighGHz}
           />
         </Grid>
-        <Grid item xs={3}>
-          <Button 
-            className="custom-btn" 
+        <Grid item xs={0.5}/>
+        <Grid item xs={3.5}>
+          <Button
+            className="custom-btn"
+            variant="contained"
+            size="small"
             {...setLimitsProps}
-          >SET</Button>
+          >
+            SET
+          </Button>
         </Grid>
 
         <Grid item xs={3} className="component-title">courseTune:</Grid>
-        <Grid item xs={3}>{this.state.courseTune}</Grid>
+        <Grid item xs={2}>{this.state.courseTune}</Grid>
         <Grid item xs={3}>
           <Button 
             className="custom-btn"
-            style={{width: "39px"}}
+            variant="contained"
+            size="small"
+            style={{
+              maxWidth: '30%',
+              minWidth: '30%'              
+            }}
             {...decYTOProps}
           >-1</Button>
-        </Grid>
-        <Grid item xs={3}>
           <Button 
             className="custom-btn" 
-            style={{width: "39px"}}
+            variant="contained"
+            size="small"
+            style={{
+              maxWidth: '30%',
+              minWidth: '30%'
+            }}
             {...incYTOProps}
           >+1</Button>
         </Grid>
+        <Grid item xs={4}/>
 
         <Grid item xs={3} className="component-title">frequency:</Grid>
         <Grid item xs={8}>{this.state.ytoFreq} GHz</Grid>

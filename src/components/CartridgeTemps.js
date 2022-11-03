@@ -44,6 +44,9 @@ class CartridgeTemps extends React.Component {
           temp5: temps.temp5
          });
       })
+      .catch(error => {
+        console.log(error);
+      })
   }
   render() {
     return (
@@ -51,19 +54,19 @@ class CartridgeTemps extends React.Component {
         <Grid item xs={12} className="component-header">Temperatures</Grid>
         
         <Grid item xs={3} className="component-title">mixer pol0:</Grid>
-        <Grid item xs={3}>{this.state.temp2.toFixed(2)} K</Grid>
-        <Grid item xs={3} className="component-title">pol1:</Grid>
-        <Grid item xs={3}>{this.state.temp5.toFixed(2)} K</Grid>
+        <Grid item xs={2}>{this.state.temp2.toFixed(2)} K</Grid>
+        <Grid item xs={1}/>
+        <Grid item xs={2} className="component-title">pol1:</Grid>
+        <Grid item xs={4}>{this.state.temp5.toFixed(2)} K</Grid>
         
         <Grid item xs={3} className="component-title" >4K:</Grid>
-        <Grid item xs={3}>{this.state.temp0.toFixed(2)} K</Grid>
-        <Grid item xs={3} className="component-title">15K:</Grid>
-        <Grid item xs={3}>{this.state.temp4.toFixed(2)} K</Grid>
+        <Grid item xs={2}>{this.state.temp0.toFixed(2)} K</Grid>
+        <Grid item xs={1}/>
+        <Grid item xs={2} className="component-title">15K:</Grid>
+        <Grid item xs={4}>{this.state.temp4.toFixed(2)} K</Grid>
         
         <Grid item xs={3} className="component-title">110K:</Grid>
-        <Grid item xs={3}>{this.state.temp1.toFixed(2)} K</Grid>
-        <Grid item xs={3}></Grid>
-        <Grid item xs={3}></Grid>
+        <Grid item xs={9}>{this.state.temp1.toFixed(2)} K</Grid>
       </Grid>
     );
   }

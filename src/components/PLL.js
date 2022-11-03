@@ -2,7 +2,13 @@ import './components.css'
 import React from "react";
 import eventBus from './EventBus';
 import Grid from '@mui/material/Grid'
-import { Button, ToggleButton } from "react-bootstrap";
+import Button from '@mui/material/Button'
+import OutlinedInput from '@mui/material/OutlinedInput';
+
+import EnableButton from './EnableButton';
+import LockButton from './LockButton';
+import { Chip } from '@mui/material';
+
 const axios = require('axios').default
 
 class PLL extends React.Component {
@@ -10,9 +16,9 @@ class PLL extends React.Component {
     super(props);
     this.state = {
       inputLOFreq: "",
+      isLocked: false,
       isLocking: false,
-      lockButtonText: "LOCK",
-      lockButtonVariantiant: "primary"
+      lockFailed: false
     }
     this.interval = props.interval ?? 5000;
     this.timer = 0;
@@ -40,19 +46,26 @@ class PLL extends React.Component {
         this.setState(pll);
         eventBus.dispatch("YTO courseTune", { courseTune: pll.courseTune });
       })
+      .catch(error => {
+        console.log(error);
+      })
+      
     axios.get('/lo/pll/config')
       .then(res => {
         const config = res.data;
         this.setState(config);
+      })
+      .catch(error => {
+        console.log(error);
       })
   }
   lockHandler() {
     if (this.state.isLocking)
       return;
     this.setState({
+      isLocked: false,
       isLocking: true,
-      lockButtonText: "LOCKING...",
-      lockButtonVariantiant: "warning"
+      lockFailed: false
     });
     const params = {
       freqLOGHz: Number(this.state.inputLOFreq)
@@ -66,27 +79,29 @@ class PLL extends React.Component {
         this.fetch();
         if (result.success) {
           this.setState({
-            lockButtonText: "SUCCESS",
-            lockButtonVariantiant: "success"
+            isLocked: true,
+            isLocking: false
           });
-          eventBus.dispatch("locked", {locked: true});
         } else {
           this.setState({
-            lockButtonText: "FAILED",
-            lockButtonVariantiant: "danger"
+            isLocked: false,
+            isLocking: false,
+            lockFailed: true
           });
-          eventBus.dispatch("locked", {locked: false});
         }
+        eventBus.dispatch("locked", {locked: this.state.isLocked});
         this.lockTimer = setInterval(this.handleLockTimer, 1500);
+      })
+      .catch(error => {
+        console.log(error);
       })
   }
   handleLockTimer() {
     clearInterval(this.lockTimer);
     this.lockTimer = 0;
     this.setState({
-      lockButtonText: "LOCK",
-      lockButtonVariantiant: "primary",
-      isLocking: false
+      isLocking: false,
+      lockFailed: false
     });
   }
   clearUnlockHandler() {
@@ -95,6 +110,9 @@ class PLL extends React.Component {
         const result = res.data;
         console.log(result);
         this.fetch();
+      })
+      .catch(error => {
+        console.log(error);
       })
   }
   pllAdjustHandler() {
@@ -106,6 +124,9 @@ class PLL extends React.Component {
         const result = res.data;
         console.log(result);
         this.fetch();
+      })
+      .catch(error => {
+        console.log(error);
       })
   }
   setNullHandler(checked) {
@@ -119,6 +140,9 @@ class PLL extends React.Component {
         this.setState({nullPLL: params.enable})
         this.fetch();
       })
+      .catch(error => {
+        console.log(error);
+      })
   }
   setLoopBWHandler(checked) {
     const params = {
@@ -129,6 +153,9 @@ class PLL extends React.Component {
         const result = res.data;
         console.log(result);
         this.setState({loopBW: params.loopBW})
+      })
+      .catch(error => {
+        console.log(error);
       })
   }
   setLockSBHandler(checked) {
@@ -141,137 +168,147 @@ class PLL extends React.Component {
         console.log(result);
         this.setState({lockSB: params.lockSB})
       })
+      .catch(error => {
+        console.log(error);
+      })
   }
   render() {
-    let lockIndicateVariant = (this.state.isLocked) ? "success" : "danger";
-    let lockIndicateText = (this.state.isLocked) ? "LOCK" : "UNLOCK";
-    let unlockDetectVariant = (!this.state.unlockDetected && this.state.isLocked) ? "success" : "danger";
-    let unlockDetectText = (!this.state.unlockDetected && this.state.isLocked) ? "OK" : "UNLOCK";
-    let nullVariant = (!this.state.nullPLL) ? "success" : "danger";
-    let nullText = (!this.state.nullPLL) ? "NORMAL" : "NULL";
-    let loopBWText = (!this.state.loopBW) ? "7.5" : "15";
-    let lockSBText = (!this.state.lockSB) ? "BELOW" : "ABOVE";
-    let lockProps = {
-      size: 'sm',
-      onClick: event => this.lockHandler()
-    }
-    let clearUnlockProps = {
-      size: 'sm',
-      onClick: event => this.clearUnlockHandler()
-    }
-    let pllAdjustProps = {
-      size: 'sm',
-      onClick: event => this.pllAdjustHandler()
-    }
+    let unlockDetect = !this.state.isLocked || this.state.unlockDetected;
     return (
       <Grid container spacing={0} className="component-data">
         <Grid item xs={12} className="component-header">PLL</Grid>        
 
-        <Grid item xs={4}>
-          <Button 
-            variant={lockIndicateVariant}
-            className="custom-btn"
-            size="sm"
-            disabled
-          >{lockIndicateText}</Button>
+        <Grid item xs={3}>
+          <Chip 
+            label={(this.state.isLocked) ? "LOCK" : "UNLOCK"}
+            color={this.state.isLocked ? "success" : "error"}
+            size="small"
+          />
         </Grid>
-        <Grid item xs={4} className="input-grid">
-          <input type="text" 
-            name="loFreq" 
+        <Grid item xs={5} className="input-grid">
+          <OutlinedInput
+            name="loFreq"
+            size="small"
+            margin="none"
             className="component-input"
-            onChange={event => {this.setState({inputLOFreq: event.target.value})}}
-            value={this.state.inputLOFreq}>
-          </input>
-            &nbsp;GHz
+            style={{width: '60%'}}
+            onChange={e => {this.setState({inputLOFreq: e.target.value})}}
+            value = {this.state.inputLOFreq}
+          />
+          &nbsp;GHz
         </Grid>
-        <Grid item xs={4}>
-          <Button 
-            variant = {this.state.lockButtonVariantiant}
+        <Grid item xs={3}>
+          <LockButton
+            isLocked={this.state.isLocked}
+            isLocking={this.state.isLocking}
+            lockFailed={this.state.lockFailed}
             className="custom-lock-btn"
-            {...lockProps}
-          >{this.state.lockButtonText}</Button>
+            onClick={event => this.lockHandler()}            
+          />
         </Grid>
+        <Grid item xs={1}/>
 
-        <Grid item xs={4} className="component-title">Unlock seen:</Grid>
-        <Grid item xs={4}>
-          <Button 
-            variant={unlockDetectVariant}
-            className="custom-btn"
-            size="sm"
-            disabled 
-          >{unlockDetectText}</Button>
+        <Grid item xs={3} className="component-title">Unlock seen:</Grid>
+        <Grid item xs={5}>
+          <Chip 
+            label={unlockDetect ? "UNLOCK" : "OK"}
+            color={unlockDetect ? "error" : "success"}
+            size="small"
+          />
         </Grid>
-        <Grid item xs={4}>
-          <Button 
-            className="custom-lock-btn" 
-            size="sm" 
-            {...clearUnlockProps}>
-              CLEAR
+        <Grid item xs={3}>
+          <Button
+            className="custom-lock-btn"
+            variant="contained"
+            size="small"
+            style={{
+              minWidth: '100%',
+              maxWidth: '100%' 
+            }}
+            onClick={e => this.clearUnlockHandler()}
+          >
+            CLEAR
           </Button>
         </Grid>
-        
-        <Grid item xs={4} className="component-title">Correction:</Grid>
-        <Grid item xs={4}>{this.state.corrV}&nbsp;V</Grid>
-        <Grid item xs={4}>
-          <Button 
-          className="custom-lock-btn" 
-          size="sm" 
-          {...pllAdjustProps}>
+        <Grid item xs={1}/>
+
+        <Grid item xs={3} className="component-title">Correction:</Grid>
+        <Grid item xs={5}>{this.state.corrV}&nbsp;V</Grid>
+        <Grid item xs={3}>
+          <Button
+            className="custom-lock-btn"
+            variant="contained"
+            size="small"
+            style={{
+              minWidth: '100%',
+              maxWidth: '100%' 
+            }}
+            onClick={e => this.pllAdjustHandler()}
+          >
             ADJUST
           </Button>
         </Grid>
+        <Grid item xs={1}/>
 
-        <Grid item xs={4} className="component-title">Ref Tot Pwr:</Grid>
-        <Grid item xs={2}>{this.state.refTP}&nbsp;V</Grid>
+        <Grid item xs={3} className="component-title">Ref Tot Pwr:</Grid>
+        <Grid item xs={3}>{this.state.refTP}&nbsp;V</Grid>
         <Grid item xs={2} className="component-title">PLL:</Grid>
-        <Grid item xs={4}>
-          <ToggleButton
+        <Grid item xs={3}>
+          <EnableButton
             className="custom-lock-btn" 
             id="nullPLL"
-            size="sm"
-            type="checkbox"
-            variant={nullVariant}
-            checked={this.state.nullPLL}
-            onChange={(event) => {this.setNullHandler(!this.state.nullPLL)}}>
-              {nullText}
-          </ToggleButton>
+            size="small"
+            enableColor="red"
+            enableText="NULL"
+            disableText="NORMAL"
+            width="100%"
+            enable={this.state.nullPLL}
+            onClick={(e) => {this.setNullHandler(!this.state.nullPLL)}}>
+          </EnableButton>
         </Grid>
+        <Grid item xs={1}/>
 
-        <Grid item xs={4} className="component-title">IF Tot Pwr:</Grid>
-        <Grid item xs={8}>{this.state.IFTP}&nbsp;V</Grid>
+        <Grid item xs={3} className="component-title">IF Tot Pwr:</Grid>
+        <Grid item xs={9}>{this.state.IFTP}&nbsp;V</Grid>
 
-        <Grid item xs={4} className="component-title">Temperature:</Grid>
-        <Grid item xs={8}>{this.state.temperature}&nbsp;C</Grid>
+        <Grid item xs={3} className="component-title">Temperature:</Grid>
+        <Grid item xs={9}>{this.state.temperature}&nbsp;C</Grid>
 
-        <Grid item xs={4} className="component-title">Loop BW:</Grid>
-        <Grid item xs={8}>
-          <ToggleButton
+        <Grid item xs={3} className="component-title">Loop BW:</Grid>
+        <Grid item xs={2}>
+          <EnableButton
             className='custom-btn'
             id="loopBW"
             size="sm"
             type="checkbox"
-            variant="info"
-            checked={this.state.loopBW}
-            onChange={(e) => this.setLoopBWHandler(1 - this.state.loopBW)}>
-              {loopBWText}
-          </ToggleButton>
-          &nbsp;&nbsp;MHz / V
+            enableText="7.5"
+            disableText="15"
+            width="100%"
+            enable={this.state.loopBW}
+            onClick={(e) => this.setLoopBWHandler(1 - this.state.loopBW)}>
+          </EnableButton>
+        </Grid>
+        <Grid item xs={7}>
+          &nbsp;MHz / V
         </Grid>
 
-        <Grid item xs={4} className="component-title">Lock SB:</Grid>
-        <Grid item xs={8}>
-          <ToggleButton
+        <Grid item xs={3} className="component-title">Lock SB:</Grid>
+        <Grid item xs={2}>
+          <EnableButton
             className='custom-btn'
             style={{width: "65px"}}
             id="lockSB"
             size="sm"
             type="checkbox"
-            variant="info"
-            checked={this.state.lockSB}
-            onChange={(e) => this.setLockSBHandler(1 - this.state.lockSB)}>
-              {lockSBText}
-          </ToggleButton>            
-          &nbsp;&nbsp;Ref.
+            enableText="BELOW"
+            disableText="ABOVE"
+            width="100%"
+            enable={this.state.lockSB}
+            onClick={(e) => this.setLockSBHandler(1 - this.state.lockSB)}>
+          </EnableButton>          
+        </Grid>
+        <Grid item xs={7}>
+          &nbsp;Reference
         </Grid>
       </Grid>
     );

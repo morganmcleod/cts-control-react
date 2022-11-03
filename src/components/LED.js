@@ -1,7 +1,7 @@
 import './components.css'
 import React from "react";
 import Grid from '@mui/material/Grid'
-import { ToggleButton } from "react-bootstrap";
+import EnableButton from './EnableButton';
 const axios = require('axios').default
 
 class LED extends React.Component {
@@ -9,7 +9,6 @@ class LED extends React.Component {
     super(props);
     this.state = {
       enable: false,
-      enableText: ""
     }
     this.pol = props.pol ?? 0;
   }
@@ -26,13 +25,17 @@ class LED extends React.Component {
       .then(res => {
         const led = res.data;
         this.setState({ 
-          enable: led.enable,
-          enableText: led.enable ? "ENABLED" : "DISABLED"
+          enable: led.enable
          });
       })
+      .catch(error => {
+        console.log(error);
+      })
   }
-  setEnableHandler(enable) {
-    console.log('setEnableHandler ' + enable);
+  onClickEnable(e) {
+    const enable = e.currentTarget.value !== 'true';
+    console.log('onClickEnable ' + enable);
+    this.setState({enable: enable});
     const params = {
       pol: this.pol,
       enable: enable
@@ -43,24 +46,20 @@ class LED extends React.Component {
         console.log(result);
         this.fetch()
       })
+      .catch(error => {
+        console.log(error);
+      })
   }
   render() {
-    let buttonId = "LEDenabled" + this.pol;
     return (
       <Grid container className="component-data">
         <Grid item xs={12} className="component-header">LED pol {this.pol}</Grid>
         <Grid item xs={12}>
-          <ToggleButton
-            className='custom-btn'
-            id={buttonId}
-            size="sm"
-            type="checkbox"
-            variant="info"
-            checked={this.state.enable}
-            onChange={(e) => this.setEnableHandler(e.currentTarget.checked)}
-          >
-          {this.state.enableText}
-          </ToggleButton>
+          <EnableButton
+            enableColor="green"
+            enable={this.state.enable}
+            onClick={(e) => this.onClickEnable(e)}
+          ></EnableButton>
         </Grid>
       </Grid>
     );

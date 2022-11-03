@@ -1,7 +1,8 @@
 import './components.css'
 import React from "react";
 import Grid from '@mui/material/Grid'
-import { ToggleButton } from "react-bootstrap";
+import EnableButton from './EnableButton';
+
 const axios = require('axios').default
 
 class Heater extends React.Component {
@@ -9,7 +10,6 @@ class Heater extends React.Component {
     super(props);
     this.state = {
       enable: false,
-      enableText: "DISABLED",
       current: 0.0
     }
   }
@@ -26,9 +26,14 @@ class Heater extends React.Component {
           current: current
          });
       })
+      .catch(error => {
+        console.log(error);
+      })
   }
-  setEnableHandler(enable) {
-    console.log('setEnableHandler ' + enable);
+  onClickEnable(e) {
+    const enable = e.currentTarget.value !== 'true';
+    console.log('onClickEnable ' + enable);
+    this.setState({enable: enable});
     const params = {
       enable: enable
     }
@@ -37,12 +42,11 @@ class Heater extends React.Component {
         const result = res.data;
         console.log(result);
         if (result.success) {
-            this.setState({
-              enable: enable,
-              enableText: enable ? "ENABLED" : "DISABLED"
-            })
             this.fetch();
         }
+      })
+      .catch(error => {
+        console.log(error);
       })
   }
   render() {
@@ -50,22 +54,16 @@ class Heater extends React.Component {
       <Grid container className="component-data">
         <Grid item xs={12} className="component-header">SIS HEATER</Grid>
         <Grid item xs={12}>
-          <ToggleButton
-            className='custom-btn'
-            id="HeaterEnabled"
-            size="sm"
-            type="checkbox"
-            variant="info"
-            checked={this.state.enable}
-            onChange={(e) => this.setEnableHandler(e.currentTarget.checked)}
-          >
-          {this.state.enableText}
-          </ToggleButton>
+          <EnableButton
+            enableColor="red"
+            enable={this.state.enable}
+            onClick={(e) => this.onClickEnable(e)}
+          ></EnableButton>
         </Grid>
-        <Grid item xs={4} className="component-title">current:</Grid>
-        <Grid item xs={8}>{this.state.current} mA</Grid>          
+        <Grid item xs={3} className="component-title">current:</Grid>
+        <Grid item xs={9}>{this.state.current} mA</Grid>
       </Grid>
-    );
+    )
   }
 }
 export default Heater;
