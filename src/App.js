@@ -1,17 +1,49 @@
 import './App.css'
 import { ThemeProvider } from "@mui/material/styles";
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid'
-import Stack from '@mui/material/Stack'
-
 import CCA from './components/CCA'
 import LO from './components/LO'
-import MainMenu from './components/MainMenu'
+import CTSAppBar from './components/AppBar'
+import BeamScannerMain from './components/BeamScanner/Main';
 import { ThemeContext, loadTheme, mapTheme } from "./themes";
-
+import eventBus from './components/EventBus';
 import React from 'react';
 const axios = require('axios').default
 axios.defaults.baseURL = 'http://localhost:8000';
+
+
+class TabPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.index = props.index ?? 0;
+    this.state = { visibleIndex: 0 }
+  }
+  componentDidMount() {
+    eventBus.on("AppBar-click", (index) => {
+      console.log("AppBar-click " + index);
+      this.setState({visibleIndex: index});
+    });
+  }
+
+  componentWillUnmount() {
+    eventBus.remove("AppBar-click")
+  }
+
+  render() {
+    return (
+      <div
+        hidden={this.state.visibleIndex !== this.index}
+        id={`simple-tabpanel-${this.index}`}
+      >
+        {this.state.visibleIndex === this.index && (          
+          <Box sx={{ p: 3 }}>
+            {this.props.children}
+          </Box>
+        )}
+      </div>
+      )
+  }
+}
 
 class App extends React.Component {
   constructor(props) {
@@ -37,27 +69,23 @@ class App extends React.Component {
 
     return (
       <ThemeContext.Provider value={this.state}>
+        <CTSAppBar/>
         <ThemeProvider theme={theme}>
-          <Box className="App-header"
-            fluid="true"
+          <Box
+            minHeight={"100vh"}
+            padding={"20px"}
             style={containerStyle}
-          >
-            <Stack spacing={0}>
-              <Grid container>
-                <Grid item xs={0.5}/>
-                <Grid item xs={11}>
-                  Cold Cartridge
-                </Grid>
-                <Grid item xs={0.5}>
-                  <MainMenu/>
-                </Grid>
-              </Grid>
+          >            
+            <TabPanel index={0}>
               <CCA/>
-              <div style={{paddingTop:'5px'}}>
-                Local Oscillator
-              </div>
+            </TabPanel>
+            <TabPanel index={1}>
               <LO/>
-            </Stack>
+            </TabPanel>
+            <TabPanel index={3}>
+              <BeamScannerMain/>
+            </TabPanel>
+            <Box flex={1} overflow="auto"/>
           </Box>
         </ThemeProvider>
       </ThemeContext.Provider>

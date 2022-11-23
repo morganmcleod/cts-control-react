@@ -40,7 +40,7 @@ class PLL extends React.Component {
     this.fetch();
   }
   fetch() {
-    axios.get(`/lo/pll`)
+    axios.get('/lo/pll')
       .then(res => {
         const pll = res.data;
         this.setState(pll);
@@ -131,7 +131,7 @@ class PLL extends React.Component {
   }
   setNullHandler(checked) {
     const params = {
-      enable: checked
+      value: checked
     }
     axios.put("/lo/pll/nullintegrator", params)
       .then(res => {

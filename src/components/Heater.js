@@ -35,7 +35,7 @@ class Heater extends React.Component {
     console.log('onClickEnable ' + enable);
     this.setState({enable: enable});
     const params = {
-      enable: enable
+      value: enable
     }
     axios.put("/cca/sis/heater", params)
       .then(res => {

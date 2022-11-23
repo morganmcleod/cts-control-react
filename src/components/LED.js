@@ -25,7 +25,7 @@ class LED extends React.Component {
       .then(res => {
         const led = res.data;
         this.setState({ 
-          enable: led.enable
+          enable: led.value
          });
       })
       .catch(error => {
