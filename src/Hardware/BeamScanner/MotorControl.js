@@ -100,7 +100,7 @@ export default function MotorController(props) {
     }
     timer.current = setInterval(() => { 
       fetch();
-    }, props.interval ?? 5000);
+    }, props.interval ?? 1000);
     return () => {
       clearInterval(timer.current);
       timer.current = null;
