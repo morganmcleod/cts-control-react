@@ -1,61 +1,19 @@
-.polarization-header {
-  font-size: calc(16px);
-  text-align: center;
-  font-weight: bold;
+.MuiAccordionSummary-root.Mui-expanded {
+  margin-left: 0px !important;
+  min-height: 28px !important;  
+  height: 28px !important;
+  padding: 0px !important;
 }
-.component-header {
-  font-size: calc(16px);
-  text-align: left;
-  padding-top: 5px;    
-  padding-left: 0px;
-  font-weight: bold;
+.MuiAccordionSummary-root {
+  margin-left: 0px !important;
 }
-.component-data {
-  font-size: calc(13px);
-  text-align: left;
-  padding-top: 5px;    
-  padding-left: 5px;  
-  font-weight: bold;
+.MuiAccordionDetails-root {
+  padding: 0px !important;
 }
-.component-title  {
-  font-size: calc(12px);
-  text-align: left;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  font-weight: normal;
+.MuiButton-contained {
+  padding-top: 0% !important;
+  padding-bottom: 0% !important;
 }
-.table-title {
-  font-size: calc(12px);
-  text-align: center;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  font-weight: normal;
-}
-.table-data {
-  font-size: calc(13px);
-  text-align: center;
-  padding-top: 5px;    
-  padding-left: 5px;  
-  font-weight: bold;
-}
-.component-input {
+.smallinput {
   height: 23px;
-  text-align: left;
-}
-.custom-btn {
-  height: auto;
-  padding-top: 0% !important;
-  padding-bottom: 0% !important;
-}
-.custom-ind-btn {
-  height: auto;
-  padding-top: 0% !important;
-  padding-bottom: 0% !important;
-  color: white !important;
-}
-.custom-lock-btn {
-  height: auto;
-  padding-top: 0% !important;
-  padding-bottom: 0% !important;
-  width: 80px;
 }

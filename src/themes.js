@@ -19,6 +19,9 @@ const lightTheme = createTheme({
       primary: 'rgba(0,0,0,0.88)',
     },
   },
+  typography: {
+    fontSize: 12,
+  },
 });
 
 const darkTheme = createTheme({
@@ -38,6 +41,9 @@ const darkTheme = createTheme({
     text: {
       primary: "#f1f1f1ff",
     },
+  },
+  typography: {
+    fontSize: 12,
   },
 });
 

@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import Grid from '@mui/material/Grid'
+import { Grid, Typography } from '@mui/material'
 import Button from '@mui/material/Button'
 import OutlinedInput from '@mui/material/OutlinedInput';
 import '../../components.css'
@@ -80,33 +80,34 @@ export default function PA(props) {
       })
   }
   return (
-    <Grid container spacing = {0.4} className="component-data">
-      <Grid item xs={12} className="component-header">Power Amp</Grid>        
+    <Grid container paddingLeft="5px">
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">Power Amp</Typography></Grid>        
 
-      <Grid container spacing = {0.4} className="component-title">
+      <Grid container spacing = {0.4}>
         <Grid item xs={3}></Grid>
-        <Grid item xs={3}>VD</Grid>
-        <Grid item xs={3}>VG</Grid>
-        <Grid item xs={3}>ID [mA]</Grid>
+        <Grid item xs={3}><Typography variant="body2" paddingTop="4px" paddingLeft="11px">VD</Typography></Grid>
+        <Grid item xs={3}><Typography variant="body2" paddingTop="4px" paddingLeft="11px">VG</Typography></Grid>
+        <Grid item xs={3}><Typography variant="body2" paddingTop="4px" paddingLeft="7px">ID [mA]</Typography></Grid>
       </Grid>
 
-      <Grid item xs={3} className="component-title">Pol0:</Grid>
-      <Grid item xs={3}>{pa.VDp0}</Grid>
-      <Grid item xs={3}>{pa.VGp0}</Grid>
-      <Grid item xs={3}>{pa.IDp0}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Pol0:</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px" paddingLeft="11px">{pa.VDp0}</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px" paddingLeft="11px">{pa.VGp0}</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px" paddingLeft="11px">{pa.IDp0}</Typography></Grid>
 
-      <Grid item xs={3} className="component-title">Pol1:</Grid>
-      <Grid item xs={3}>{pa.VDp1}</Grid>
-      <Grid item xs={3}>{pa.VGp1}</Grid>
-      <Grid item xs={3}>{pa.IDp1}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Pol1:</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px" paddingLeft="11px">{pa.VDp1}</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px" paddingLeft="11px">{pa.VGp1}</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px" paddingLeft="11px">{pa.IDp1}</Typography></Grid>
     
-      <Grid item xs={3} className="component-title">Pol0:</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Pol0:</Typography></Grid>
       <Grid item xs={3}>
         <OutlinedInput
           name="set_VDp0"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
+          style={{ "width": "90%" }}
+          className="smallinput"
           onChange={(e) => setInputVDp0(e.target.value)}
           value = {inputVDp0}
         />
@@ -115,15 +116,16 @@ export default function PA(props) {
         <OutlinedInput
           name="set_VGp0"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
+          style={{ "width": "90%" }}
+          className="smallinput"
           onChange={(e) => setInputVGp0(e.target.value)}
           value = {inputVGp0}
         />
       </Grid>
       <Grid item xs={3}>
         <Button
-          className="custom-btn"
+          className="custom-btn-sm"
           variant="contained"
           size="small"
           onClick={(e) => setPAHandler(0)}
@@ -132,13 +134,14 @@ export default function PA(props) {
         </Button>
       </Grid>          
 
-      <Grid item xs={3} className="component-title">Pol1:</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Pol1:</Typography></Grid>
       <Grid item xs={3}>
         <OutlinedInput
           name="set_VDp1"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
+          style={{ "width": "90%" }}
+          className="smallinput"
           onChange={(e) => setInputVDp1(e.target.value)}
           value = {inputVDp1}
         />
@@ -147,15 +150,16 @@ export default function PA(props) {
         <OutlinedInput
           name="set_VGp1"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
+          style={{ "width": "90%" }}
+          className="smallinput"
           onChange={(e) => setInputVGp1(e.target.value)}
           value = {inputVGp1}
         />
       </Grid>
       <Grid item xs={3}>
         <Button
-          className="custom-btn"
+          className="custom-btn-sm"
           variant="contained"
           size="small"
           onClick={(e) => setPAHandler(1)}
@@ -164,11 +168,11 @@ export default function PA(props) {
         </Button>
       </Grid>
 
-      <Grid item xs={3} className="component-title">3V&nbsp;supply:</Grid>
-      <Grid item xs={9}>{pa.supply3V}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">3V&nbsp;supply:</Typography></Grid>
+      <Grid item xs={9}><Typography fontWeight="bold" paddingTop="2px" paddingLeft="11px">{pa.supply3V}</Typography></Grid>
       
-      <Grid item xs={3} className="component-title">5V&nbsp;supply:</Grid>
-      <Grid item xs={9}>{pa.supply5V}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">5V&nbsp;supply:</Typography></Grid>
+      <Grid item xs={9}><Typography fontWeight="bold" paddingTop="2px" paddingLeft="11px">{pa.supply5V}</Typography></Grid>
 
     </Grid>
   );

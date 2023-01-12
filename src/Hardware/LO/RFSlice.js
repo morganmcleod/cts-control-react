@@ -5,11 +5,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { LOSliceConfig } from './LOSliceConfig'
 
-export const LOSlice = createSlice({
-  ...LOSliceConfig,
-  name: 'LO'
-});
-
 export const RFSlice = createSlice({
   ...LOSliceConfig,
   name: 'RF'

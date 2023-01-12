@@ -3,10 +3,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import Chip from '@mui/material/Chip';
-import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button'
-import OutlinedInput from '@mui/material/OutlinedInput';
+import { Grid, Chip, Button, OutlinedInput, Typography } from '@mui/material'
 import EnableButton from '../../Shared/EnableButton';
 import LockButton from './LockButton';
 import '../../components.css'
@@ -194,8 +191,8 @@ export default function PLL(props) {
 
   const unlockDetect = !pll.isLocked || pll.unlockDetected;
   return (
-    <Grid container spacing={0} className="component-data">
-      <Grid item xs={12} className="component-header">PLL</Grid>        
+    <Grid container paddingLeft="5px">
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">PLL</Typography></Grid>        
 
       <Grid item xs={3}>
         <Chip 
@@ -204,30 +201,30 @@ export default function PLL(props) {
           size="small"
         />
       </Grid>
-      <Grid item xs={5} className="input-grid">
+      <Grid item xs={5}>
         <OutlinedInput
           name="loFreq"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
           style={{width: '60%'}}
+          className="smallinput"
           onChange={e => setInputLOFreq(e.target.value)}
           value = {inputLOFreq}
         />
-        &nbsp;GHz
+        <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;GHz</Typography>
       </Grid>
       <Grid item xs={3}>
         <LockButton
           isLocked={isLocked}
           isLocking={isLocking}
           lockFailed={lockFailed}
-          className="custom-lock-btn"
+          className="custom-btn-sm"
           onClick={lockHandler}
         />
       </Grid>
       <Grid item xs={1}/>
 
-      <Grid item xs={3} className="component-title">Unlock seen:</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Unlock seen:</Typography></Grid>
       <Grid item xs={5}>
         <Chip 
           label={unlockDetect ? "UNLOCK" : "OK"}
@@ -237,7 +234,7 @@ export default function PLL(props) {
       </Grid>
       <Grid item xs={3}>
         <Button
-          className="custom-lock-btn"
+          className="custom-btn-sm"
           variant="contained"
           size="small"
           style={{
@@ -251,11 +248,11 @@ export default function PLL(props) {
       </Grid>
       <Grid item xs={1}/>
 
-      <Grid item xs={3} className="component-title">Correction:</Grid>
-      <Grid item xs={5}>{pll.corrV}&nbsp;V</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Correction:</Typography></Grid>
+      <Grid item xs={5}><Typography fontWeight="bold" paddingTop="2px">{pll.corrV}&nbsp;V</Typography></Grid>
       <Grid item xs={3}>
         <Button
-          className="custom-lock-btn"
+          className="custom-btn-sm"
           variant="contained"
           size="small"
           style={{
@@ -269,12 +266,12 @@ export default function PLL(props) {
       </Grid>
       <Grid item xs={1}/>
 
-      <Grid item xs={3} className="component-title">Ref Tot Pwr:</Grid>
-      <Grid item xs={3}>{pll.refTP}&nbsp;V</Grid>
-      <Grid item xs={2} className="component-title">PLL:</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Ref Tot Pwr:</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{pll.refTP}&nbsp;V</Typography></Grid>
+      <Grid item xs={2}><Typography variant="body2" paddingTop="4px">PLL:</Typography></Grid>
       <Grid item xs={3}>
         <EnableButton
-          className="custom-lock-btn" 
+          className="custom-btn-sm" 
           id="nullPLL"
           size="small"
           enableColor="red"
@@ -286,16 +283,16 @@ export default function PLL(props) {
       </Grid>
       <Grid item xs={1}/>
 
-      <Grid item xs={3} className="component-title">IF Tot Pwr:</Grid>
-      <Grid item xs={9}>{pll.IFTP}&nbsp;V</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">IF Tot Pwr:</Typography></Grid>
+      <Grid item xs={9}><Typography fontWeight="bold" paddingTop="2px">{pll.IFTP}&nbsp;V</Typography></Grid>
 
-      <Grid item xs={3} className="component-title">Temperature:</Grid>
-      <Grid item xs={9}>{pll.temperature}&nbsp;C</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Temperature:</Typography></Grid>
+      <Grid item xs={9}><Typography fontWeight="bold" paddingTop="2px">{pll.temperature}&nbsp;C</Typography></Grid>
 
-      <Grid item xs={3} className="component-title">Loop BW:</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="6px">Loop BW:</Typography></Grid>
       <Grid item xs={2}>
         <EnableButton
-          className='custom-btn'
+          className="custom-btn-sm"
           id="loopBW"
           size="sm"
           type="checkbox"
@@ -306,13 +303,13 @@ export default function PLL(props) {
           onClick={e => setLoopBWHandler(1 - pllConfig.loopBW)}/>
       </Grid>
       <Grid item xs={7}>
-        &nbsp;MHz / V
+        <Typography variant="body2" paddingTop="6px">&nbsp;&nbsp;MHz / V</Typography>
       </Grid>
 
-      <Grid item xs={3} className="component-title">Lock SB:</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="6px">Lock SB:</Typography></Grid>
       <Grid item xs={2}>
         <EnableButton
-          className='custom-btn'
+          className="custom-btn-sm"
           style={{width: "65px"}}
           id="lockSB"
           size="sm"
@@ -324,7 +321,7 @@ export default function PLL(props) {
           onClick={e => setLockSBHandler(1 - pllConfig.lockSB)}/>
       </Grid>
       <Grid item xs={7}>
-        &nbsp;Reference
+        <Typography variant="body2" paddingTop="6px">&nbsp;&nbsp;Reference</Typography>
       </Grid>
     </Grid>
   );

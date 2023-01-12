@@ -24,7 +24,8 @@ class EnableButton extends React.Component {
         const disableColor = this.disableColor ?? cont.theme.palette.primary.main;
         return (
           <Button
-            className='custom-btn'
+            name={this.props.name ?? "enableButton"}
+            className="custom-btn-sm"
             variant="contained"
             size="small"
             value={this.props.enable}

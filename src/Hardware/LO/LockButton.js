@@ -45,7 +45,7 @@ class LockButton extends React.Component {
         }
         return (
           <Button
-            className='custom-btn'
+            className="custom-btn-sm"
             variant="contained"
             size="small"
             style={{ backgroundColor: bgColor,

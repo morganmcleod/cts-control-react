@@ -1,15 +1,17 @@
 // React and Redux
 import React, { useCallback, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux';
 
 // UI components and style
-import Grid from '@mui/material/Grid'
-import '../../components.css'
+import { Grid, Typography } from '@mui/material';
+
+import localDate from '../../Shared/LocalDate';
+import '../../components.css';
 
 // HTTP and store
 import axios from "axios";
 import { setScanStatus } from './BeamScannerSlice';
-import { setActive, setDescription } from '../Shared/MeasureSlice';
+import { setMeasureActive, setMeasureDescription } from '../Shared/MeasureSlice';
 
 export default function ScanStatus(props) {
   // Periodic refresh timer
@@ -25,11 +27,11 @@ export default function ScanStatus(props) {
     .then(res => {
       dispatch(setScanStatus(res.data));
       if (res.data.activeScan !== null && !res.data.measurementComplete) {
-        dispatch(setActive(true));
-        dispatch(setDescription("Beam patterns"));
+        dispatch(setMeasureActive(true));
+        dispatch(setMeasureDescription("Beam patterns"));
       } else {
-        dispatch(setActive(false));
-        dispatch(setDescription(null));
+        dispatch(setMeasureActive(false));
+        dispatch(setMeasureDescription(null));
       }
     })
     .catch(error => {
@@ -52,25 +54,32 @@ export default function ScanStatus(props) {
     };
   }, [fetch, props.interval]);
 
+  const timeStamp = scanStatus.timeStamp ? localDate(scanStatus.timeStamp) : "--";
+  let amplitude = "--";
+  if (scanStatus.amplitude > -300) {
+    amplitude = scanStatus.amplitude.toFixed(2) + ' dB'
+  }
+
   return (
-    <Grid container spacing={0} className="component-data">
-      <Grid item xs={4} className="component-title">CartTest key:</Grid>
-      <Grid item xs={8}>{scanStatus.fkCartTest}</Grid>
+    <Grid container paddingLeft="5px">
+      <Grid item xs={12}><Typography variant="h6">Scan Status</Typography></Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">CartTest key:</Typography></Grid>
+      <Grid item xs={8}><Typography fontWeight="bold">{scanStatus.key}</Typography></Grid>
 
-      <Grid item xs={4} className="component-title">BeamPattern key:</Grid>
-      <Grid item xs={8}>{scanStatus.fkBeamPatterns}</Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">BeamPattern key:</Typography></Grid>
+      <Grid item xs={8}><Typography fontWeight="bold">{scanStatus.fkBeamPatterns}</Typography></Grid>
       
-      <Grid item xs={4} className="component-title">Center power:</Grid>
-      <Grid item xs={8}>{scanStatus.amplitude}&nbsp;dB</Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Center power:</Typography></Grid>
+      <Grid item xs={8}><Typography fontWeight="bold">{amplitude}</Typography></Grid>
 
-      <Grid item xs={4} className="component-title">Last measured:</Grid>
-      <Grid item xs={8}>{scanStatus.timeStamp}</Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Last measured:</Typography></Grid>
+      <Grid item xs={8}><Typography fontWeight="bold">{timeStamp}</Typography></Grid>
 
-      <Grid item xs={4} className="component-title">Scan complete:</Grid>
-      <Grid item xs={8}>{scanStatus.scanComplete ? "Yes" : "No"}</Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Scan complete:</Typography></Grid>
+      <Grid item xs={8}><Typography fontWeight="bold">{scanStatus.scanComplete ? "Yes" : "No"}</Typography></Grid>
 
-      <Grid item xs={4} className="component-title">Message:</Grid>
-      <Grid item xs={8}>{scanStatus.message}</Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Message:</Typography></Grid>
+      <Grid item xs={8}><Typography fontWeight="bold">{scanStatus.message}</Typography></Grid>
     </Grid>
   )
 }

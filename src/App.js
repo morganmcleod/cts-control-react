@@ -2,16 +2,18 @@ import './App.css'
 import React from 'react';
 import { ThemeProvider } from "@mui/material/styles";
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid'
+import Divider from '@mui/material/Divider';
 
 import { ThemeContext, loadTheme, mapTheme } from "./themes";
 import CCA from './Hardware/Cartridge/CCA';
+import Presets from './Hardware/Cartridge/Presets';
+import CartBias from './Config/CartBias';
 import LO from './Hardware/LO/LO';
 import RFSource from './Hardware/LO/RFSource';
 import CTSAppBar from './Shared/AppBar';
 import TabPanel from './Shared/TabPanel';
+import PageHeader from './Measure/Shared/PageHeader';
 import BeamScannerMain from './Measure/BeamScanner/Main';
-import SystemStatus from './Measure/Shared/SystemStatus';
 
 import axios from "axios";
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -53,39 +55,43 @@ class App extends React.Component {
             style={containerStyle}
           >            
             <TabPanel index={0} visibleTab={this.state.visibleTab}>
-              <Grid container spacing={0} className="component-data">
-                <Grid item xs={6} className="component-header">Cold Cartridge</Grid>
-                <Grid item xs={6} paddingBottom={"10px"}>
-                  <SystemStatus/>
-                </Grid>
-              </Grid>
+              <PageHeader
+                title="Cold Cartridge"
+                showCartSelect={true}
+              />
               <CCA/>
+              <Presets/>
             </TabPanel>
             <TabPanel index={1} visibleTab={this.state.visibleTab}>
-              <Grid container spacing={0} className="component-data">
-                <Grid item xs={6} className="component-header">Local Oscillator</Grid>
-                <Grid item xs={6} paddingBottom={"10px"}>
-                  <SystemStatus/>
-                </Grid>
-              </Grid>
-              <LO/>
+              <PageHeader 
+                title="Cartridge Bias"
+                showCartSelect={true}
+              />
+              <CartBias/>
             </TabPanel>
             <TabPanel index={2} visibleTab={this.state.visibleTab}>
-              <Grid container spacing={0} className="component-data">
-                <Grid item xs={6} className="component-header">RF Source</Grid>
-                <Grid item xs={6} paddingBottom={"10px"}>
-                  <SystemStatus/>
-                </Grid>
-              </Grid>
-              <RFSource/>
+              <PageHeader 
+                title="Local Oscillator" 
+                showLORef={true}
+              />
+              <LO/>              
             </TabPanel>
             <TabPanel index={3} visibleTab={this.state.visibleTab}>
-              <Grid container spacing={0} className="component-data">
-                <Grid item xs={6} className="component-header">Beam Patterns</Grid>
-                <Grid item xs={6} paddingBottom={"10px"}>
-                  <SystemStatus/>
-                </Grid>
-              </Grid>
+              <PageHeader 
+                title="RF Source" 
+                showRFRef={true}
+              />
+              <RFSource/>              
+            </TabPanel>
+            <TabPanel index={4} visibleTab={this.state.visibleTab}>
+              <PageHeader 
+                title="Beam Patterns" 
+                showCartSelect={true}
+                showMeasControl={true}
+                startUrl="/beamscan/start"
+                stopUrl="/beamscan/stop"
+              />
+              <Divider variant="fullWidth" color="blue"/>
               <BeamScannerMain/>
             </TabPanel>
             <Box flex={1} overflow="auto"/>

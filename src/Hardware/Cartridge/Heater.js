@@ -3,7 +3,7 @@ import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import Grid from '@mui/material/Grid'
+import { Grid, Typography } from '@mui/material'
 import EnableButton from '../../Shared/EnableButton';
 import '../../components.css'
 
@@ -52,8 +52,8 @@ export default function Heater(props) {
   }
 
   return (
-    <Grid container className="component-data">
-      <Grid item xs={12} className="component-header">SIS HEATER</Grid>
+    <Grid container paddingLeft="5px">
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">SIS HEATER</Typography></Grid>
       <Grid item xs={12}>
         <EnableButton
           enableColor="red"
@@ -61,8 +61,8 @@ export default function Heater(props) {
           onClick={(e) => onClickEnable(e)}
         ></EnableButton>
       </Grid>
-      <Grid item xs={3} className="component-title">current:</Grid>
-      <Grid item xs={9}>{heaters[props.pol].current} mA</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">current:</Typography></Grid>
+      <Grid item xs={9}><Typography fontWeight="bold" paddingTop="2px">{heaters[props.pol].current} mA</Typography></Grid>
     </Grid>
   )
 }

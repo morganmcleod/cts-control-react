@@ -3,7 +3,7 @@ import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import Grid from '@mui/material/Grid'
+import { Grid, Typography } from '@mui/material'
 import EnableButton from '../../Shared/EnableButton';
 import '../../components.css'
 
@@ -49,8 +49,8 @@ export default function LED(props) {
   }
 
   return (
-    <Grid container className="component-data">
-      <Grid item xs={12} className="component-header">LNA LED</Grid>
+    <Grid container paddingLeft="5px">
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">LNA LED</Typography></Grid>
       <Grid item xs={12}>
         <EnableButton
           enableColor="green"

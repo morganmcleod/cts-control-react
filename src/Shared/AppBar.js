@@ -7,9 +7,9 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MainMenu from './MainMenu';
 
-const pages = ['ColdCart', 'LO', 'RF', 'BeamScanner']
+const pages = ['Cold Cart', 'Bias', 'LO', 'RF', 'Beam Patterns']
   
-function CTSAppBar(props) {
+export default function CTSAppBar(props) {
 
   const handleClick = (index) => {
     props.setVisibleTab(index);
@@ -57,4 +57,3 @@ function CTSAppBar(props) {
     </AppBar>
   );
 }
-export default CTSAppBar;

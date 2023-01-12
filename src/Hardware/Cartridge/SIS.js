@@ -3,23 +3,26 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button'
-import OutlinedInput from '@mui/material/OutlinedInput';
+import { Grid, Button, OutlinedInput, Typography} from '@mui/material';
 import '../../components.css'
 
 // HTTP and store
 import axios from "axios";
-import { setSIS } from './CartridgeSlice'
+import { 
+  setSIS, 
+  setInputVj, 
+  setInputImag
+} from './CartridgeSlice'
 
 export default function SIS(props) {
   // Periodic refresh timer
   const timer = useRef(null);
   
   // Redux store interfaces
-  const thisSIS = useSelector((state) => state.Cartridge.SIS)[props.pol][props.sis - 1];
+  const SIS = useSelector((state) => state.Cartridge.SIS[props.pol][props.sis - 1]);
+  const inputs = useSelector((state) => state.Cartridge.inputs.SIS[props.pol][props.sis - 1]);
   const dispatch = useDispatch();
-  
+
   // Load data from REST API
   const fetch = useCallback(() => {
     let params = {
@@ -54,93 +57,141 @@ export default function SIS(props) {
     };
   }, [props.interval, fetch]);
 
-  // SET VJ button handler
-  const setVjHandler = () => {
-    const params = {
-      pol: props.pol,
-      sis: props.sis,
-      Vj: document.getElementsByName("setVj")[0].value
+  // SET button handler
+  const setButtonHandler = (name) => {
+    switch (name) {
+      case "setVj": {
+        const params = {
+          pol: props.pol,
+          sis: props.sis,
+          Vj: inputs.Vj.trim()
+        }
+        axios.put("/cca/sis", params)
+          .then(res => {
+            console.log(res.data);
+          })
+          .catch(error => {
+            console.log(error);
+          })
+        }
+        break;
+      case "setImag": {
+        const params = {
+          pol: props.pol,
+          sis: props.sis,
+          Imag: inputs.Imag.trim()
+        }
+        axios.put("/cca/sis", params)
+          .then(res => {
+            console.log(res.data);
+          })
+          .catch(error => {
+            console.log(error);
+          })
+        }
+        break;
+      default:
+        break;
     }
-    axios.put("/cca/sis", params)
-      .then(res => {
-        console.log(res.data);
-      })
-      .catch(error => {
-        console.log(error);
-      })
   }
 
-  // SET IMAG button handler
-  const setImagHandler = () => {
-    const params = {
-      pol: props.pol,
-      sis: props.sis,
-      Imag: document.getElementsByName("setImag")[0].value
+   // if apply is incremented, "click" the SET buttons
+   const lastApply = useRef(inputs.apply);
+   useEffect(() => {
+    if (inputs.refresh > lastApply.current) {
+      lastApply.current = inputs.refresh;
+      const params = {
+        pol: props.pol,
+        sis: props.sis,
+        Vj: inputs.Vj,
+        Imag: inputs.Imag
+      }
+      axios.put("/cca/sis", params)
+        .then(res => {
+          console.log(res.data);
+        })
+        .catch(error => {
+          console.log(error);
+        })
     }
-    axios.put("/cca/sis", params)
-      .then(res => {
-        console.log(res.data);
-      })
-      .catch(error => {
-        console.log(error);
-      })
+  }, [inputs.refresh, props.pol, props.sis, inputs, dispatch]);
+
+  const valueChangeHandler = (e) => {
+    switch (e.target.name) {
+      case "setVj":
+        dispatch(setInputVj({pol: props.pol, sis:props.sis, data:e.target.value}));
+        break;
+      case "setImag":
+        dispatch(setInputImag({pol: props.pol, sis:props.sis, data:e.target.value}));
+        break;
+      default:
+        break;
+    }
   }
 
   return (
-    <Grid container className="component-data">
-      <Grid item xs={12}className="component-header">SIS {props.sis}</Grid>
+    <Grid container name={'sis' + props.pol + props.sis} paddingLeft="5px">
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">SIS {props.sis}</Typography></Grid>
 
-      <Grid item xs={3} className="component-title">Vj [mV]:</Grid>
-      <Grid item xs={2}>{thisSIS.Vj.toFixed(3)}</Grid>
+      <Grid item xs={3}><Typography variant="body2">Vj [mV]:</Typography></Grid>
+      <Grid item xs={2}><Typography fontWeight="bold">{SIS.Vj.toFixed(3)}</Typography></Grid>
       <Grid item xs={3}>
         <OutlinedInput
           name="setVj"
           size="small"
           margin="none"
-          className="component-input"
+          value={inputs.Vj}
+          onChange={(e) => valueChangeHandler(e)}
+          className="smallinput"
         />
       </Grid>
       <Grid item xs={0.5}/>
       <Grid item xs={3.5}>
         <Button 
-          className="custom-btn"
+          name="setVj"
           variant="contained"
           size="small"
-          onClick={(e) => setVjHandler()}
+          onClick={(e) => setButtonHandler(e.target.name)}
+          style={{paddingTop: "0%", paddingBottom: "0%"}}
+          disabled={!inputs.Vj.trim() || isNaN(inputs.Vj.trim())}
         >
           SET
         </Button>
       </Grid>
 
-      <Grid item xs={3} className="component-title">Ij [mA]:</Grid>
-      <Grid item xs={9}>{thisSIS.Ij.toFixed(3)}</Grid>
+      <Grid item xs={3}><Typography variant="body2">Ij [mA]:</Typography></Grid>
+      <Grid item xs={9}><Typography fontWeight="bold">{SIS.Ij.toFixed(3)}</Typography></Grid>
 
-      <Grid item xs={12} className="component-header">Magnet {props.sis}</Grid>
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">Magnet {props.sis}</Typography></Grid>
 
-      <Grid item xs={3} className="component-title">Imag [mA]:</Grid>
-      <Grid item xs={2}>{thisSIS.Imag.toFixed(2)}</Grid>
+      <Grid item xs={3}><Typography variant="body2">Imag [mA]:</Typography></Grid>
+      <Grid item xs={2}><Typography fontWeight="bold">{SIS.Imag.toFixed(2)}</Typography></Grid>
       <Grid item xs={3}>
         <OutlinedInput
           name="setImag"
           size="small"
           margin="none"
-          className="component-input"
+          value={inputs.Imag}
+          onChange={(e) => valueChangeHandler(e)}
+          className="smallinput"
         />
       </Grid>
       <Grid item xs={0.5}/>
       <Grid item xs={3.5}>
-        <Button 
-          className="custom-btn"
+        <Button
+          name="setImag"          
           variant="contained"
           size="small"
-          onClick={(e) => setImagHandler()}
+          onClick={(e) => setButtonHandler(e.target.name)}
+          style={{paddingTop: "0%", paddingBottom: "0%"}}
+          disabled={!inputs.Imag.trim() || isNaN(inputs.Imag.trim())}
         >
           SET
         </Button> 
       </Grid>
       
-      <Grid item xs={3} className="component-title">Vmag [mV]:</Grid>
-      <Grid item xs={9}>{thisSIS.Vmag.toFixed(2)}</Grid>
+      <Grid item xs={3}><Typography variant="body2">Vmag [mV]:</Typography></Grid>
+      <Grid item xs={9}><Typography fontWeight="bold">{SIS.Vmag.toFixed(2)}</Typography></Grid>
     </Grid>
   );
 }

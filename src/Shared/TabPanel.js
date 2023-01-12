@@ -9,7 +9,7 @@ export default function TabPanel(props) {
       id={`simple-tabpanel-${props.index}`}
     >
       {props.visibleTab === props.index && (          
-        <Box sx={{ p: 3 }}>
+        <Box padding="0px">
           {props.children}
         </Box>
       )}

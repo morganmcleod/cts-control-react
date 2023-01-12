@@ -3,9 +3,12 @@ import React from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import Grid from '@mui/material/Grid'
-import Chip from '@mui/material/Chip'; 
-import Checkbox from '@mui/material/Checkbox';
+import {
+  Grid,
+  Chip,
+  Checkbox,
+  Typography
+} from '@mui/material';
 import '../../components.css'
 
 // HTTP and store
@@ -37,7 +40,7 @@ export default function ScanListItem(props) {
     } else {
       return (
         <>
-          <Grid item xs={1.5} style={{"textAlign" : "center"}}>
+          <Grid item xs={1.5}>
             <Checkbox
               color="success"
               size="small"
@@ -140,8 +143,12 @@ export default function ScanListItem(props) {
           onChange={(e) => { onChange({ enable: e.target.checked}); }}
         ></Checkbox>
       </Grid>
-      <Grid item xs={1.5}>{data.RF}</Grid>
-      <Grid item xs={1.5}>{data.LO < data.RF ? "USB" : "LSB"}</Grid>
+      <Grid item xs={1.5}>
+        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{data.RF}</Typography>
+      </Grid>
+      <Grid item xs={1.5}>
+        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{data.LO < data.RF ? "USB" : "LSB"}</Typography>
+      </Grid>
       {itemStatus()}
     </>
   );

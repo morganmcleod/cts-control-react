@@ -5,6 +5,7 @@ export const MotorControlSlice = createSlice({
   name: 'MotorControl',
   initialState: {
     position: {x: 0, y:0, pol:0},
+    gotoPosition: null,
     xy_speed: 0,
     pol_speed: 0,
     xy_accel: 15,
@@ -38,11 +39,15 @@ export const MotorControlSlice = createSlice({
     setPosition(state, action) {
       state.position = action.payload;
     },
+    setGotoPosition(state, action) {
+      state.gotoPosition = action.payload;
+    },
     setNamedParam(state, action) {
       state[action.payload.name] = action.payload.data;
     }
   }
 });
+
 // this is for dispatch:
 export const { 
   setXYSpeed,
@@ -50,6 +55,7 @@ export const {
   setIsConnected,
   setMotorStatus,
   setPosition,
+  setGotoPosition,
   setNamedParam
  } = MotorControlSlice.actions
 

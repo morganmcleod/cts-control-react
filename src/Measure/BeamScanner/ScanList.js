@@ -3,8 +3,11 @@ import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import Grid from '@mui/material/Grid';
-import Checkbox from '@mui/material/Checkbox';
+import {
+  Grid,
+  Checkbox,
+  Typography
+} from '@mui/material';
 import ScanListItem from './ScanListItem';
 import Disabled from '../../Shared/Disabled';
 import '../../components.css';
@@ -133,7 +136,7 @@ export default function ScanList(props) {
         disableRipple
         checked={kids.all}
         indeterminate={!kids.all && kids.some}
-        style={{"paddingTop": "0"}}
+        style={{"paddingTop": "4px"}}
         onChange={(e) => onParentChange(!kids.some)}
       />
     );
@@ -143,56 +146,56 @@ export default function ScanList(props) {
     const kids = subScanChildren();
     return (
       <>
-        <Grid item xs={1.5} className="table-title">
+        <Grid item xs={1.5}>
           <Checkbox
             color="success"
             size="small"
             disableRipple
-            style={{"paddingTop": "0"}}
+            style={{"paddingTop": "4px"}}
             checked={kids.copol0.all}
             indeterminate={!kids.copol0.all && kids.copol0.some}
             onChange={(e) => onParentSubScansChange({copol0: !kids.copol0.some})}
           />
         </Grid>
-        <Grid item xs={1.5} className="table-title">
+        <Grid item xs={1.5}>
           <Checkbox
             color="success"
             size="small"
             disableRipple
-            style={{"paddingTop": "0"}}
+            style={{"paddingTop": "4px"}}
             checked={kids.xpol0.all}
             indeterminate={!kids.xpol0.all && kids.xpol0.some}
             onChange={(e) => onParentSubScansChange({xpol0: !kids.xpol0.some})}
           />
         </Grid>
-        <Grid item xs={1.5} className="table-title">
+        <Grid item xs={1.5}>
           <Checkbox
             color="success"
             size="small"
             disableRipple
-            style={{"paddingTop": "0"}}
+            style={{"paddingTop": "4px"}}
             checked={kids.copol1.all}
             indeterminate={!kids.copol1.all && kids.copol1.some}
             onChange={(e) => onParentSubScansChange({copol1: !kids.copol1.some})}
           />
         </Grid>
-        <Grid item xs={1.5} className="table-title">
+        <Grid item xs={1.5}>
           <Checkbox
             color="success"
             size="small"
             disableRipple
-            style={{"paddingTop": "0"}}
+            style={{"paddingTop": "4px"}}
             checked={kids.xpol1.all}
             indeterminate={!kids.xpol1.all && kids.xpol1.some}
             onChange={(e) => onParentSubScansChange({xpol1: !kids.xpol1.some})}
           />
         </Grid>
-        <Grid item xs={1.5} className="table-title">
+        <Grid item xs={1.5}>
           <Checkbox
             color="primary"
             size="small"
             disableRipple
-            style={{"paddingTop": "0"}}
+            style={{"paddingTop": "4px"}}
             checked={kids.copol180.all}
             indeterminate={!kids.copol180.all && kids.copol180.some}
             onChange={(e) => onParentSubScansChange({copol180: !kids.copol180.some})}
@@ -204,29 +207,28 @@ export default function ScanList(props) {
 
   return (
     <>
-      <Grid container spacing={0} className="table-data">
-        <Grid item xs={12} className="component-header">Scan List</Grid>
+      <Grid container textAlign="center">
+        <Grid item xs={12} textAlign="left">
+          <Typography variant="h6" paddingLeft="8px">Scan List</Typography>
+        </Grid>
 
-        <Grid item xs={1.5} className="table-title">Enable</Grid>
-        <Grid item xs={1.5} className="table-title">RF</Grid>
-        <Grid item xs={1.5} className="table-title">SB</Grid>
-        <Grid item xs={1.5} className="table-title">Co_0</Grid>
-        <Grid item xs={1.5} className="table-title">X_0</Grid>
-        <Grid item xs={1.5} className="table-title">Co_1</Grid>
-        <Grid item xs={1.5} className="table-title">X_1</Grid>
-        <Grid item xs={1.5} className="table-title">180</Grid>
+        <Grid item xs={1.5}><Typography variant="body2" paddingTop="4px">Enable</Typography></Grid>
+        <Grid item xs={1.5}><Typography variant="body2" paddingTop="4px">RF</Typography></Grid>
+        <Grid item xs={1.5}><Typography variant="body2" paddingTop="4px">SB</Typography></Grid>
+        <Grid item xs={1.5}><Typography variant="body2" paddingTop="4px">Co_0</Typography></Grid>
+        <Grid item xs={1.5}><Typography variant="body2" paddingTop="4px">X_0</Typography></Grid>
+        <Grid item xs={1.5}><Typography variant="body2" paddingTop="4px">Co_1</Typography></Grid>
+        <Grid item xs={1.5}><Typography variant="body2" paddingTop="4px">X_1</Typography></Grid>
+        <Grid item xs={1.5}><Typography variant="body2" paddingTop="4px">180</Typography></Grid>
       </Grid>
       <Disabled disabled={disabled}>
-        <Grid container spacing={0} className="table-data">
-          <Grid item xs={1.5} className="table-title">
-            { parentEnableCheckbox() }
-          </Grid>
-          <Grid item xs={1.5} className="table-title">[ GHz ]</Grid>
-          <Grid item xs={1.5}/>
-          { parentSubScansCheckbox() }
+        <Grid container textAlign="center">
+          <Grid item xs={1.5}>{ parentEnableCheckbox() }</Grid>
+          <Grid item xs={1.5}><Typography variant="body2" paddingTop="4px">[ GHz ]</Typography></Grid>
+          <Grid item xs={1.5}/>{ parentSubScansCheckbox() }
         </Grid>
       </Disabled>
-      <Grid container spacing={0} className="table-data" sx={{borderTop:1}}>
+      <Grid container textAlign="center" sx={{borderTop:1}}>
         {scanList.map((item, index) => (
           <ScanListItem
             key = {item.index}

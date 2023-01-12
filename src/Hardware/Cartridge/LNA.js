@@ -3,22 +3,21 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button'
-import OutlinedInput from '@mui/material/OutlinedInput';
+import { Button, Grid, OutlinedInput, Typography } from '@mui/material'
 import EnableButton from '../../Shared/EnableButton';
 import '../../components.css'
 
 // HTTP and store
 import axios from "axios";
-import { setLNA, setLNAEnable } from './CartridgeSlice'
+import { setLNA, setLNAEnable, setInputVd, setInputId } from './CartridgeSlice'
 
 export default function LNA(props) {
   // Periodic refresh timer
   const timer = useRef(null);
 
   // Redux store interfaces
-  const thisLNA = useSelector((state) => state.Cartridge.LNA)[props.pol][props.lna - 1];
+  const LNA = useSelector((state) => state.Cartridge.LNA[props.pol][props.lna - 1]);
+  const inputs = useSelector((state) => state.Cartridge.inputs.LNA[props.pol][props.lna - 1]);
   const dispatch = useDispatch();
 
   // Load data from REST API
@@ -50,10 +49,31 @@ export default function LNA(props) {
     };
   }, [props.interval, fetch]);
 
-  // ENABLE button handler
-  const onClickEnable = (e) => {
-    const enable = e.currentTarget.value !== 'true';
-    console.log('setEnableHandler ' + enable);
+  // SET button handler
+  const setButtonHandler = useCallback(() => {
+    let params = {
+      pol: props.pol,
+      lna: props.lna,
+      VD1: (inputs.VD1.trim() && !isNaN(inputs.VD1.trim())) ? inputs.VD1.trim() : null,
+      VD2: (inputs.VD2.trim() && !isNaN(inputs.VD2.trim())) ? inputs.VD2.trim() : null,
+      VD3: (inputs.VD3.trim() && !isNaN(inputs.VD3.trim())) ? inputs.VD3.trim() : null,
+      ID1: (inputs.ID1.trim() && !isNaN(inputs.ID1.trim())) ? inputs.ID1.trim() : null,
+      ID2: (inputs.ID2.trim() && !isNaN(inputs.ID2.trim())) ? inputs.ID2.trim() : null,
+      ID3: (inputs.ID3.trim() && !isNaN(inputs.ID3.trim())) ? inputs.ID3.trim() : null
+    }
+    axios.put("/cca/lna", params)
+      .then(res => {
+        const result = res.data;
+        console.log(result);
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }, [inputs, props.pol, props.lna]);
+
+  const enableButtonHandler = useCallback(() => {
+    const enable = !LNA.enable;
+    console.log('enableButtonHandler ' + enable);
     dispatch(setLNAEnable({pol: props.pol, lna: props.lna, data: enable}))
     axios.put("/cca/lna/enable", {pol: props.pol, lna: props.lna, enable: enable})
       .then(res => {
@@ -63,137 +83,178 @@ export default function LNA(props) {
       .catch(error => {
         console.log(error);
       })
-  }
-  
-  // SET button helper
-  const setValueHandler = (what) => {
-    let params = {
-      pol: props.pol,
-      lna: props.lna
-    }
-    params[what] =  document.getElementsByName("set" + what)[0].value
-    if (params[what]) {
-      axios.put("/cca/lna", params)
-        .then(res => {
-          const result = res.data;
-          console.log(result);
-        })
-        .catch(error => {
-          console.log(error);
-        })
+  }, [LNA.enable, dispatch, props.pol, props.lna]);
+
+  // if apply is incremented, "click" the SET and ENABLE buttons
+  const lastApply = useRef(inputs.apply);
+
+  useEffect(() => {
+    if (inputs.apply > lastApply.current) {
+      lastApply.current = inputs.apply;
+      setButtonHandler();
+      if (!LNA.enable) {
+        enableButtonHandler();        
       }
+    }
+  }, [inputs.apply, LNA.enable, setButtonHandler, enableButtonHandler]);
+  
+  const valueChangeHandler = (e) => {
+    switch(e.target.name) {
+      case "setVD1":
+        dispatch(setInputVd({pol: props.pol, lna: props.lna, stage:1, data:e.target.value}));
+        break; 
+      case "setVD2":
+        dispatch(setInputVd({pol: props.pol, lna: props.lna, stage:2, data:e.target.value}));
+        break;
+      case "setVD3":
+        dispatch(setInputVd({pol: props.pol, lna: props.lna, stage:3, data:e.target.value}));
+        break;
+      case "setID1":
+        dispatch(setInputId({pol: props.pol, lna: props.lna, stage:1, data:e.target.value}));
+        break;
+      case "setID2":
+        dispatch(setInputId({pol: props.pol, lna: props.lna, stage:2, data:e.target.value}));
+        break;
+      case "setID3":
+        dispatch(setInputId({pol: props.pol, lna: props.lna, stage:3, data:e.target.value}));
+        break;
+      default:
+        break;
+    }
   }
 
-  // SET button handler
-  const setAllHandler = () => {
-    setValueHandler('VD1');
-    setValueHandler('VD2');
-    setValueHandler('VD3');
-    setValueHandler('ID1');
-    setValueHandler('ID2');
-    setValueHandler('ID3');
+  const disableSetButton = () => {
+    // if any button is non blank and it is numeric don't disable:
+    if (inputs.VD1.trim() && !isNaN(inputs.VD1.trim()))
+      return false;
+    if (inputs.VD2.trim() && !isNaN(inputs.VD2.trim()))
+      return false;
+    if (inputs.VD3.trim() && !isNaN(inputs.VD3.trim()))
+      return false;
+    if (inputs.ID1.trim() && !isNaN(inputs.ID1.trim()))
+      return false;
+    if (inputs.ID2.trim() && !isNaN(inputs.ID2.trim()))
+      return false;
+    if (inputs.ID3.trim() && !isNaN(inputs.ID3.trim()))
+      return false;
+    return true;    
   }
-  
+
   return (
-    <Grid container className="component-data">
-      <Grid item xs={12} className="component-header">LNA {props.lna}</Grid>
+    <Grid container name={'lna' + props.pol + props.lna} paddingLeft="5px">
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">LNA {props.lna}</Typography></Grid>
 
       <Grid item xs={12}>
         <EnableButton
+          name={"enableLna" + props.pol + props.lna}
           enableColor="green"
           disableColor="red"
-          enable={thisLNA.enable}
-          onClick={(e) => onClickEnable(e)}/>
+          enable={LNA.enable}
+          onClick={() => enableButtonHandler()}/>
       </Grid>
       
-      <Grid item xs={3} className="component-title">VD1 [V]:</Grid>
-      <Grid item xs={2}>{thisLNA.VD1}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">VD1 [V]:</Typography></Grid>
+      <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{LNA.VD1}</Typography></Grid>
       <Grid item xs={3}>
         <OutlinedInput
           name="setVD1"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
+          value={inputs.VD1}
+          onChange={(e) => valueChangeHandler(e)}
+          className="smallinput"
         />
       </Grid>
       <Grid item xs={0.5}/>
       <Grid item xs={3.5}>
         <Button 
-          className="custom-btn"
+          name="setLna"
+          className="custom-btn-sm"
           variant="contained"
           size="small"
-          onClick={(e) => setAllHandler()}
+          onClick={(e) => setButtonHandler()}
+          disabled={disableSetButton()}
         >
           SET
         </Button>
       </Grid>
       
-      <Grid item xs={3} className="component-title">VD2 [V]:</Grid>
-      <Grid item xs={2}>{thisLNA.VD2}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">VD2 [V]:</Typography></Grid>
+      <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{LNA.VD2}</Typography></Grid>
       <Grid item xs={3}>
         <OutlinedInput
           name="setVD2"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
+          value={inputs.VD2}
+          onChange={(e) => valueChangeHandler(e)}
+          className="smallinput"
         />
       </Grid>
       <Grid item xs={4}/>
 
-      <Grid item xs={3} className="component-title">VD3 [V]:</Grid>
-      <Grid item xs={2}>{thisLNA.VD3}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">VD3 [V]:</Typography></Grid>
+      <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{LNA.VD3}</Typography></Grid>
       <Grid item xs={3}>
         <OutlinedInput
           name="setVD3"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
+          value={inputs.VD3}
+          onChange={(e) => valueChangeHandler(e)}
+          className="smallinput"
         />
       </Grid>
       <Grid item xs={4}/>
 
-      <Grid item xs={3} className="component-title">ID1 [mA]:</Grid>
-      <Grid item xs={2}>{thisLNA.ID1}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">ID1 [mA]:</Typography></Grid>
+      <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{LNA.ID1}</Typography></Grid>
       <Grid item xs={3}>
         <OutlinedInput
           name="setID1"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
+          value={inputs.ID1}
+          onChange={(e) => valueChangeHandler(e)}
+          className="smallinput"
         />
       </Grid>
       <Grid item xs={4}/>
       
-      <Grid item xs={3} className="component-title">ID2 [mA]:</Grid>
-      <Grid item xs={2}>{thisLNA.ID2}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">ID2 [mA]:</Typography></Grid>
+      <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{LNA.ID2}</Typography></Grid>
       <Grid item xs={3}><OutlinedInput
           name="setID2"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
+          value={inputs.ID2}
+          onChange={(e) => valueChangeHandler(e)}
+          className="smallinput"
         />
       </Grid>
       <Grid item xs={4}/>
       
-      <Grid item xs={3} className="component-title">ID3 [mA]:</Grid>
-      <Grid item xs={2}>{thisLNA.ID3}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">ID3 [mA]:</Typography></Grid>
+      <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{LNA.ID3}</Typography></Grid>
       <Grid item xs={3}><OutlinedInput
           name="setID3"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
+          value={inputs.ID3}
+          onChange={(e) => valueChangeHandler(e)}
+          className="smallinput"
         />
       </Grid>
       <Grid item xs={4}/>
 
-      <Grid item xs={3} className="component-title">VG1 [V]:</Grid>
-      <Grid item xs={9}>{thisLNA.VG1}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">VG1 [V]:</Typography></Grid>
+      <Grid item xs={9}><Typography fontWeight="bold" paddingTop="2px">{LNA.VG1}</Typography></Grid>
 
-      <Grid item xs={3} className="component-title">VG2 [V]:</Grid>
-      <Grid item xs={9}>{thisLNA.VG2}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">VG2 [V]:</Typography></Grid>
+      <Grid item xs={9}><Typography fontWeight="bold" paddingTop="2px">{LNA.VG2}</Typography></Grid>
 
-      <Grid item xs={3} className="component-title">VG3 [V]:</Grid>
-      <Grid item xs={9}>{thisLNA.VG3}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">VG3 [V]:</Typography></Grid>
+      <Grid item xs={9}><Typography fontWeight="bold" paddingTop="2px">{LNA.VG3}</Typography></Grid>
     </Grid>
   );
 }

@@ -20,14 +20,17 @@ export const BeamScannerSlice = createSlice({
     measurementSpec: {
       beamCenter: {x:0, y:0},
       scanStart: {x:0, y:0},
-      scanStop: {x:0, y:0},
+      scanEnd: {x:0, y:0},
       scanAngles: [0, 0],
       levelAngles: [0, 0],
       targetLevel: 0,
       resolution: 0,
       centersInterval: 0,
     },
-    scanList: []
+    scanList: [],
+    rasters: [],
+    amplitudePlot: {x: [], y: [], amp: []},
+    rasterPlot: {x: [], amp: [], phase: []}
   },
   reducers: {
     setScanStatus(state, action) {
@@ -44,6 +47,25 @@ export const BeamScannerSlice = createSlice({
       if (index >= 0 && index < state.scanList.length) {
         state.scanList[index] = action.payload.data;
       }
+    },
+    resetRasters(state, action) {
+      state.rasters = [];
+      state.amplitudePlot = {x: [], y: [], amp: []};
+      state.rasterPlot = {x: [], amp: [], phase: []};      
+    },
+    addRaster(state, action) {
+      state.rasters.push(action.payload)
+      const raster = action.payload
+      let xStart = raster['startPos']['x'];
+      state.rasterPlot = {x: [], amp: [], phase: []};
+      for (let i = 0; i < raster['amplitude'].length; i++) {
+        state.amplitudePlot.x.push(xStart + i * raster.xStep);
+        state.amplitudePlot.y.push(raster['startPos']['y']);
+        state.amplitudePlot.amp.push(raster['amplitude'][i]);
+        state.rasterPlot.x.push(xStart + i * raster.xStep);
+      }
+      state.rasterPlot.amp = raster['amplitude'];
+      state.rasterPlot.phase = raster['phase'];
     }
   }
 });
@@ -53,7 +75,9 @@ export const {
   setScanStatus,
   setMeasurementSpec,
   setScanList,
-  setScanListItem
+  setScanListItem,
+  resetRasters,
+  addRaster
 } = BeamScannerSlice.actions
 
 // this is for configureStore:

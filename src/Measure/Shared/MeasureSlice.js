@@ -5,22 +5,32 @@ export const MeasureSlice = createSlice({
   name: 'Measure',
   initialState: {
     active: false,
-    description: ""
+    description: "",
+    operator: "",
+    notes: ""
   },
   reducers: {
-    setActive(state, action) {
+    setMeasureActive(state, action) {
       state.active = action.payload;
     },
-    setDescription(state, action) {
-      state.description = action.payload ?? "none";
+    setMeasureDescription(state, action) {
+      state.description = action.payload ?? "None";
+    },
+    setMeasureOperator(state, action) {
+      state.operator = action.payload;
+    },
+    setMeasureNotes(state, action) {
+      state.notes = action.payload;
     }
   }
 });
 
 // these are for dispatch:
 export const { 
-  setActive,
-  setDescription
+  setMeasureActive,
+  setMeasureDescription,
+  setMeasureOperator,
+  setMeasureNotes,
 } = MeasureSlice.actions
 
 // this is for configureStore:

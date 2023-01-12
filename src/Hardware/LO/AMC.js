@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import Grid from '@mui/material/Grid'
+import { Grid, Typography } from '@mui/material'
 import '../../components.css'
 
 // HTTP and store
@@ -53,39 +53,39 @@ export default function AMC(props) {
   }, [props.interval, fetch]);
 
   return (
-    <Grid container spacing={0} className="component-data">
-      <Grid item xs={12} className="component-header">AMC</Grid>
+    <Grid container paddingLeft="5px">
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">AMC</Typography></Grid>
       
       <Grid item xs={3}></Grid>
-      <Grid item className="component-title" xs={3}>VD [V]</Grid>
-      <Grid item className="component-title" xs={3}>ID [mA]</Grid>
-      <Grid item className="component-title" xs={2}>VG [V]</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">VD [V]</Typography></Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">ID [mA]</Typography></Grid>
+      <Grid item xs={2}><Typography variant="body2" paddingTop="4px">VG [V]</Typography></Grid>
       
-      <Grid item xs={3} className="component-title">stage A:</Grid>
-      <Grid item xs={3}>{amc.VDA}</Grid>
-      <Grid item xs={3}>{amc.IDA}</Grid>
-      <Grid item xs={3}>{amc.VGA}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">stage A:</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{amc.VDA}</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{amc.IDA}</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{amc.VGA}</Typography></Grid>
 
-      <Grid item xs={3} className="component-title">stage B:</Grid>
-      <Grid item xs={3}>{amc.VDB}</Grid>
-      <Grid item xs={3}>{amc.IDB}</Grid>
-      <Grid item xs={3}>{amc.VGB}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">stage B:</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{amc.VDB}</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{amc.IDB}</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{amc.VGB}</Typography></Grid>
 
-      <Grid item xs={3} className="component-title">stage E:</Grid>
-      <Grid item xs={3}>{amc.VDE}</Grid>
-      <Grid item xs={3}>{amc.IDE}</Grid>
-      <Grid item xs={3}>{amc.VGE}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">stage E:</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{amc.VDE}</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{amc.IDE}</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{amc.VGE}</Typography></Grid>
 
       <Grid item xs={3}></Grid>
-      <Grid item xs={3} className="component-title">counts</Grid>
-      <Grid item xs={6} className="component-title">current [mA]</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">counts</Typography></Grid>
+      <Grid item xs={6}><Typography variant="body2" paddingTop="4px">current [mA]</Typography></Grid>
 
-      <Grid item xs={3} className="component-title">mult D:</Grid>
-      <Grid item xs={3}>{amc.multDCounts}</Grid>
-      <Grid item xs={6}>{amc.multDCurrent}</Grid>          
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">mult D:</Typography></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{amc.multDCounts}</Typography></Grid>
+      <Grid item xs={6}><Typography fontWeight="bold" paddingTop="2px">{amc.multDCurrent}</Typography></Grid>          
 
-      <Grid item xs={3} className="component-title">5V supply:</Grid>
-      <Grid item xs={9}>{amc.supply5V}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">5V supply:</Typography></Grid>
+      <Grid item xs={9}><Typography fontWeight="bold" paddingTop="2px">{amc.supply5V}</Typography></Grid>
       
     </Grid>
   );

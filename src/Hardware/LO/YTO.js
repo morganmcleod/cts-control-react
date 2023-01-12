@@ -3,9 +3,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button'
-import OutlinedInput from '@mui/material/OutlinedInput';
+import { Grid, Button, OutlinedInput, Typography } from '@mui/material'
 import '../../components.css'
 
 // HTTP and store
@@ -78,39 +76,39 @@ export default function YTO(props) {
   }
 
   return (
-    <Grid container spacing={0} className="component-data">
-      <Grid item xs={12} className="component-header">YTO</Grid>        
+    <Grid container paddingLeft="5px">
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">YTO</Typography></Grid>        
 
-      <Grid item xs={3} className="component-title">low [GHz]:</Grid>
-      <Grid item xs={2}>{yto.lowGHz}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">low [GHz]:</Typography></Grid>
+      <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{yto.lowGHz}</Typography></Grid>
       <Grid item xs={3}>
         <OutlinedInput
           name="setLow"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
           onChange={e => setInputLowGHz(e.target.value)}
           value = {inputLowGHz}
+          className="smallinput"
         />
       </Grid>
       <Grid item xs={4}/>
       
-      <Grid item xs={3} className="component-title">high [Ghz]:</Grid>
-      <Grid item xs={2}>{yto.highGHz}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">high [Ghz]:</Typography></Grid>
+      <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{yto.highGHz}</Typography></Grid>
       <Grid item xs={3}>
         <OutlinedInput
           name="setHigh"
           size="small"
-          margin="none"
-          className="component-input"
+          margin="none"          
           onChange={e => setInputHighGHz(e.target.value)}
           value = {inputHighGHz}
+          className="smallinput"
         />
       </Grid>
       <Grid item xs={0.5}/>
       <Grid item xs={3.5}>
         <Button
-          className="custom-btn"
+          className="custom-btn-sm"
           variant="contained"
           size="small"
           onClick={e => setLimitsHandler()}
@@ -119,11 +117,11 @@ export default function YTO(props) {
         </Button>
       </Grid>
 
-      <Grid item xs={3} className="component-title">courseTune:</Grid>
-      <Grid item xs={2}>{yto.courseTune}</Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">courseTune:</Typography></Grid>
+      <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{yto.courseTune}</Typography></Grid>
       <Grid item xs={3}>
         <Button 
-          className="custom-btn"
+          className="custom-btn-sm"
           variant="contained"
           size="small"
           style={{
@@ -133,7 +131,7 @@ export default function YTO(props) {
           onClick={e => tweakYTO(-1)}
         >-1</Button>
         <Button 
-          className="custom-btn" 
+          className="custom-btn-sm" 
           variant="contained"
           size="small"
           style={{
@@ -145,11 +143,10 @@ export default function YTO(props) {
       </Grid>
       <Grid item xs={4}/>
 
-      <Grid item xs={3} className="component-title">YTO freq:</Grid>
-      <Grid item xs={8}>{yto.ytoFreqGHz.toFixed(3)} GHz</Grid>
-      <Grid item xs={3} className="component-title">LO freq:</Grid>
-      <Grid item xs={8}>{yto.loFreqGHz.toFixed(3)} GHz</Grid>
-      
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">YTO freq:</Typography></Grid>
+      <Grid item xs={8}><Typography fontWeight="bold" paddingTop="2px">{yto.ytoFreqGHz.toFixed(3)} GHz</Typography></Grid>
+      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">LO freq:</Typography></Grid>
+      <Grid item xs={8}><Typography fontWeight="bold" paddingTop="2px">{yto.loFreqGHz.toFixed(3)} GHz</Typography></Grid>
     </Grid>
   );
 };
