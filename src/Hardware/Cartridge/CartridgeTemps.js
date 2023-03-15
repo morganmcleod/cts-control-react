@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -11,9 +11,6 @@ import axios from "axios";
 import { setTemperatures } from './CartridgeSlice'
 
 export default function CartridgeTemps(props) {
-    // Periodic refresh timer
-    const timer = useRef(null);
-
     // Redux store interfaces
     const temps = useSelector((state) => state.Cartridge.Temperatures);
     const dispatch = useDispatch();
@@ -31,19 +28,21 @@ export default function CartridgeTemps(props) {
 
   // Periodic refresh timer
   useEffect(() => {
-    if (timer.current) {
-      clearInterval(timer.current);
-      timer.current = null;
-    } else {
-      // first render load
-      fetch();
-    }
-    timer.current = setInterval(() => { 
-      fetch();
+    let isMounted = true;
+  
+    // first render load
+    fetch();
+    
+    // periodic load
+    const timer = setInterval(() => { 
+      if (isMounted)
+        fetch();
     }, props.interval ?? 5000);
+    
+    // return cleanup function
     return () => {
-      clearInterval(timer.current);
-      timer.current = null;
+      isMounted = false;
+      clearInterval(timer);      
     };
   }, [props.interval, fetch]);
   

@@ -7,7 +7,7 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MainMenu from './MainMenu';
 
-const pages = ['Cold Cart', 'Bias', 'LO', 'RF', 'Beam Patterns']
+const pages = ['Cold Cart', 'LO & RF', 'Bias', 'Beam Patterns']
   
 export default function CTSAppBar(props) {
 

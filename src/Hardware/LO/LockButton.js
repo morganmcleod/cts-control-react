@@ -9,7 +9,7 @@ class LockButton extends React.Component {
   //  LOCK (unlocked): click to start locking
   //  LOCKING: waiting for lock or failure
   //  FAILED
-  //  LOCKED
+  //  LOCKED: button can be cliked to re-lock
   constructor(props) {
     super(props);
     this.unlockColor = props.unlockColor ?? null;

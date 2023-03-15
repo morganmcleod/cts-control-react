@@ -9,7 +9,6 @@ import CCA from './Hardware/Cartridge/CCA';
 import Presets from './Hardware/Cartridge/Presets';
 import CartBias from './Config/CartBias';
 import LO from './Hardware/LO/LO';
-import RFSource from './Hardware/LO/RFSource';
 import CTSAppBar from './Shared/AppBar';
 import TabPanel from './Shared/TabPanel';
 import PageHeader from './Measure/Shared/PageHeader';
@@ -64,26 +63,21 @@ class App extends React.Component {
             </TabPanel>
             <TabPanel index={1} visibleTab={this.state.visibleTab}>
               <PageHeader 
+                title="LO & RF Source" 
+                showLORef={true}
+              />
+              <LO/>              
+            </TabPanel>
+            
+            <TabPanel index={2} visibleTab={this.state.visibleTab}>
+              <PageHeader 
                 title="Cartridge Bias"
                 showCartSelect={true}
               />
               <CartBias/>
             </TabPanel>
-            <TabPanel index={2} visibleTab={this.state.visibleTab}>
-              <PageHeader 
-                title="Local Oscillator" 
-                showLORef={true}
-              />
-              <LO/>              
-            </TabPanel>
+            
             <TabPanel index={3} visibleTab={this.state.visibleTab}>
-              <PageHeader 
-                title="RF Source" 
-                showRFRef={true}
-              />
-              <RFSource/>              
-            </TabPanel>
-            <TabPanel index={4} visibleTab={this.state.visibleTab}>
               <PageHeader 
                 title="Beam Patterns" 
                 showCartSelect={true}

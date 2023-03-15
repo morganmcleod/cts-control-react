@@ -36,6 +36,7 @@ export const LOSliceConfig = {
       supply3V: 0.0, 
       supply5V: 0.0
     },
+    inputLOFreq: "",
     PLL: {
       lockDetectBit: false,
       unlockDetected: false,
@@ -70,6 +71,9 @@ export const LOSliceConfig = {
     setPA(state, action) {
       state.PA = action.payload;
     },
+    setInputLOFreq(state, action) {
+      state.inputLOFreq = action.payload;
+    },
     setPLL(state, action) {
       state.PLL = action.payload;
       // Also update the YTO course tuning and frequency:
@@ -83,6 +87,12 @@ export const LOSliceConfig = {
     },
     setYTO(state, action) {
       state.YTO = action.payload;
-    }
+    },
+    setYTOCourseTune(state, action) {
+      state.YTO.courseTune = action.payload;
+      const yto = state.YTO;
+      let freq = calculateYTOFreq(yto.lowGHz, yto.highGHz, yto.courseTune);
+      state.YTO = { ...state.YTO, ytoFreqGHz: freq, loFreqGHz: freq * 18 }
+    }  
   }
 };

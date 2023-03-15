@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 
 // UI components and style
@@ -14,9 +14,6 @@ import { setScanStatus } from './BeamScannerSlice';
 import { setMeasureActive, setMeasureDescription } from '../Shared/MeasureSlice';
 
 export default function ScanStatus(props) {
-  // Periodic refresh timer
-  const timer = useRef(null);
-  
   // Redux store interfaces
   const scanStatus = useSelector((state) => state.BeamScanner.scanStatus);
   const dispatch = useDispatch();
@@ -41,18 +38,23 @@ export default function ScanStatus(props) {
 
   // Periodic refresh timer
   useEffect(() => {
-    if (timer.current) {
-      clearInterval(timer.current);
-      timer.current = null;
-    }
-    timer.current = setInterval(() => { 
-      fetch() 
+    let isMounted = true;
+  
+    // first render load
+    fetch();
+    
+    // periodic load
+    const timer = setInterval(() => { 
+      if (isMounted)
+        fetch();
     }, props.interval ?? 5000);
+    
+    // return cleanup function
     return () => {
-      clearInterval(timer.current);
-      timer.current = null;
+      isMounted = false;
+      clearInterval(timer);      
     };
-  }, [fetch, props.interval]);
+  }, [props.interval, fetch]);
 
   const timeStamp = scanStatus.timeStamp ? localDate(scanStatus.timeStamp) : "--";
   let amplitude = "--";

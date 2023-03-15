@@ -12,9 +12,6 @@ import axios from "axios";
 import { setLNA, setLNAEnable, setInputVd, setInputId } from './CartridgeSlice'
 
 export default function LNA(props) {
-  // Periodic refresh timer
-  const timer = useRef(null);
-
   // Redux store interfaces
   const LNA = useSelector((state) => state.Cartridge.LNA[props.pol][props.lna - 1]);
   const inputs = useSelector((state) => state.Cartridge.inputs.LNA[props.pol][props.lna - 1]);
@@ -33,19 +30,21 @@ export default function LNA(props) {
 
   // Periodic refresh timer
   useEffect(() => {
-    if (timer.current) {
-      clearInterval(timer.current);
-      timer.current = null;
-    } else {
-      // first render load
-      fetch();
-    }
-    timer.current = setInterval(() => { 
-      fetch();
+    let isMounted = true;
+  
+    // first render load
+    fetch();
+    
+    // periodic load
+    const timer = setInterval(() => { 
+      if (isMounted)
+        fetch();
     }, props.interval ?? 5000);
+    
+    // return cleanup function
     return () => {
-      clearInterval(timer.current);
-      timer.current = null;
+      isMounted = false;
+      clearInterval(timer);      
     };
   }, [props.interval, fetch]);
 
@@ -87,7 +86,6 @@ export default function LNA(props) {
 
   // if apply is incremented, "click" the SET and ENABLE buttons
   const lastApply = useRef(inputs.apply);
-
   useEffect(() => {
     if (inputs.apply > lastApply.current) {
       lastApply.current = inputs.apply;

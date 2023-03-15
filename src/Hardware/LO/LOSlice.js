@@ -14,8 +14,10 @@ export const LOSlice = createSlice({
 export const loSetAMC = LOSlice.actions.setAMC;
 export const loSetPA = LOSlice.actions.setPA;
 export const loSetPLL = LOSlice.actions.setPLL;
+export const setInputLO = LOSlice.actions.setInputLOFreq;
 export const loSetPLLConfig = LOSlice.actions.setPLLConfig;
 export const loSetYTO = LOSlice.actions.setYTO;
+export const loSetYTOCourseTune = LOSlice.actions.setYTOCourseTune;
 
 // this is for configureStore:
 export default LOSlice.reducer

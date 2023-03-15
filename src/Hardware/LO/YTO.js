@@ -8,8 +8,8 @@ import '../../components.css'
 
 // HTTP and store
 import axios from "axios";
-import { loSetYTO } from './LOSlice'
-import { rfSetYTO } from './RFSlice'
+import { loSetYTO, loSetYTOCourseTune } from './LOSlice'
+import { rfSetYTO, rfSetYTOCourseTune } from './RFSlice'
 
 export default function YTO(props) {
   // State for user input prior to clicking the SET button
@@ -65,10 +65,10 @@ export default function YTO(props) {
     const params = {
       courseTune: yto.courseTune + amount
     }
+    dispatch(props.isRfSource ? rfSetYTOCourseTune(params.courseTune) : loSetYTOCourseTune(params.courseTune));
     axios.put(prefix + '/yto/coursetune', params)
       .then(res => {
         console.log(res.data);
-        fetch();
       })
       .catch(error => {
         console.log(error);
@@ -91,7 +91,17 @@ export default function YTO(props) {
           className="smallinput"
         />
       </Grid>
-      <Grid item xs={4}/>
+      <Grid item xs={0.5}/>
+      <Grid item xs={3.5}>
+        <Button
+          className="custom-btn-sm"
+          variant="contained"
+          size="small"
+          onClick={e => setLimitsHandler()}
+        >
+          SET
+        </Button>
+      </Grid>
       
       <Grid item xs={3}><Typography variant="body2" paddingTop="4px">high [Ghz]:</Typography></Grid>
       <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{yto.highGHz}</Typography></Grid>
@@ -105,17 +115,8 @@ export default function YTO(props) {
           className="smallinput"
         />
       </Grid>
-      <Grid item xs={0.5}/>
-      <Grid item xs={3.5}>
-        <Button
-          className="custom-btn-sm"
-          variant="contained"
-          size="small"
-          onClick={e => setLimitsHandler()}
-        >
-          SET
-        </Button>
-      </Grid>
+      <Grid item xs={4}/>
+     
 
       <Grid item xs={3}><Typography variant="body2" paddingTop="4px">courseTune:</Typography></Grid>
       <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{yto.courseTune}</Typography></Grid>
@@ -125,8 +126,8 @@ export default function YTO(props) {
           variant="contained"
           size="small"
           style={{
-            maxWidth: '30%',
-            minWidth: '30%'              
+            maxWidth: '40%',
+            minWidth: '40%'              
           }}
           onClick={e => tweakYTO(-1)}
         >-1</Button>
@@ -135,8 +136,8 @@ export default function YTO(props) {
           variant="contained"
           size="small"
           style={{
-            maxWidth: '30%',
-            minWidth: '30%'
+            maxWidth: '40%',
+            minWidth: '40%'
           }}
           onClick={e => tweakYTO(1)}
         >+1</Button>

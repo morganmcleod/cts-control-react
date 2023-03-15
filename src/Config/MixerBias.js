@@ -14,15 +14,15 @@ import localDate from "../Shared/LocalDate";
 
 export default function MixerBias(props) {
   // Redux store interfaces
+  const cartConfig = useSelector((state) => state.CartBias.cartConfig);
   const mixerParams = useSelector((state) => state.CartBias.mixerParams[props.pol]);
-  const cartConfigId = useSelector((state) => state.CartBias.cartConfigId);
   const configKeys = useSelector((state) => state.CartBias.configKeys[props.pol]);
   const refresh = useSelector((state) => state.CartBias.refresh);
   const dispatch = useDispatch();
 
   // Load data from REST API
   const fetch = useCallback(() => {
-    if (cartConfigId && configKeys.keyChip1) {
+    if (cartConfig && configKeys) {
       axios.get('/database/config/mixer_params/', {params: {keyChip: configKeys.keyChip1}})
         .then(res => {
           dispatch(setMixerParams({pol: props.pol, sis: 1, data: res.data.items}));
@@ -31,7 +31,7 @@ export default function MixerBias(props) {
           console.log(error);
         });
     }
-    if (cartConfigId && configKeys.keyChip2) {
+    if (cartConfig && configKeys) {
       axios.get('/database/config/mixer_params/', {params: {keyChip: configKeys.keyChip2}})
         .then(res => {
           dispatch(setMixerParams({pol: props.pol, sis: 2, data: res.data.items}));
@@ -40,7 +40,7 @@ export default function MixerBias(props) {
           console.log(error);
         });
     }
-  }, [dispatch, props.pol, cartConfigId, configKeys])
+  }, [dispatch, props.pol, cartConfig, configKeys])
 
   // if refresh is incremented, "click" the SET and ENABLE buttons
   const lastRefresh = useRef(null);
@@ -61,13 +61,10 @@ export default function MixerBias(props) {
           <Typography variant="body2" display="inline"><b>SIS Pol {props.pol}</b></Typography>
         </Grid>
         <Grid item xs={3}>
-          <Typography variant="body2" display="inline" color="Highlight">block:{configKeys.keyMixerAssy ?? '--'}</Typography>
+          <Typography variant="body2" display="inline" color="Highlight">ID:{configKeys ? configKeys.keyMixer : '--'}</Typography>
         </Grid>
-        <Grid item xs={3}>
-          <Typography variant="body2" display="inline" color="Highlight">chip1:{configKeys.keyChip1 ?? '--'}</Typography>
-        </Grid>
-        <Grid item xs={3}>
-          <Typography variant="body2" display="inline" color="Highlight">chip2:{configKeys.keyChip2 ?? '--'}</Typography>
+        <Grid item xs={6}>
+          <Typography variant="body2" display="inline" color="Highlight">SN:{configKeys ? configKeys.snMixer : '--'}</Typography>
         </Grid>
         <Grid item xs={colw} paddingLeft="3px"><Typography variant="body2">LO</Typography></Grid>
         <Grid item xs={colw}><Typography variant="body2">VJ1</Typography></Grid>

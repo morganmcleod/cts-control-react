@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -77,9 +77,6 @@ export default function MotorController(props) {
   const [gotoChanged, setGotoChanged] = useState(false);
   const [accExpanded, setAccExpanded] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
-  
-  // Periodic refresh timer
-  const timer = useRef(null);
 
   // Redux store interfaces
   const thisMC = useSelector((state) => state.MotorControl);
@@ -138,18 +135,21 @@ export default function MotorController(props) {
 
   // Periodic refresh timer
   useEffect(() => {
-    if (timer.current) {
-      clearInterval(timer.current);
-      timer.current = null;
-    } else {
-      fetch();
-    }
-    timer.current = setInterval(() => { 
-      fetch();
-    }, props.interval ?? 1000);
+    let isMounted = true;
+  
+    // first render load
+    fetch();
+    
+    // periodic load
+    const timer = setInterval(() => { 
+      if (isMounted)
+        fetch();
+    }, props.interval ?? 5000);
+    
+    // return cleanup function
     return () => {
-      clearInterval(timer.current);
-      timer.current = null;
+      isMounted = false;
+      clearInterval(timer);      
     };
   }, [props.interval, fetch]);
   

@@ -84,23 +84,21 @@ export default function RefSource(props) {
 
   return (
     <Grid container>
-      <Grid item xs={3}/>      
-      <Grid item xs={9}><Typography variant="body2"><b>{title}</b></Typography></Grid>
+      <Grid item xs={12}><Typography variant="body2"><b>{title}</b></Typography></Grid>
 
-      <Grid item xs={3}/>
-      <Grid item xs={2}><Typography variant="body2">Frequency:</Typography></Grid>
-      <Grid item xs={3}>
+      <Grid item xs={3} paddingTop="4px"><Typography variant="body2">Frequency:</Typography></Grid>
+      <Grid item xs={5.5}>
         <OutlinedInput
           size="small"
           margin="none"          
-          style={{ width: '60%' }}
+          style={{ width: '70%' }}
           className="smallinput"
           onChange={(e) => setInputFreq(e.target.value)}
           value = {inputFreq}
         />
         <Typography variant="body2" fontWeight="bold" display="inline">&nbsp;GHz</Typography>
       </Grid>
-      <Grid item xs={2}>
+      <Grid item xs={3}>
         <Button
           name="set-freq"
           className="custom-btn-sm"
@@ -108,41 +106,40 @@ export default function RefSource(props) {
           size="small"
           onClick={(e) => handleSetButton(e)}
         >
-          SET
+          SET FRQ.
         </Button>
-      </Grid>
-      <Grid item xs={2}/>
+      </Grid>      
 
-      <Grid item xs={3}/>
-      <Grid item xs={2}><Typography variant="body2">Amplitude</Typography></Grid>
-      <Grid item xs={3}>
+      <Grid item xs={3} paddingTop="4px"><Typography variant="body2">Amplitude:</Typography></Grid>
+      <Grid item xs={5.5}>
         <OutlinedInput
           size="small"
           margin="none"          
-          style={{ width: '60%' }}
+          style={{ width: '70%' }}
           className="smallinput"
           onChange={(e) => setInputAmp(e.target.value)}
           value = {inputAmp}
         />
         <Typography variant="body2" fontWeight="bold" display="inline">&nbsp;dBm</Typography>
       </Grid>
-      <Grid item xs={2}>
+      <Grid item xs={3}>
         <Button
           name="set-amp"
           className="custom-btn-sm"
           variant="contained"
-          size="small"
+          size="small"          
           onClick={(e) => handleSetButton(e)}
         >
-          SET
+          SET AMP.
         </Button>
-      </Grid>
-      <Grid item xs={2}/>
+      </Grid>      
 
-      <Grid item xs={7.75}/>
-      <Grid item xs={2}>
+      <Grid item xs={6.5}/>
+      <Grid item xs={2} paddingTop="6px"><Typography variant="body2">Output:</Typography></Grid>
+      <Grid item xs={3}>
         <EnableButton
           enableColor="green"
+          disableColor="red"
           enable={status.enable}
           onClick={(e) => onClickEnable(e)}
         ></EnableButton>

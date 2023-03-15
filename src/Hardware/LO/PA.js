@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -20,9 +20,6 @@ export default function PA(props) {
   const [inputVGp0, setInputVGp0] = useState("");
   const [inputVGp1, setInputVGp1] = useState("");
   
-  // Periodic refresh timer
-  const timer = useRef(null);
-
   // Redux store interfaces
   const pa = useSelector((state) => props.isRfSource ? state.RF.PA : state.LO.PA);
   const dispatch = useDispatch();
@@ -47,18 +44,21 @@ export default function PA(props) {
 
   // Periodic refresh timer
   useEffect(() => {
-    if (timer.current) {
-      clearInterval(timer.current);
-      timer.current = null;
-    } else {
-      fetch();
-    }
-    timer.current = setInterval(() => { 
-      fetch();
+    let isMounted = true;
+  
+    // first render load
+    fetch();
+    
+    // periodic load
+    const timer = setInterval(() => { 
+      if (isMounted)
+        fetch();
     }, props.interval ?? 5000);
+    
+    // return cleanup function
     return () => {
-      clearInterval(timer.current);
-      timer.current = null;
+      isMounted = false;
+      clearInterval(timer);      
     };
   }, [props.interval, fetch]);
 
@@ -81,7 +81,7 @@ export default function PA(props) {
   }
   return (
     <Grid container paddingLeft="5px">
-      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">Power Amp</Typography></Grid>        
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">PA</Typography></Grid>        
 
       <Grid container spacing = {0.4}>
         <Grid item xs={3}></Grid>

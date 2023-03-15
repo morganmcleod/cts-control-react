@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -12,9 +12,6 @@ import { loSetAMC } from './LOSlice'
 import { rfSetAMC } from './RFSlice'
 
 export default function AMC(props) {
-  // Periodic refresh timer
-  const timer = useRef(null);
-
   // Redux store interfaces
   const amc = useSelector((state) => props.isRfSource ? state.RF.AMC : state.LO.AMC);
   const dispatch = useDispatch();
@@ -33,22 +30,23 @@ export default function AMC(props) {
       })
   }, [dispatch, prefix, props.isRfSource]);
 
-  // Periodic refresh timer
-  useEffect(() => {
-    if (timer.current) {
-      clearInterval(timer.current);
-      timer.current = null;
-    } else {
-      // First time: refresh now.
-      fetch();
-    }
-    timer.current = setInterval(() => { 
-      fetch();
+   // Periodic refresh timer
+   useEffect(() => {
+    let isMounted = true;
+  
+    // first render load
+    fetch();
+    
+    // periodic load
+    const timer = setInterval(() => { 
+      if (isMounted)
+        fetch();
     }, props.interval ?? 5000);
-    // Return the timer cleanup function:
+    
+    // return cleanup function
     return () => {
-      clearInterval(timer.current);
-      timer.current = null;
+      isMounted = false;
+      clearInterval(timer);      
     };
   }, [props.interval, fetch]);
 

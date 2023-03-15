@@ -3,27 +3,10 @@ import { createSlice } from '@reduxjs/toolkit';
 export const CartBiasSlice = createSlice({
   name: 'CartBias',
   initialState: {
-    cartConfigId: null,
-    cartSerialNum: "",
+    cartConfig: null,
     cartConfigOptions: [],
     refresh: 0,
-    configKeys: [
-      {
-        // pol0
-        keyMixerAssy: null,
-        keyChip1: null,
-        keyChip2: null,
-        keyPreamp1: null,
-        keyPreamp2: null
-      }, {
-        // pol1
-        keyMixerAssy: null,
-        keyChip1: null,
-        keyChip2: null,
-        keyPreamp1: null,
-        keyPreamp2: null
-      }
-    ],
+    configKeys: [null, null],
     mixerParams: [
       {
         // pol0
@@ -52,11 +35,8 @@ export const CartBiasSlice = createSlice({
     ]
   },
   reducers: { 
-    setCartConfigId(state, action) {
-      state.cartConfigId = action.payload;
-    },
-    setCartSerialNum(state, action) {
-      state.cartSerialNum = action.payload;
+    setCartConfig(state, action) {
+      state.cartConfig = action.payload;
     },
     setCartConfigOptions(state, action) {
       state.cartConfigOptions = action.payload;
@@ -93,32 +73,11 @@ export const CartBiasSlice = createSlice({
       }
     },
     setConfigKeys(state, action) {
-      state.configKeys[action.payload.pol].keyMixerAssy = action.payload.keyMixer;
-      state.configKeys[action.payload.pol].keyChip1 = action.payload.keyChip1;
-      state.configKeys[action.payload.pol].keyChip2 = action.payload.keyChip2;
-      state.configKeys[action.payload.pol].keyPreamp1 = action.payload.keyPreamp1;
-      state.configKeys[action.payload.pol].keyPreamp2 = action.payload.keyPreamp2;
+      state.configKeys[action.payload.pol] = action.payload;
     },
     reset(state, action) {
-      state.cartConfigId = null;
-      state.cartSerialNum = "";
-      state.configKeys = [
-        {
-          // pol0
-          keyMixerAssy: null,
-          keyChip1: null,
-          keyChip2: null,
-          keyPreamp1: null,
-          keyPreamp2: null
-        }, {
-          // pol1
-          keyMixerAssy: null,
-          keyChip1: null,
-          keyChip2: null,
-          keyPreamp1: null,
-          keyPreamp2: null
-        }
-      ];
+      state.cartConfig = null;
+      state.configKeys = [null, null];
       state.mixerParams = [
         {
           // pol0
@@ -151,8 +110,7 @@ export const CartBiasSlice = createSlice({
 
 // these are for dispatch:
 export const { 
-  setCartConfigId,
-  setCartSerialNum,
+  setCartConfig,
   setCartConfigOptions,
   setRefresh,
   setMixerParams,

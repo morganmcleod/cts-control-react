@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -10,29 +10,21 @@ import '../../components.css'
 
 // HTTP and store
 import axios from "axios";
-import { loSetPLL, loSetPLLConfig } from './LOSlice'
-import { rfSetPLL, rfSetPLLConfig } from './RFSlice'
+import { setInputLO, loSetPLL, loSetPLLConfig } from './LOSlice'
+import { setInputRF, rfSetPLL, rfSetPLLConfig } from './RFSlice'
 
-export default function PLL(props) {
-  // State for user input prior to clicking one of the LOCK button
-  const [inputLOFreq, setInputLOFreq] = useState("");
-  
-  // State for appearance of the LOCK button
-  const [isLocked, setIsLocked] = useState(false);
-  const [isLocking, setIsLocking] = useState(false);
-  const [lockFailed, setLockFailed] = useState(false);
-
-  // Periodic refresh timer
-  const timer = useRef(null);
-
-  // Timer for updating the LOCK button after success or failure
-  const lockTimer = useRef(null);
-
+export default function PLL(props) {  
   // Redux store interfaces
+  const inputFreq = useSelector((state) => props.isRfSource ? state.RF.inputLOFreq : state.LO.inputLOFreq);
   const pll = useSelector((state) => props.isRfSource ? state.RF.PLL : state.LO.PLL);
   const pllConfig = useSelector((state) => props.isRfSource ? state.RF.PLLConfig : state.LO.PLLConfig);
   const dispatch = useDispatch();
 
+  // State for appearance of the LOCK button
+  const [isLocked, setIsLocked] = useState(pll.isLocked);
+  const [isLocking, setIsLocking] = useState(false);
+  const [lockFailed, setLockFailed] = useState(false);
+  
   // URL prefix
   const prefix = props.isRfSource ? '/rfsource' : '/lo'
 
@@ -41,6 +33,7 @@ export default function PLL(props) {
     axios.get(prefix + '/pll')
       .then(res => {
         dispatch(props.isRfSource ? rfSetPLL(res.data) : loSetPLL(res.data));
+        setIsLocked(res.data.isLocked)
       })
       .catch(error => {
         console.log(error);
@@ -56,18 +49,21 @@ export default function PLL(props) {
 
   // Periodic refresh timer
   useEffect(() => {
-    if (timer.current) {
-      clearInterval(timer.current);
-      timer.current = null;
-    } else {
-      fetch();
-    }
-    timer.current = setInterval(() => { 
-      fetch();
+    let isMounted = true;
+  
+    // first render load
+    fetch();
+    
+    // periodic load
+    const timer = setInterval(() => { 
+      if (isMounted)
+        fetch();
     }, props.interval ?? 5000);
+    
+    // return cleanup function
     return () => {
-      clearInterval(timer.current);
-      timer.current = null;
+      isMounted = false;
+      clearInterval(timer);      
     };
   }, [props.interval, fetch]);
 
@@ -82,7 +78,7 @@ export default function PLL(props) {
     setIsLocking(true);
     setLockFailed(false);
 
-    const freqLOGHz = Number(inputLOFreq);
+    const freqLOGHz = Number(inputFreq);
     axios.put(prefix + '/pll/lock', {freqLOGHz: freqLOGHz})
       .then(res => {
         const result = res.data;
@@ -99,18 +95,14 @@ export default function PLL(props) {
         // Load content now
         fetch();
         // Set a timer to finalize LOCK button appearance
-        lockTimer.current = setInterval(handleLockTimer, 1500);
+        const lockTimer = setInterval(() => {
+          clearInterval(lockTimer);
+          setLockFailed(false);
+        }, 1500);
       })
       .catch(error => {
         console.log(error);
       })
-  }
-
-  // Finalize LOCK button appearance
-  const handleLockTimer = () => {
-    clearInterval(lockTimer.current);
-    lockTimer.current = null;
-    setLockFailed(false);
   }
 
   // CLEAR unlock detect handler
@@ -189,31 +181,37 @@ export default function PLL(props) {
       })
   }
 
-  const unlockDetect = !pll.isLocked || pll.unlockDetected;
+  // Change LO handler
+  const onChangeLO = (value) => {
+    setIsLocked(false);
+    dispatch(props.isRfSource ? setInputRF(value) : setInputLO(value));
+  }
+
+  const unlockDetect = pll.unlockDetected;
   return (
     <Grid container paddingLeft="5px">
       <Grid item xs={12}><Typography variant="body1" fontWeight="bold">PLL</Typography></Grid>        
 
-      <Grid item xs={3}>
+      <Grid item xs={4}>
         <Chip 
           label={isLocked ? "LOCKED" : "UNLOCK"}
           color={isLocked ? "success" : "error"}
           size="small"
         />
       </Grid>
-      <Grid item xs={5}>
+      <Grid item xs={4}>
         <OutlinedInput
           name="loFreq"
           size="small"
           margin="none"          
           style={{width: '60%'}}
           className="smallinput"
-          onChange={e => setInputLOFreq(e.target.value)}
-          value = {inputLOFreq}
+          onChange={e => onChangeLO(e.target.value)}
+          value = {inputFreq}
         />
         <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;GHz</Typography>
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={2.5}>
         <LockButton
           isLocked={isLocked}
           isLocking={isLocking}
@@ -222,17 +220,16 @@ export default function PLL(props) {
           onClick={lockHandler}
         />
       </Grid>
-      <Grid item xs={1}/>
-
-      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Unlock seen:</Typography></Grid>
-      <Grid item xs={5}>
+      
+      <Grid item xs={4}><Typography variant="body2" paddingTop="6px">Unlock detect latch:</Typography></Grid>
+      <Grid item xs={4}>
         <Chip 
-          label={unlockDetect ? "UNLOCK" : "OK"}
+          label={unlockDetect ? "YES" : "NO"}
           color={unlockDetect ? "error" : "success"}
           size="small"
         />
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={2.5}>
         <Button
           className="custom-btn-sm"
           variant="contained"
@@ -245,12 +242,11 @@ export default function PLL(props) {
         >
           CLEAR
         </Button>
-      </Grid>
-      <Grid item xs={1}/>
+      </Grid>      
 
-      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Correction:</Typography></Grid>
-      <Grid item xs={5}><Typography fontWeight="bold" paddingTop="2px">{pll.corrV}&nbsp;V</Typography></Grid>
-      <Grid item xs={3}>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Correction:</Typography></Grid>
+      <Grid item xs={4}><Typography fontWeight="bold" paddingTop="2px">{pll.corrV}&nbsp;V</Typography></Grid>
+      <Grid item xs={2.5}>
         <Button
           className="custom-btn-sm"
           variant="contained"
@@ -261,15 +257,14 @@ export default function PLL(props) {
           }}
           onClick={e => pllAdjustHandler()}
         >
-          ADJUST
+          ZERO CV
         </Button>
       </Grid>
-      <Grid item xs={1}/>
-
-      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Ref Tot Pwr:</Typography></Grid>
-      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{pll.refTP}&nbsp;V</Typography></Grid>
-      <Grid item xs={2}><Typography variant="body2" paddingTop="4px">PLL:</Typography></Grid>
-      <Grid item xs={3}>
+      
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Ref Tot Pwr:</Typography></Grid>
+      <Grid item xs={2.8}><Typography fontWeight="bold" paddingTop="2px">{pll.refTP}&nbsp;V</Typography></Grid>
+      <Grid item xs={1.2}><Typography variant="body2" paddingTop="4px">Null:&nbsp;</Typography></Grid>
+      <Grid item xs={2.5}>
         <EnableButton
           className="custom-btn-sm" 
           id="nullPLL"
@@ -281,32 +276,31 @@ export default function PLL(props) {
           enable={pll.nullPLL}
           onClick={e => setNullHandler(!pll.nullPLL)}/>
       </Grid>
-      <Grid item xs={1}/>
+      
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">IF Tot Pwr:</Typography></Grid>
+      <Grid item xs={8}><Typography fontWeight="bold" paddingTop="2px">{pll.IFTP}&nbsp;V</Typography></Grid>
 
-      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">IF Tot Pwr:</Typography></Grid>
-      <Grid item xs={9}><Typography fontWeight="bold" paddingTop="2px">{pll.IFTP}&nbsp;V</Typography></Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Temperature:</Typography></Grid>
+      <Grid item xs={8}><Typography fontWeight="bold" paddingTop="2px">{pll.temperature}&nbsp;C</Typography></Grid>
 
-      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Temperature:</Typography></Grid>
-      <Grid item xs={9}><Typography fontWeight="bold" paddingTop="2px">{pll.temperature}&nbsp;C</Typography></Grid>
-
-      <Grid item xs={3}><Typography variant="body2" paddingTop="6px">Loop BW:</Typography></Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="6px">Loop BW:</Typography></Grid>
       <Grid item xs={2}>
         <EnableButton
           className="custom-btn-sm"
           id="loopBW"
           size="sm"
           type="checkbox"
-          enableText="7.5"
-          disableText="15"
+          disableText="7.5"
+          enableText="15"
           width="100%"
           enable={pllConfig.loopBW}
           onClick={e => setLoopBWHandler(1 - pllConfig.loopBW)}/>
       </Grid>
-      <Grid item xs={7}>
+      <Grid item xs={6}>
         <Typography variant="body2" paddingTop="6px">&nbsp;&nbsp;MHz / V</Typography>
       </Grid>
 
-      <Grid item xs={3}><Typography variant="body2" paddingTop="6px">Lock SB:</Typography></Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="6px">Lock SB:</Typography></Grid>
       <Grid item xs={2}>
         <EnableButton
           className="custom-btn-sm"
@@ -314,13 +308,13 @@ export default function PLL(props) {
           id="lockSB"
           size="sm"
           type="checkbox"
-          enableText="BELOW"
-          disableText="ABOVE"
+          disableText="BELOW"
+          enableText="ABOVE"
           width="100%"
           enable={pllConfig.lockSB}
           onClick={e => setLockSBHandler(1 - pllConfig.lockSB)}/>
       </Grid>
-      <Grid item xs={7}>
+      <Grid item xs={6}>
         <Typography variant="body2" paddingTop="6px">&nbsp;&nbsp;Reference</Typography>
       </Grid>
     </Grid>

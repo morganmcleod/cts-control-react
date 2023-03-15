@@ -15,9 +15,6 @@ import {
 } from './CartridgeSlice'
 
 export default function SIS(props) {
-  // Periodic refresh timer
-  const timer = useRef(null);
-  
   // Redux store interfaces
   const SIS = useSelector((state) => state.Cartridge.SIS[props.pol][props.sis - 1]);
   const inputs = useSelector((state) => state.Cartridge.inputs.SIS[props.pol][props.sis - 1]);
@@ -41,19 +38,21 @@ export default function SIS(props) {
 
   // Periodic refresh timer
   useEffect(() => {
-    if (timer.current) {
-      clearInterval(timer.current);
-      timer.current = null;
-    } else {
-      // first render load
-      fetch();
-    }
-    timer.current = setInterval(() => { 
-      fetch();
+    let isMounted = true;
+  
+    // first render load
+    fetch();
+    
+    // periodic load
+    const timer = setInterval(() => { 
+      if (isMounted)
+        fetch();
     }, props.interval ?? 5000);
+    
+    // return cleanup function
     return () => {
-      clearInterval(timer.current);
-      timer.current = null;
+      isMounted = false;
+      clearInterval(timer);      
     };
   }, [props.interval, fetch]);
 
@@ -98,8 +97,8 @@ export default function SIS(props) {
    // if apply is incremented, "click" the SET buttons
    const lastApply = useRef(inputs.apply);
    useEffect(() => {
-    if (inputs.refresh > lastApply.current) {
-      lastApply.current = inputs.refresh;
+    if (inputs.apply > lastApply.current) {
+      lastApply.current = inputs.apply;
       const params = {
         pol: props.pol,
         sis: props.sis,
@@ -114,7 +113,7 @@ export default function SIS(props) {
           console.log(error);
         })
     }
-  }, [inputs.refresh, props.pol, props.sis, inputs, dispatch]);
+  }, [inputs.apply, props.pol, props.sis, inputs, dispatch]);
 
   const valueChangeHandler = (e) => {
     switch (e.target.name) {

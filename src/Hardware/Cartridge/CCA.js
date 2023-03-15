@@ -15,8 +15,8 @@ export default function CCA() {
       <Grid container sx={{border:1, borderTop:0}}>
         <Grid item xs={3}><CartridgeTemps/></Grid>
         <Grid item xs={2}><Heater pol="0"/></Grid>
-        <Grid item xs={1} sx={{borderRight:1}}><LED pol="0"/></Grid>
-        <Grid item xs={3}/>
+        <Grid item xs={1}><LED pol="0"/></Grid>
+        <Grid item xs={3} sx={{borderLeft:1}}/>
         <Grid item xs={2}><Heater pol="1"/></Grid>
         <Grid item xs={1}><LED pol="1"/></Grid>
       </Grid>

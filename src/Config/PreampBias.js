@@ -14,16 +14,17 @@ import { setPreampParams } from './CartBiasSlice';
 
 export default function PreampBias(props) {
   // Redux store interfaces
+  const cartConfig = useSelector((state) => state.CartBias.cartConfig);
   const preampParams = useSelector((state) => state.CartBias.preampParams[props.pol]);
-  const cartConfigId = useSelector((state) => state.CartBias.cartConfigId);
   const configKeys = useSelector((state) => state.CartBias.configKeys[props.pol]);
-  const keyPreamp = (props.lna === 2) ? configKeys.keyPreamp2 : configKeys.keyPreamp1;
+  const keyPreamp = configKeys ? ((props.lna === 2) ? configKeys.keyPreamp2 : configKeys.keyPreamp1) : null;
+  const snPreamp =  configKeys ? ((props.lna === 2) ? configKeys.snPreamp2 : configKeys.snPreamp1) : null;
   const refresh = useSelector((state) => state.CartBias.refresh);
   const dispatch = useDispatch();
 
   // Load data from REST API
   const fetch = useCallback(() => {
-    if (cartConfigId && keyPreamp) {
+    if (cartConfig && keyPreamp) {
       axios.get('/database/config/preamp_params/', {params: {keyPreamp: keyPreamp}})
         .then(res => {
           dispatch(setPreampParams({pol: props.pol, lna: props.lna, data: res.data.items}));
@@ -32,7 +33,7 @@ export default function PreampBias(props) {
           console.log(error);
         });
     }    
-  }, [dispatch, props.pol, props.lna, cartConfigId, keyPreamp])
+  }, [dispatch, props.pol, props.lna, cartConfig, keyPreamp])
 
   // if refresh is incremented, "click" the SET and ENABLE buttons
   const lastRefresh = useRef(null);
@@ -51,11 +52,13 @@ export default function PreampBias(props) {
     <>
       <Grid container spacing={0} sx={{borderBottom: 1}}>
         <Grid item xs={3}>
-          <Typography variant="body2"><b>LNA{props.lna} Pol {props.pol}</b></Typography>
+          <Typography variant="body2" display="inline"><b>LNA{props.lna} Pol {props.pol}</b></Typography>
         </Grid>
-        <Grid item xs={6}/>
         <Grid item xs={3}>
-          <Typography variant="body2" display="inline" color="Highlight">preamp:{keyPreamp ?? '--'}</Typography>
+          <Typography variant="body2" display="inline" color="Highlight">ID:{keyPreamp ?? '--'}</Typography>
+        </Grid>
+        <Grid item xs={6}>
+          <Typography variant="body2" display="inline" color="Highlight">SN:{snPreamp ?? '--'}</Typography>
         </Grid>
         <Grid item xs={colw} paddingLeft="3px"><Typography variant="body2">LO</Typography></Grid>
         <Grid item xs={colw}><Typography variant="body2">VD1</Typography></Grid>
