@@ -61,10 +61,17 @@ export default function MixerBias(props) {
           <Typography variant="body2" display="inline"><b>SIS Pol {props.pol}</b></Typography>
         </Grid>
         <Grid item xs={3}>
-          <Typography variant="body2" display="inline" color="Highlight">ID:{configKeys ? configKeys.keyMixer : '--'}</Typography>
+          <Typography variant="body2" display="inline" color="Highlight">SN:&nbsp;&nbsp;{configKeys ? configKeys.snMixer : '--'}</Typography>
         </Grid>
         <Grid item xs={6}>
-          <Typography variant="body2" display="inline" color="Highlight">SN:{configKeys ? configKeys.snMixer : '--'}</Typography>
+          <Typography variant="body2" display="inline" color="Highlight">SN1:&nbsp;&nbsp;{configKeys ? configKeys.snChip1 : '--'}</Typography>
+        </Grid>
+        <Grid item xs={3} paddingBottom="8px"/>
+        <Grid item xs={3} paddingBottom="8px">
+          <Typography variant="body2" display="inline" color="Highlight">ID:&nbsp;&nbsp;{configKeys ? configKeys.keyMixer : '--'}</Typography>
+        </Grid>
+        <Grid item xs={6} paddingBottom="8px">
+          <Typography variant="body2" display="inline" color="Highlight">SN2:&nbsp;&nbsp;{configKeys ? configKeys.snChip2 : '--'}</Typography>
         </Grid>
         <Grid item xs={colw} paddingLeft="3px"><Typography variant="body2">LO</Typography></Grid>
         <Grid item xs={colw}><Typography variant="body2">VJ1</Typography></Grid>

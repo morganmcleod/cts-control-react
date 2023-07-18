@@ -55,10 +55,10 @@ export default function PreampBias(props) {
           <Typography variant="body2" display="inline"><b>LNA{props.lna} Pol {props.pol}</b></Typography>
         </Grid>
         <Grid item xs={3}>
-          <Typography variant="body2" display="inline" color="Highlight">ID:{keyPreamp ?? '--'}</Typography>
+          <Typography variant="body2" display="inline" color="Highlight">ID:&nbsp;&nbsp;{keyPreamp ?? '--'}</Typography>
         </Grid>
         <Grid item xs={6}>
-          <Typography variant="body2" display="inline" color="Highlight">SN:{snPreamp ?? '--'}</Typography>
+          <Typography variant="body2" display="inline" color="Highlight">SN:&nbsp;&nbsp;{snPreamp ?? '--'}</Typography>
         </Grid>
         <Grid item xs={colw} paddingLeft="3px"><Typography variant="body2">LO</Typography></Grid>
         <Grid item xs={colw}><Typography variant="body2">VD1</Typography></Grid>

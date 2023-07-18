@@ -57,15 +57,21 @@ export default function MeasControl(props) {
 
   const onCartSelect = (newValue) => {
     if (newValue) {
+      let configId = newValue.id
+      axios.put("/database/config/" + configId, true)
+      .then(res => {
+        console.log(res.data);
+      })
+
       dispatch(setCartConfig(newValue));
-      axios.get("/database/config/keys/", {params: {configId: newValue.id, pol: 0}})
+      axios.get("/database/config/keys/", {params: {configId: configId, pol: 0}})
       .then(res => {
         dispatch(setConfigKeys({...res.data, pol: 0}));
       })
       .catch(error => {
         console.log(error);
       })
-      axios.get("/database/config/keys/", {params: {configId: newValue.id, pol: 1}})
+      axios.get("/database/config/keys/", {params: {configId: configId, pol: 1}})
       .then(res => {
         dispatch(setConfigKeys({...res.data, pol: 1}));
         dispatch(setRefresh());
@@ -129,7 +135,7 @@ export default function MeasControl(props) {
         </Grid>
         <Grid item xs={12}>
           <Typography variant="body2" color="Highlight">
-            CA:{cartConfig ? cartConfig.id : '--'}&nbsp;&nbsp;&nbsp;&nbsp;CC:{cartConfig ? cartConfig.coldCartId : '--'}
+            config:&nbsp;&nbsp;{cartConfig ? cartConfig.id : '--'}
           </Typography>
         </Grid>
       </Grid>
