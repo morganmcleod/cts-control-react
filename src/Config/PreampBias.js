@@ -54,10 +54,12 @@ export default function PreampBias(props) {
         <Grid item xs={3}>
           <Typography variant="body2" display="inline"><b>LNA{props.lna} Pol {props.pol}</b></Typography>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={9}/>
+        <Grid item xs={4} paddingBottom="8px"/>
+        <Grid item xs={4} paddingBottom="8px">
           <Typography variant="body2" display="inline" color="Highlight">ID:&nbsp;&nbsp;{keyPreamp ?? '--'}</Typography>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={4} paddingBottom="8px">
           <Typography variant="body2" display="inline" color="Highlight">SN:&nbsp;&nbsp;{snPreamp ?? '--'}</Typography>
         </Grid>
         <Grid item xs={colw} paddingLeft="3px"><Typography variant="body2">LO</Typography></Grid>
@@ -129,12 +131,13 @@ export default function PreampBias(props) {
             ></PreampParam>
           </React.Fragment>
         ))}
-        <Grid item xs={12}>
-          <Typography variant="body2" color="Highlight" align="center">
+        <Grid item xs={12 - colw}>
+          <Typography variant="body2" color="Highlight" align="right">
             {ts1}
           </Typography>        
         </Grid>
-        &nbsp;<br/>        
+        <Grid item xs={colw}/>
+        <Grid item xs={12}>&nbsp;</Grid>
       </Grid>
     </>
   );
