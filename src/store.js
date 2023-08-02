@@ -10,6 +10,7 @@ import MotorControlReducer from './Hardware/BeamScanner/MotorControlSlice';
 import MeasureReducer from './Measure/Shared/MeasureSlice';
 import BeamScannerReducer from './Measure/BeamScanner/BeamScannerSlice';
 import CartBiasSlice from './Config/CartBiasSlice';
+import WarmIFPlateSlice from './Hardware/WarmIFPlate/WarmIFPlateSlice';
 
 const listenerMiddleware = createListenerMiddleware();
 
@@ -25,7 +26,8 @@ export default configureStore({
     MotorControl: MotorControlReducer,
     Measure: MeasureReducer,
     BeamScanner: BeamScannerReducer,
-    CartBias: CartBiasSlice
+    CartBias: CartBiasSlice,
+    WarmIFPlate: WarmIFPlateSlice
   },
   // Add the listener middleware to the store.
   // NOTE: Since this can receive actions with functions inside,

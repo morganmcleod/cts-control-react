@@ -43,6 +43,7 @@ export const LOSliceConfig = {
       refTP: 0.0,
       IFTP: 0.0,
       isLocked: false,
+      loFreqGHz: 0.0,
       courseTune: 0,
       corrV: 0.0, 
       temperature: 0,
@@ -58,8 +59,7 @@ export const LOSliceConfig = {
       lowGHz: 0.0,
       highGHz: 0.0,
       courseTune: 0,
-      ytoFreqGHz: 0.0,
-      loFreqGHz: 0.0
+      ytoFreqGHz: 0.0
     },
     LO: {}
   },
@@ -80,7 +80,7 @@ export const LOSliceConfig = {
       state.YTO.courseTune = action.payload.courseTune;
       const yto = state.YTO;
       let freq = calculateYTOFreq(yto.lowGHz, yto.highGHz, yto.courseTune);
-      state.YTO = { ...state.YTO, ytoFreqGHz: freq, loFreqGHz: freq * 18 }
+      state.YTO = { ...state.YTO, ytoFreqGHz: freq }
     },
     setPLLConfig(state, action) {
       state.PLLConfig = action.payload;
@@ -92,7 +92,7 @@ export const LOSliceConfig = {
       state.YTO.courseTune = action.payload;
       const yto = state.YTO;
       let freq = calculateYTOFreq(yto.lowGHz, yto.highGHz, yto.courseTune);
-      state.YTO = { ...state.YTO, ytoFreqGHz: freq, loFreqGHz: freq * 18 }
+      state.YTO = { ...state.YTO, ytoFreqGHz: freq }
     }  
   }
 };

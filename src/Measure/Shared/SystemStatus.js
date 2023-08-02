@@ -1,10 +1,16 @@
 // React and Redux
 import React, { useCallback, useEffect, useRef } from "react";
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
 import { Chip, Grid, Typography } from '@mui/material';
 import '../../components.css'
+
+// HTTP and store
+import axios from "axios";
+import { loSetPLL } from '../../Hardware/LO/LOSlice'
+import { rfSetPLL } from '../../Hardware/LO/RFSlice'
+import { setInputSwitch, setYIGFilter} from '../../Hardware/WarmIFPlate/WarmIFPlateSlice'
 
 export default function SystemStatus(props) {
   // Periodic refresh timer
@@ -15,10 +21,44 @@ export default function SystemStatus(props) {
   const rf = useSelector((state) => state.RF);
   const description = useSelector((state) => state.Measure.description);
   const active = useSelector((state) => state.Measure.active);
+  const inputSwitch = useSelector((state) => state.WarmIFPlate.inputSwitch);
+  const yigFilter = useSelector((state) => state.WarmIFPlate.yigFilter);
+  const dispatch = useDispatch();
 
   // Load data from REST API
   const fetch = useCallback(() => {
-  }, []);
+    axios.get('/lo/pll')
+    .then(res => {
+      dispatch(loSetPLL(res.data));
+    })
+    .catch(error => {
+      console.log(error);
+    })
+
+    axios.get('/rfsource/pll')
+    .then(res => {
+      dispatch(rfSetPLL(res.data));
+    })
+    .catch(error => {
+      console.log(error);
+    })
+    
+    axios.get('/warmif/inputswitch')
+      .then(res => {
+        dispatch(setInputSwitch(res.data.message));
+      })
+      .catch(error => {
+        console.log(error);
+      })
+    
+      axios.get('/warmif/yigfilter')
+      .then(res => {
+        dispatch(setYIGFilter(Number(res.data.value)));
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }, [dispatch]);
 
   // Periodic refresh timer
   useEffect(() => {
@@ -70,9 +110,9 @@ export default function SystemStatus(props) {
           }}
         />
       </Grid>
-      <Grid item xs={2.2}><Typography fontWeight="bold" paddingTop="2px">{lo.YTO.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
+      <Grid item xs={2.2}><Typography fontWeight="bold" paddingTop="2px">{lo.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
       <Grid item xs={2}><Typography variant="body2" paddingTop="4px">IF Switch:</Typography></Grid>
-      <Grid item xs={3}></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{inputSwitch}</Typography></Grid>
 
       <Grid item xs={2}><Typography variant="body2" paddingTop="4px">RF:</Typography></Grid>
       <Grid item xs={2.5}>
@@ -88,9 +128,9 @@ export default function SystemStatus(props) {
           }}
         />
       </Grid>
-      <Grid item xs={2.2}><Typography fontWeight="bold" paddingTop="2px">{rf.YTO.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
+      <Grid item xs={2.2}><Typography fontWeight="bold" paddingTop="2px">{rf.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
       <Grid item xs={2}><Typography variant="body2" paddingTop="4px">YIG Filter:</Typography></Grid>
-      <Grid item xs={3}></Grid>
+      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{yigFilter.toFixed(2)} GHz</Typography></Grid>
     </Grid>
   );
 }
