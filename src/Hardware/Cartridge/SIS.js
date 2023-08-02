@@ -19,42 +19,35 @@ export default function SIS(props) {
   const SIS = useSelector((state) => state.Cartridge.SIS[props.pol][props.sis - 1]);
   const inputs = useSelector((state) => state.Cartridge.inputs.SIS[props.pol][props.sis - 1]);
   const dispatch = useDispatch();
+  
+  // Only fetch data when mounted
+  const isMounted = useRef(false);
 
   // Load data from REST API
   const fetch = useCallback(() => {
-    let params = {
-      pol: props.pol,
-      sis: props.sis,
-      averaging: props.averaging ? props.averaging : 1
-    }
-    axios.get("/cca/sis", { params: params })
-      .then(res => {
-        dispatch(setSIS({pol: props.pol, sis:props.sis, data:res.data}));
-      })
-      .catch(error => {
-        console.log(error);
-      })
-  }, [dispatch, props.pol, props.sis, props.averaging]);
+    if (isMounted.current) {
+      let params = {
+        pol: props.pol,
+        sis: props.sis,
+        averaging: props.averaging ? props.averaging : 1
+      }
+      axios.get("/cca/sis", { params: params })
+        .then(res => {
+          dispatch(setSIS({pol: props.pol, sis:props.sis, data:res.data}));
+          setTimeout(() => {fetch()}, props.interval ?? 5000);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      }
+  }, [dispatch, props.pol, props.sis, props.averaging, props.interval]);
 
-  // Periodic refresh timer
+  // Fetch on first render:
   useEffect(() => {
-    let isMounted = true;
-  
-    // first render load
+    isMounted.current = true;
     fetch();
-    
-    // periodic load
-    const timer = setInterval(() => { 
-      if (isMounted)
-        fetch();
-    }, props.interval ?? 5000);
-    
-    // return cleanup function
-    return () => {
-      isMounted = false;
-      clearInterval(timer);      
-    };
-  }, [props.interval, fetch]);
+    return () => { isMounted.current = false; };
+  }, [fetch]);
 
   // SET button handler
   const setButtonHandler = (name) => {

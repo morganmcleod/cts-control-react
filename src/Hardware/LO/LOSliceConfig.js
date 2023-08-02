@@ -82,6 +82,9 @@ export const LOSliceConfig = {
       let freq = calculateYTOFreq(yto.lowGHz, yto.highGHz, yto.courseTune);
       state.YTO = { ...state.YTO, ytoFreqGHz: freq }
     },
+    setLockInfo(state, action) {
+      state.PLL = {...state.PLL, ...action.payload }
+    },
     setPLLConfig(state, action) {
       state.PLLConfig = action.payload;
     },

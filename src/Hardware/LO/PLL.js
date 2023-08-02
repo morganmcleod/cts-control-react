@@ -1,9 +1,9 @@
 // React and Redux
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import { Grid, Chip, Button, OutlinedInput, Typography } from '@mui/material'
+import { Grid, Button, OutlinedInput, Typography } from '@mui/material'
 import EnableButton from '../../Shared/EnableButton';
 import LockButton from './LockButton';
 import '../../components.css'
@@ -13,7 +13,10 @@ import axios from "axios";
 import { setInputLO, loSetPLL, loSetPLLConfig } from './LOSlice'
 import { setInputRF, rfSetPLL, rfSetPLLConfig } from './RFSlice'
 
-export default function PLL(props) {  
+export default function PLL(props) {
+  // State for the frequency input:
+  const [freqChanged, setFreqChanged] = useState(false);
+
   // Redux store interfaces
   const inputFreq = useSelector((state) => props.isRfSource ? state.RF.inputLOFreq : state.LO.inputLOFreq);
   const pll = useSelector((state) => props.isRfSource ? state.RF.PLL : state.LO.PLL);
@@ -28,44 +31,37 @@ export default function PLL(props) {
   // URL prefix
   const prefix = props.isRfSource ? '/rfsource' : '/lo'
 
+  // Only fetch data when mounted
+  const isMounted = useRef(false);
+
   // Load data from REST API
   const fetch = useCallback(() => {
-    axios.get(prefix + '/pll')
-      .then(res => {
-        dispatch(props.isRfSource ? rfSetPLL(res.data) : loSetPLL(res.data));
-        setIsLocked(res.data.isLocked)
-      })
-      .catch(error => {
-        console.log(error);
-      })
-    axios.get(prefix + '/pll/config')
-      .then(res => {
-        dispatch(props.isRfSource ? rfSetPLLConfig(res.data) : loSetPLLConfig(res.data));
-      })
-      .catch(error => {
-        console.log(error);
-      })
-  }, [dispatch, prefix, props.isRfSource]);
-
-  // Periodic refresh timer
-  useEffect(() => {
-    let isMounted = true;
+    if (isMounted.current) {
+      axios.get(prefix + '/pll')
+        .then(res => {
+          dispatch(props.isRfSource ? rfSetPLL(res.data) : loSetPLL(res.data));
+          setIsLocked(res.data.isLocked)
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      axios.get(prefix + '/pll/config')
+        .then(res => {
+          dispatch(props.isRfSource ? rfSetPLLConfig(res.data) : loSetPLLConfig(res.data));        
+          setTimeout(() => {fetch()}, props.interval ?? 5000);
+        })
+        .catch(error => {
+          console.log(error);
+        })    
+    }
+  }, [dispatch, prefix, props.isRfSource, props.interval, isMounted]);
   
-    // first render load
+  // Fetch on first render:
+  useEffect(() => {
+    isMounted.current = true;
     fetch();
-    
-    // periodic load
-    const timer = setInterval(() => { 
-      if (isMounted)
-        fetch();
-    }, props.interval ?? 5000);
-    
-    // return cleanup function
-    return () => {
-      isMounted = false;
-      clearInterval(timer);      
-    };
-  }, [props.interval, fetch]);
+    return () => { isMounted.current = false; };
+  }, [fetch]);
 
   // LOCK button handler
   const lockHandler = () => {
@@ -92,6 +88,7 @@ export default function PLL(props) {
           setIsLocking(false);
           setLockFailed(true);
         }
+        setFreqChanged(false);
         // Load content now
         fetch();
         // Set a timer to finalize LOCK button appearance
@@ -185,19 +182,15 @@ export default function PLL(props) {
   const onChangeLO = (value) => {
     setIsLocked(false);
     dispatch(props.isRfSource ? setInputRF(value) : setInputLO(value));
-  }
+    setFreqChanged(true);
+  };
 
   const unlockDetect = pll.unlockDetected;
   return (
     <Grid container paddingLeft="5px">
       <Grid item xs={12}><Typography variant="body1" fontWeight="bold">PLL</Typography></Grid>        
-
-      <Grid item xs={4}>
-        <Chip 
-          label={isLocked ? "LOCKED" : "UNLOCK"}
-          color={isLocked ? "success" : "error"}
-          size="small"
-        />
+      <Grid item xs={3.5}>
+        <Typography variant="body2" display="inline" paddingTop="4px">Frequency:</Typography>
       </Grid>
       <Grid item xs={4}>
         <OutlinedInput
@@ -207,10 +200,11 @@ export default function PLL(props) {
           style={{width: '60%'}}
           className="smallinput"
           onChange={e => onChangeLO(e.target.value)}
-          value = {inputFreq}
+          value = {freqChanged ? inputFreq : pll.loFreqGHz}
         />
         <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;GHz</Typography>
       </Grid>
+      <Grid item xs={0.5}/>
       <Grid item xs={2.5}>
         <LockButton
           isLocked={isLocked}
@@ -221,27 +215,21 @@ export default function PLL(props) {
         />
       </Grid>
       
-      <Grid item xs={4}><Typography variant="body2" paddingTop="6px">Unlock detect latch:</Typography></Grid>
-      <Grid item xs={4}>
-        <Chip 
-          label={unlockDetect ? "YES" : "NO"}
-          color={unlockDetect ? "error" : "success"}
-          size="small"
-        />
-      </Grid>
+      <Grid item xs={6.6}><Typography variant="body2" paddingTop="6px">Unlock Detect</Typography></Grid>
+      <Grid item xs={1.4}><Typography variant="body2" paddingTop="4px">Latch:&nbsp;</Typography></Grid>
       <Grid item xs={2.5}>
-        <Button
-          className="custom-btn-sm"
-          variant="contained"
-          size="small"
-          style={{
-            minWidth: '100%',
-            maxWidth: '100%' 
-          }}
+        <EnableButton
+          id="clearUnlock"
+          enableColor="green"
+          disableColor="red"
+          enableText="OK"
+          disableText="CLEAR"
+          enable={!unlockDetect}
+          width="100%"
           onClick={e => clearUnlockHandler()}
         >
           CLEAR
-        </Button>
+        </EnableButton>
       </Grid>      
 
       <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Correction:</Typography></Grid>

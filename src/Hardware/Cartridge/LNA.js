@@ -17,36 +17,29 @@ export default function LNA(props) {
   const inputs = useSelector((state) => state.Cartridge.inputs.LNA[props.pol][props.lna - 1]);
   const dispatch = useDispatch();
 
+  // Only fetch data when mounted
+  const isMounted = useRef(false);
+
   // Load data from REST API
   const fetch = useCallback(() => {
-    axios.get("/cca/lna", {params: {pol: props.pol, lna: props.lna}})
-      .then(res => {
-        dispatch(setLNA({pol: props.pol, lna: props.lna, data:res.data}));
-      })
-      .catch(error => {
-        console.log(error);
-      })
-  }, [dispatch, props.pol, props.lna]);
+    if (isMounted.current) {
+      axios.get("/cca/lna", {params: {pol: props.pol, lna: props.lna}})
+        .then(res => {
+          dispatch(setLNA({pol: props.pol, lna: props.lna, data:res.data}));
+          setTimeout(() => {fetch()}, props.interval ?? 5000);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      }
+  }, [dispatch, props.pol, props.lna, props.interval]);
 
-  // Periodic refresh timer
+  // Fetch on first render:
   useEffect(() => {
-    let isMounted = true;
-  
-    // first render load
+    isMounted.current = true;
     fetch();
-    
-    // periodic load
-    const timer = setInterval(() => { 
-      if (isMounted)
-        fetch();
-    }, props.interval ?? 5000);
-    
-    // return cleanup function
-    return () => {
-      isMounted = false;
-      clearInterval(timer);      
-    };
-  }, [props.interval, fetch]);
+    return () => { isMounted.current = false; };
+  }, [fetch]);
 
   // SET button handler
   const setButtonHandler = useCallback(() => {

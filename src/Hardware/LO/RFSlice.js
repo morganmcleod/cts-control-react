@@ -15,6 +15,7 @@ export const rfSetAMC = RFSlice.actions.setAMC;
 export const rfSetPA = RFSlice.actions.setPA;
 export const setInputRF = RFSlice.actions.setInputLOFreq;
 export const rfSetPLL = RFSlice.actions.setPLL;
+export const rfSetLockInfo = RFSlice.actions.setLockInfo
 export const rfSetPLLConfig = RFSlice.actions.setPLLConfig;
 export const rfSetYTO = RFSlice.actions.setYTO;
 export const rfSetYTOCourseTune = RFSlice.actions.setYTOCourseTune;

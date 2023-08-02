@@ -146,8 +146,6 @@ export default function YTO(props) {
 
       <Grid item xs={3}><Typography variant="body2" paddingTop="4px">YTO freq:</Typography></Grid>
       <Grid item xs={8}><Typography fontWeight="bold" paddingTop="2px">{yto.ytoFreqGHz.toFixed(3)} GHz</Typography></Grid>
-      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">LO freq:</Typography></Grid>
-      <Grid item xs={8}><Typography fontWeight="bold" paddingTop="2px">{yto.loFreqGHz.toFixed(3)} GHz</Typography></Grid>
     </Grid>
   );
 };

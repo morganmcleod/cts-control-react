@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -26,41 +26,35 @@ export default function PA(props) {
 
   // URL prefix
   const prefix = props.isRfSource ? '/rfsource' : '/lo'
+  
+  // Only fetch data when mounted
+  const isMounted = useRef(false);
 
   // Load data from REST API
   const fetch = useCallback(() => {
-    axios.get(prefix + '/pa')
-      .then(res => {
-        dispatch(props.isRfSource ? rfSetPA(res.data) : loSetPA(res.data));
-        if (inputVGp0 === "")
-          setInputVGp0(res.data.VGp0);
-        if (inputVGp1 === "")
-          setInputVGp1(res.data.VGp1);
-      })
-      .catch(error => {
-        console.log(error);
-      })
-  }, [dispatch, inputVGp0, inputVGp1, prefix, props.isRfSource]);
+    if (isMounted.current) {
+      axios.get(prefix + '/pa')
+        .then(res => {
+          dispatch(props.isRfSource ? rfSetPA(res.data) : loSetPA(res.data));
+          if (inputVGp0 === "")
+            setInputVGp0(res.data.VGp0);
+          if (inputVGp1 === "")
+            setInputVGp1(res.data.VGp1);
 
-  // Periodic refresh timer
-  useEffect(() => {
-    let isMounted = true;
+          setTimeout(() => {fetch()}, props.interval ?? 5000);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+    }
+  }, [dispatch, prefix, inputVGp0, inputVGp1, props.isRfSource, props.interval]);
   
-    // first render load
+  // Fetch on first render:
+  useEffect(() => {
+    isMounted.current = true;
     fetch();
-    
-    // periodic load
-    const timer = setInterval(() => { 
-      if (isMounted)
-        fetch();
-    }, props.interval ?? 5000);
-    
-    // return cleanup function
-    return () => {
-      isMounted = false;
-      clearInterval(timer);      
-    };
-  }, [props.interval, fetch]);
+    return () => { isMounted.current = false; };
+  }, [fetch]);
 
   // SET buttons handler
   const setPAHandler = (pol) => {

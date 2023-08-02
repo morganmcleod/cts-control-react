@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -19,36 +19,29 @@ export default function AMC(props) {
   // URL prefix
   const prefix = props.isRfSource ? '/rfsource' : '/lo'
 
+  // Only fetch data when mounted
+  const isMounted = useRef(false);
+
   // Load data from REST API
   const fetch = useCallback(() => {
-    axios.get(prefix + '/amc')
-      .then(res => {
-        dispatch(props.isRfSource? rfSetAMC(res.data) : loSetAMC(res.data));
-      })
-      .catch(error => {
-        console.log(error);
-      })
-  }, [dispatch, prefix, props.isRfSource]);
+    if (isMounted.current) {
+      axios.get(prefix + '/amc')
+        .then(res => {
+          dispatch(props.isRfSource? rfSetAMC(res.data) : loSetAMC(res.data));
+          setTimeout(() => {fetch()}, props.interval ?? 5000);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+    }
+  }, [dispatch, prefix, props.isRfSource, props.interval]);
 
-   // Periodic refresh timer
-   useEffect(() => {
-    let isMounted = true;
-  
-    // first render load
+  // Fetch on first render:
+  useEffect(() => {
+    isMounted.current = true;
     fetch();
-    
-    // periodic load
-    const timer = setInterval(() => { 
-      if (isMounted)
-        fetch();
-    }, props.interval ?? 5000);
-    
-    // return cleanup function
-    return () => {
-      isMounted = false;
-      clearInterval(timer);      
-    };
-  }, [props.interval, fetch]);
+    return () => { isMounted.current = false; };
+  }, [fetch]);
 
   return (
     <Grid container paddingLeft="5px">

@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -15,37 +15,30 @@ export default function CartridgeTemps(props) {
     const temps = useSelector((state) => state.Cartridge.Temperatures);
     const dispatch = useDispatch();
 
+    // Only fetch data when mounted
+    const isMounted = useRef(false);
+
     // Load data from REST API
     const fetch = useCallback(() => {
-      axios.get(`/cca/tempsensors`)
-        .then(res => {
-          dispatch(setTemperatures(res.data));
-        })
-        .catch(error => {
-          console.log(error);
-        })
-    }, [dispatch]);
+      if (isMounted.current) {
+        axios.get(`/cca/tempsensors`)
+          .then(res => {
+            dispatch(setTemperatures(res.data));
+            setTimeout(() => {fetch()}, props.interval ?? 5000);
+          })
+          .catch(error => {
+            console.log(error);
+          })
+        }
+    }, [dispatch, props.interval]);
 
-  // Periodic refresh timer
+  // Fetch on first render:
   useEffect(() => {
-    let isMounted = true;
-  
-    // first render load
+    isMounted.current = true;
     fetch();
-    
-    // periodic load
-    const timer = setInterval(() => { 
-      if (isMounted)
-        fetch();
-    }, props.interval ?? 5000);
-    
-    // return cleanup function
-    return () => {
-      isMounted = false;
-      clearInterval(timer);      
-    };
-  }, [props.interval, fetch]);
-  
+    return () => { isMounted.current = false; };
+  }, [fetch]);
+
   return (
     <Grid container paddingLeft="5px">
       <Grid item xs={12}><Typography variant="body1" fontWeight="bold">Temperatures</Typography></Grid>
