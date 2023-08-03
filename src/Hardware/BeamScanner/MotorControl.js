@@ -201,7 +201,7 @@ export default function MotorController(props) {
 
   // GOTO button handler
   const handleGoto = () => {
-    if (gotoChanged && goto.x >= 0 && goto.y >= 0 && goto.pol >= 0) {
+    if (gotoChanged) {
       dispatch(setGotoPosition(goto));
     }
   }
@@ -229,7 +229,13 @@ export default function MotorController(props) {
   }
 
   const handleServoHere = () => {
-    console.log("implement Servo Here");
+    axios.put("/beamscan/mc/servo_here")
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(error => {
+        console.log(error);
+      })
   }
   
   let gotoValid = {x:true, y:true, pol:true};
@@ -238,7 +244,7 @@ export default function MotorController(props) {
       gotoValid.x = false;
     if (goto.y < 0 || isNaN(goto.y))
       gotoValid.y = false;
-    if (goto.pol < 0 || isNaN(goto.pol))
+    if (isNaN(goto.pol))
       gotoValid.pol = false;
   }
 
@@ -536,6 +542,7 @@ export default function MotorController(props) {
               <Button
                 variant="contained"
                 size="small"
+                onClick={e => handleSetZero('y')}
                 style={{
                   paddingTop: "0%", 
                   paddingBottom: "0%",

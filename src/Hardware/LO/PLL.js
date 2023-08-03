@@ -40,7 +40,7 @@ export default function PLL(props) {
       axios.get(prefix + '/pll')
         .then(res => {
           dispatch(props.isRfSource ? rfSetPLL(res.data) : loSetPLL(res.data));
-          setIsLocked(res.data.isLocked)
+          setIsLocked(res.data.isLocked && !freqChanged);
         })
         .catch(error => {
           console.log(error);
