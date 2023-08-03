@@ -151,8 +151,8 @@ export default function SIS(props) {
         </Button>
       </Grid>
 
-      <Grid item xs={3}><Typography variant="body2">Ij [mA]:</Typography></Grid>
-      <Grid item xs={9}><Typography fontWeight="bold">{SIS.Ij.toFixed(3)}</Typography></Grid>
+      <Grid item xs={3}><Typography variant="body2">Ij [uA]:</Typography></Grid>
+      <Grid item xs={9}><Typography fontWeight="bold">{SIS.Ij.toFixed(2)}</Typography></Grid>
 
       <Grid item xs={12}><Typography variant="body1" fontWeight="bold">Magnet {props.sis}</Typography></Grid>
 

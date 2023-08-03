@@ -80,8 +80,9 @@ export default function SystemStatus(props) {
       <Grid item xs={12}>
         <Typography variant="body2" fontWeight="bold">System Status</Typography>
       </Grid>
+      
       <Grid item xs={2}><Typography variant="body2" paddingTop="4px">Measuring:</Typography></Grid>
-      <Grid item xs={2.5}>
+      <Grid item xs={3}>
         <Chip 
           label={active ? "RUNNING" : "STOPPED"}
           color={active ? "success" : "error"}
@@ -97,7 +98,7 @@ export default function SystemStatus(props) {
       <Grid item xs={7}><Typography fontWeight="bold" paddingTop="2px">{description}</Typography></Grid>
 
       <Grid item xs={2}><Typography variant="body2" paddingTop="4px">LO:</Typography></Grid>
-      <Grid item xs={2.5}>
+      <Grid item xs={3}>
         <Chip 
           label={lo.PLL.isLocked ? "LOCKED" : "UNLOCKED"}
           color={lo.PLL.isLocked ? "success" : "error"}
@@ -110,12 +111,12 @@ export default function SystemStatus(props) {
           }}
         />
       </Grid>
-      <Grid item xs={2.2}><Typography fontWeight="bold" paddingTop="2px">{lo.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
+      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{lo.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
       <Grid item xs={2}><Typography variant="body2" paddingTop="4px">IF Switch:</Typography></Grid>
-      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{inputSwitch}</Typography></Grid>
+      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{inputSwitch}</Typography></Grid>
 
       <Grid item xs={2}><Typography variant="body2" paddingTop="4px">RF:</Typography></Grid>
-      <Grid item xs={2.5}>
+      <Grid item xs={3}>
         <Chip 
           label={rf.PLL.isLocked ? "LOCKED" : "UNLOCKED"}
           color={rf.PLL.isLocked ? "success" : "error"}
@@ -128,9 +129,9 @@ export default function SystemStatus(props) {
           }}
         />
       </Grid>
-      <Grid item xs={2.2}><Typography fontWeight="bold" paddingTop="2px">{rf.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
+      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{rf.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
       <Grid item xs={2}><Typography variant="body2" paddingTop="4px">YIG Filter:</Typography></Grid>
-      <Grid item xs={3}><Typography fontWeight="bold" paddingTop="2px">{yigFilter.toFixed(2)} GHz</Typography></Grid>
+      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{yigFilter.toFixed(2)} GHz</Typography></Grid>
     </Grid>
   );
 }
