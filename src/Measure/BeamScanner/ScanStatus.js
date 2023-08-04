@@ -63,7 +63,7 @@ export default function ScanStatus(props) {
   }
 
   return (
-    <Grid container paddingLeft="5px">
+    <Grid container paddingLeft="8px">
       <Grid item xs={12}><Typography variant="h6">Scan Status</Typography></Grid>
       <Grid item xs={4}><Typography variant="body2" paddingTop="4px">CartTest key:</Typography></Grid>
       <Grid item xs={8}><Typography fontWeight="bold">{scanStatus.key}</Typography></Grid>
