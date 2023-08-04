@@ -1,6 +1,7 @@
 // React and Redux
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux'
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 // UI components and style
 import {
@@ -83,6 +84,27 @@ export default function MotorController(props) {
   const measActive = useSelector((state) => state.Measure.active);
   const dispatch = useDispatch();
 
+  const options = {retryOnError: true, shouldReconnect: (closeEvent) => true};
+
+  const { 
+    readyState: statusReady,
+    lastMessage: statusMessage 
+  } = useWebSocket("ws://localhost:8000/beamscan/motorstatus_ws", options);
+
+  useEffect(() => {
+    if (statusReady === ReadyState.OPEN) {
+      if (statusMessage !== null) {
+        try {
+          const status = JSON.parse(statusMessage.data);
+          dispatch(setMotorStatus(status));
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    }
+  }, [statusReady, statusMessage, dispatch]);
+
+
   // Close the controls accordion if a measurement has started:
   if (measActive && accExpanded)
     setAccExpanded(false);
@@ -92,22 +114,6 @@ export default function MotorController(props) {
     axios.get('/beamscan/mc/isconnected')
       .then(res => {
         dispatch(setIsConnected(res.data.value))
-      })
-      .catch(error => {
-        console.log(error);
-      })
-      
-    axios.get('beamscan/mc/status')
-      .then(res => {
-        const motor_status = res.data;
-        dispatch(setMotorStatus(motor_status))
-        // if currently in motion, ignore GOTO inputs
-        if (motor_status.xMotion || 
-            motor_status.yMotion || 
-            motor_status.polMotion) 
-        {
-          setGotoChanged(false);
-        }
       })
       .catch(error => {
         console.log(error);

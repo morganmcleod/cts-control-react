@@ -17,14 +17,16 @@ export default function BeamScannerMain(props) {
     <Grid container>
       <Grid item xs={5}>
         <MotorController/>
-        <Box padding="20px">
+        <Box padding="10px">
           <BeamScannerGraph/>
         </Box>
       </Grid>
       <Grid item xs={3}>
         <MeasSpec/>
-        <Box paddingTop="20px">
+        <Box paddingTop="10px">
           <RasterGraph type="amp"/>
+        </Box>
+        <Box paddingTop="10px">
           <RasterGraph type="phase"/>
         </Box>
       </Grid>

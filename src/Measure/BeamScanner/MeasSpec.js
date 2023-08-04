@@ -23,6 +23,7 @@ export default function MeasSpec(props) {
   // Redux store interfaces
   const disabled = useSelector((state) => state.Measure.active);
   const measSpec = useSelector((state) => state.BeamScanner.measurementSpec);
+  const position = useSelector((state) => state.MotorControl.position);
   const dispatch = useDispatch();
   
   const fetch = useCallback(() => {
@@ -50,8 +51,6 @@ export default function MeasSpec(props) {
       spec.scanEnd.y,
       spec.scanAngles[0],
       spec.scanAngles[1],
-      spec.levelAngles[0],
-      spec.levelAngles[1],
       spec.targetLevel,
       spec.resolution,
       spec.centersInterval
@@ -102,12 +101,6 @@ export default function MeasSpec(props) {
       case "scanangle-1":
         spec = {...measSpec, scanAngles: [measSpec.scanAngles[0], e.target.value]};
         break;
-      case "levelangle-0":
-        spec = {...measSpec, levelAngles: [e.target.value, measSpec.levelAngles[1]]};
-        break;
-      case "levelangle-1":
-        spec = {...measSpec, levelAngles: [measSpec.levelAngles[0], e.target.value]};
-        break;
       case "target-level":
         spec = {...measSpec, targetLevel: e.target.value};
         break;
@@ -155,7 +148,7 @@ export default function MeasSpec(props) {
           dispatch(setGotoPosition({
             x: measSpec.beamCenter.x, 
             y: measSpec.beamCenter.y,
-            pol: measSpec.levelAngles[0]
+            pol: position.pol
           }));
         }
         break;
@@ -164,7 +157,7 @@ export default function MeasSpec(props) {
           dispatch(setGotoPosition({
             x: measSpec.scanStart.x, 
             y: measSpec.scanStart.y,
-            pol: measSpec.scanAngles[0]
+            pol:position.pol
           }));
         }
         break;
@@ -173,12 +166,30 @@ export default function MeasSpec(props) {
           dispatch(setGotoPosition({
             x: measSpec.scanEnd.x, 
             y: measSpec.scanEnd.y,
-            pol: measSpec.scanAngles[0]
+            pol: position.pol
           }));
         }
-      break;
-        default:
-          break;
+        break;
+      case "goPol0":
+        if (measSpec.scanAngles[0] >= -200 && measSpec.scanAngles[0] <= 180 ) {
+          dispatch(setGotoPosition({
+            x: position.x, 
+            y: position.y, 
+            pol:  measSpec.scanAngles[0]
+          }));
+        }
+        break;
+      case "goPol1":
+        if (measSpec.scanAngles[1] >= -200 && measSpec.scanAngles[1] <= 180 ) {
+          dispatch(setGotoPosition({
+            x: position.x, 
+            y: position.y, 
+            pol: measSpec.scanAngles[1]
+          }));
+        }
+        break;
+      default:
+        break;
     }
   }
 
@@ -333,20 +344,18 @@ export default function MeasSpec(props) {
       </Grid>
 
       <Grid item xs={12}>&nbsp;</Grid>
-
-      <Grid item xs={4}/>
-      <Grid item xs={3}><Typography variant="body2">&nbsp;&nbsp;&nbsp;Pol 0</Typography></Grid>
-      <Grid item xs={3}><Typography variant="body2">&nbsp;&nbsp;&nbsp;Pol 1</Typography></Grid>
-      <Grid item xs={2}/>
       
-      <Grid item xs={4}>
+      <Grid item xs={5}>
         <Typography variant="body2" paddingTop="4px">Scan angles [deg]:</Typography>
+      </Grid>
+      <Grid item xs={2}>
+        <Typography variant="body2" paddingTop="4px" align="center">Pol 0:</Typography>
       </Grid>
       <Grid item xs={3}>
         <OutlinedInput
           name="scanangle-0"
           disabled={disabled}
-          error={measSpec.scanAngles[0] < -180 || measSpec.scanAngles[0] === '' || isNaN(measSpec.scanAngles[0])}
+          error={measSpec.scanAngles[0] < -200 || measSpec.scanAngles[0] > 180 || measSpec.scanAngles[0] === '' || isNaN(measSpec.scanAngles[0])}
           size="small"
           margin="none"          
           style={{width: '85%'}}
@@ -355,11 +364,32 @@ export default function MeasSpec(props) {
           value = {measSpec.scanAngles[0]}
         />
       </Grid>
+      <Grid item xs={2}>
+        <Button
+          name="goPol0"
+          disabled={disabled || measSpec.scanAngles[0] === '' || isNaN(measSpec.scanAngles[0])}          
+          className="custom-btn-sm"
+          variant="contained"
+          size="small"
+          style={{
+            minWidth: '55%',
+            maxWidth: '55%' 
+          }}
+          onClick={e => handleGoto(e)}
+        >
+          GO
+        </Button>
+      </Grid>
+
+      <Grid item xs={5}/>
+      <Grid item xs={2}>
+        <Typography variant="body2" paddingTop="4px" align="center">Pol 1:</Typography>
+      </Grid>
       <Grid item xs={3}>
         <OutlinedInput
           name="scanangle-1"
           disabled={disabled}
-          error={measSpec.scanAngles[1] < -180 || measSpec.scanAngles[1] === '' || isNaN(measSpec.scanAngles[1])}
+          error={measSpec.scanAngles[1] < -200 || measSpec.scanAngles[1] > 180 || measSpec.scanAngles[1] === '' || isNaN(measSpec.scanAngles[1])}
           size="small"
           margin="none"          
           style={{width: '85%'}}
@@ -368,39 +398,22 @@ export default function MeasSpec(props) {
           value = {measSpec.scanAngles[1]}
         />
       </Grid>
-      <Grid item xs={2}/>
-
-      <Grid item xs={4}>
-        <Typography variant="body2" paddingTop="4px">Level angles [deg]:</Typography>
-      </Grid>
-      <Grid item xs={3}>
-        <OutlinedInput
-          name="levelangle-0"
-          disabled={disabled}
-          error={measSpec.levelAngles[0] < -180 || measSpec.levelAngles[0] === '' || isNaN(measSpec.levelAngles[0])}
+      <Grid item xs={2}>
+        <Button
+          name="goPol1"
+          disabled={disabled || measSpec.scanAngles[1] === '' || isNaN(measSpec.scanAngles[1])} 
+          className="custom-btn-sm"
+          variant="contained"
           size="small"
-          margin="none"          
-          style={{width: '85%'}}
-          className="smallinput"
-          onChange={e => {handleChangeSetting(e)}}
-          value = {measSpec.levelAngles[0]}
-        />
+          style={{
+            minWidth: '55%',
+            maxWidth: '55%' 
+          }}
+          onClick={e => handleGoto(e)}
+        >
+          GO
+        </Button>
       </Grid>
-      <Grid item xs={3}>
-        <OutlinedInput
-          name="levelangle-1"
-          disabled={disabled}
-          error={measSpec.levelAngles[1] < -180 || measSpec.levelAngles[1] === '' || isNaN(measSpec.levelAngles[1])}
-          size="small"
-          margin="none"          
-          style={{width: '85%'}}
-          className="smallinput"
-          onChange={e => {handleChangeSetting(e)}}
-          value = {measSpec.levelAngles[1]}
-        />
-      </Grid>
-      <Grid item xs={2}/>
-
       <Grid item xs={12}>&nbsp;</Grid>
 
       <Grid item xs={4}>

@@ -44,7 +44,7 @@ export default function MeasControl(props) {
       .then(res => {
         console.log(res.data);
         if (res.data.success) {
-          // dispatch(setMeasureActive(true));
+          dispatch(setMeasureActive(true));
           dispatch(setMeasureDescription(props.description));
         } else {
           dispatch(setMeasureDescription(res.data.message));

@@ -22,7 +22,6 @@ export const BeamScannerSlice = createSlice({
       scanStart: {x:0, y:0},
       scanEnd: {x:0, y:0},
       scanAngles: [0, 0],
-      levelAngles: [0, 0],
       targetLevel: 0,
       resolution: 0,
       centersInterval: 0,

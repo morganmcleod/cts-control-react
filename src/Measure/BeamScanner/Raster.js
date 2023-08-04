@@ -8,7 +8,11 @@ export default function RasterGraph(props) {
   const measSpec = useSelector((state) => state.BeamScanner.measurementSpec)
 
   return (
-    <Plot
+    <Plot      
+      style = {{
+        width: "auto"     
+      }}
+      useResizeHandler
       data = {[{
         name: 'amplitude',
         x: rasterPlot.x,
@@ -18,7 +22,8 @@ export default function RasterGraph(props) {
         showscale: false,
       }]}
       layout = {{
-        width: 320, height: 170,
+        autosize: true,
+        height: 170,
         xaxis: {
           title: 'X [mm]',
           range: [measSpec.scanStart.x, measSpec.scanEnd.x],

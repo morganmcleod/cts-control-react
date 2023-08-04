@@ -54,7 +54,11 @@ export default function BeamScannerGraph(props) {
   }, [rasterReady, rasterMessage, dispatch]);
  
   return (
-    <Plot
+    <Plot 
+      style = {{
+        width: "auto"        
+      }}
+      useResizeHandler
       data = {[{
         name: 'position',
         x: [position.x],
@@ -72,7 +76,7 @@ export default function BeamScannerGraph(props) {
         showscale: false        
       }]}
       layout = {{
-        width: 500, height: 450,
+        autosize: true,
         xaxis: {
           title: 'X [mm]',
           range: [measSpec.scanStart.x - 10, measSpec.scanEnd.x + 10],
