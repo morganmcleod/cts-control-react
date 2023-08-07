@@ -1,9 +1,12 @@
-import React, {useEffect} from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { useDispatch, useSelector } from 'react-redux'
 import { setPosition } from "../../Hardware/BeamScanner/MotorControlSlice";
 import { resetRasters, addRaster } from "./BeamScannerSlice";
 import Plot from "react-plotly.js";
+
+import axios from "axios";
+
 
 export default function BeamScannerGraph(props) {
   // Redux store interface
@@ -19,10 +22,10 @@ export default function BeamScannerGraph(props) {
     lastMessage: posMessage 
   } = useWebSocket("ws://localhost:8000/beamscan/position_ws", options);
     
-  const { 
-    readyState: rasterReady,
-    lastMessage: rasterMessage 
-  } = useWebSocket("ws://localhost:8000/beamscan/rasters_ws", options);
+  // const { 
+  //   readyState: rasterReady,
+  //   lastMessage: rasterMessage 
+  // } = useWebSocket("ws://localhost:8000/beamscan/rasters_ws", options);
 
   useEffect(() => {
     if (posReady === ReadyState.OPEN) {
@@ -37,22 +40,58 @@ export default function BeamScannerGraph(props) {
     }
   }, [posReady, posMessage, dispatch]);
 
-  useEffect(() => {
-    if (rasterReady === ReadyState.OPEN) {
-      if (rasterMessage !== null) {
-        try {
-          const rasters = JSON.parse(rasterMessage.data);
-          if (rasters.startIndex === 0)
-            dispatch(resetRasters());
-          for (const raster of rasters.rasters)
-            dispatch(addRaster(raster));
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    }
-  }, [rasterReady, rasterMessage, dispatch]);
+  // useEffect(() => {
+  //   if (rasterReady === ReadyState.OPEN) {
+  //     if (rasterMessage !== null) {
+  //       try {
+  //         const rasters = JSON.parse(rasterMessage.data);
+  //         if (rasters.startIndex === 0)
+  //           dispatch(resetRasters());
+  //         for (const raster of rasters.rasters)
+  //           dispatch(addRaster(raster));
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     }
+  //   }
+  // }, [rasterReady, rasterMessage, dispatch]);
  
+  const startIndex = useRef(0);
+  const timer = useRef(0);
+
+  // Only fetch data when mounted
+  const isMounted = useRef(false);
+
+  const fetch = useCallback(() => {
+    axios.get('/beamscan/rasters', { params: { startIndex: startIndex.current }})
+    .then(res => {
+      if (res.data.rasters.length) {
+        if (res.data.startIndex === 0) {        
+          dispatch(resetRasters());
+        }
+        for (const raster of res.data.rasters)
+          dispatch(addRaster(raster));
+        startIndex.current = res.data.startIndex + res.data.rasters.length;        
+      }
+      timer.current = setTimeout(() => {fetch()}, props.interval ?? 4000);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }, [dispatch, props.interval, startIndex]);
+  
+  // Fetch on first render:
+  useEffect(() => {
+    isMounted.current = true;
+    fetch();
+    return () => { 
+      isMounted.current = false; 
+      if (timer.current) {
+        clearTimeout(timer.current);
+        timer.current = 0;
+      }};
+  }, [fetch]);
+
   return (
     <Plot 
       style = {{
