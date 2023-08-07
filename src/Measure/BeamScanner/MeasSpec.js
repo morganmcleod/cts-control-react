@@ -198,8 +198,8 @@ export default function MeasSpec(props) {
       <Grid item xs={12}><Typography variant="h6">Measurement Setup</Typography></Grid>
 
       <Grid item xs={4}/>
-      <Grid item xs={3}><Typography variant="body2">&nbsp;&nbsp;&nbsp;X [mm]</Typography></Grid>
-      <Grid item xs={3}><Typography variant="body2">&nbsp;&nbsp;&nbsp;Y [mm]</Typography></Grid>
+      <Grid item xs={3} align="center"><Typography variant="body2">X [mm]</Typography></Grid>
+      <Grid item xs={3} align="center"><Typography variant="body2">Y [mm]</Typography></Grid>
       <Grid item xs={2}/>
       
       <Grid item xs={4}>
@@ -212,7 +212,7 @@ export default function MeasSpec(props) {
           error={measSpec.scanStart.x < 0 || measSpec.scanStart.x === '' || isNaN(measSpec.scanStart.x)}
           size="small"
           margin="none"          
-          style={{width: '85%'}}
+          style={{width: '95%'}}
           className="smallinput"
           onChange={e => {handleChangeSetting(e)}}
           value = {measSpec.scanStart.x}
@@ -225,13 +225,13 @@ export default function MeasSpec(props) {
           error={measSpec.scanStart.y < 0 || measSpec.scanStart.y === '' || isNaN(measSpec.scanStart.y)}
           size="small"
           margin="none"          
-          style={{width: '85%'}}
+          style={{width: '95%'}}
           className="smallinput"
           onChange={e => {handleChangeSetting(e)}}
           value = {measSpec.scanStart.y}
         />
       </Grid>
-      <Grid item xs={2}>
+      <Grid item xs={2} align="center">
         <Button
           name="goScanStart"
           disabled={disabled || measSpec.scanStart.x < 0 || measSpec.scanStart.x === '' || isNaN(measSpec.scanStart.x)
@@ -259,7 +259,7 @@ export default function MeasSpec(props) {
           error={measSpec.beamCenter.x < 0 || measSpec.beamCenter.x === '' || isNaN(measSpec.beamCenter.x)}
           size="small"
           margin="none"          
-          style={{width: '85%'}}
+          style={{width: '95%'}}
           className="smallinput"
           onChange={e => {handleChangeSetting(e)}}
           value = {measSpec.beamCenter.x}
@@ -272,13 +272,13 @@ export default function MeasSpec(props) {
           error={measSpec.beamCenter.y < 0 || measSpec.beamCenter.y === '' || isNaN(measSpec.beamCenter.y)}
           size="small"
           margin="none"          
-          style={{width: '85%'}}
+          style={{width: '95%'}}
           className="smallinput"
           onChange={e => {handleChangeSetting(e)}}
           value = {measSpec.beamCenter.y}
         />
       </Grid>
-      <Grid item xs={2}>
+      <Grid item xs={2} align="center">
         <Button
           name="goBeamCenter"
           disabled={disabled || measSpec.beamCenter.x < 0 || measSpec.beamCenter.x === '' || isNaN(measSpec.beamCenter.x)
@@ -306,7 +306,7 @@ export default function MeasSpec(props) {
           error={measSpec.scanEnd.x < 0 || measSpec.scanEnd.x === '' || isNaN(measSpec.scanEnd.x)}
           size="small"
           margin="none"          
-          style={{width: '85%'}}
+          style={{width: '95%'}}
           className="smallinput"
           onChange={e => {handleChangeSetting(e)}}
           value = {measSpec.scanEnd.x}
@@ -319,13 +319,13 @@ export default function MeasSpec(props) {
           error={measSpec.scanEnd.y < 0 || measSpec.scanEnd.y === '' || isNaN(measSpec.scanEnd.y)}
           size="small"
           margin="none"          
-          style={{width: '85%'}}
+          style={{width: '95%'}}
           className="smallinput"
           onChange={e => {handleChangeSetting(e)}}
           value = {measSpec.scanEnd.y}
         />
       </Grid>
-      <Grid item xs={2}>
+      <Grid item xs={2} align="center">
         <Button
           name="goScanEnd"
           disabled={disabled || measSpec.scanEnd.x < 0 || measSpec.scanEnd.x === '' || isNaN(measSpec.scanEnd.x)
@@ -343,10 +343,14 @@ export default function MeasSpec(props) {
         </Button>
       </Grid>
 
-      <Grid item xs={12}>&nbsp;</Grid>
+      <Grid item xs={7}/>
+      <Grid item xs={3} align="center">
+        <Typography variant="body2" paddingTop="4px">[deg]</Typography>
+      </Grid>
+      <Grid item xs={2}/>
       
       <Grid item xs={5}>
-        <Typography variant="body2" paddingTop="4px">Scan angles [deg]:</Typography>
+        <Typography variant="body2" paddingTop="4px">Scan angles :</Typography>
       </Grid>
       <Grid item xs={2}>
         <Typography variant="body2" paddingTop="4px" align="center">Pol 0:</Typography>
@@ -358,13 +362,13 @@ export default function MeasSpec(props) {
           error={measSpec.scanAngles[0] < -200 || measSpec.scanAngles[0] > 180 || measSpec.scanAngles[0] === '' || isNaN(measSpec.scanAngles[0])}
           size="small"
           margin="none"          
-          style={{width: '85%'}}
+          style={{width: '95%'}}
           className="smallinput"
           onChange={e => {handleChangeSetting(e)}}
           value = {measSpec.scanAngles[0]}
         />
       </Grid>
-      <Grid item xs={2}>
+      <Grid item xs={2} align="center">
         <Button
           name="goPol0"
           disabled={disabled || measSpec.scanAngles[0] === '' || isNaN(measSpec.scanAngles[0])}          
@@ -392,13 +396,13 @@ export default function MeasSpec(props) {
           error={measSpec.scanAngles[1] < -200 || measSpec.scanAngles[1] > 180 || measSpec.scanAngles[1] === '' || isNaN(measSpec.scanAngles[1])}
           size="small"
           margin="none"          
-          style={{width: '85%'}}
+          style={{width: '95%'}}
           className="smallinput"
           onChange={e => {handleChangeSetting(e)}}
           value = {measSpec.scanAngles[1]}
         />
       </Grid>
-      <Grid item xs={2}>
+      <Grid item xs={2} align="center">
         <Button
           name="goPol1"
           disabled={disabled || measSpec.scanAngles[1] === '' || isNaN(measSpec.scanAngles[1])} 
@@ -426,7 +430,7 @@ export default function MeasSpec(props) {
           error={measSpec.targetLevel < -100 || measSpec.targetLevel > 15 || measSpec.targetLevel === '' || isNaN(measSpec.targetLevel)}
           size="small"
           margin="none"          
-          style={{width: '42.5%'}}
+          style={{width: '47.5%'}}
           className="smallinput"
           onChange={e => {handleChangeSetting(e)}}
           value = {measSpec.targetLevel}
@@ -445,7 +449,7 @@ export default function MeasSpec(props) {
           size="small"
           margin="none"          
           onChange={e => {handleChangeSetting(e)}}
-          style={{width: '42.5%'}}
+          style={{width: '47.5%'}}
           className="smallinput"
           value = {measSpec.resolution}
         /><Typography variant="body2" display="inline" paddingTop="4px">&nbsp;mm</Typography>
@@ -463,7 +467,7 @@ export default function MeasSpec(props) {
           size="small"
           margin="none"          
           onChange={e => {handleChangeSetting(e)}}
-          style={{width: '42.5%'}}
+          style={{width: '47.5%'}}
           className="smallinput"
           value = {measSpec.centersInterval}
         /><Typography variant="body2" display="inline" paddingTop="4px">&nbsp;sec</Typography>

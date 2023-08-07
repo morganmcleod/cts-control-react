@@ -81,8 +81,8 @@ export default function SystemStatus(props) {
         <Typography variant="body2" fontWeight="bold">System Status</Typography>
       </Grid>
       
-      <Grid item xs={2}><Typography variant="body2" paddingTop="4px">Measuring:</Typography></Grid>
-      <Grid item xs={3}>
+      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">Measuring:</Typography></Grid>
+      <Grid item xs={3} align="center">
         <Chip 
           label={active ? "RUNNING" : "STOPPED"}
           color={active ? "success" : "error"}
@@ -97,8 +97,8 @@ export default function SystemStatus(props) {
       </Grid>
       <Grid item xs={7}><Typography fontWeight="bold" paddingTop="2px">{description}</Typography></Grid>
 
-      <Grid item xs={2}><Typography variant="body2" paddingTop="4px">LO:</Typography></Grid>
-      <Grid item xs={3}>
+      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">LO:</Typography></Grid>
+      <Grid item xs={3} align="center">
         <Chip 
           label={lo.PLL.isLocked ? "LOCKED" : "UNLOCKED"}
           color={lo.PLL.isLocked ? "success" : "error"}
@@ -115,8 +115,8 @@ export default function SystemStatus(props) {
       <Grid item xs={2}><Typography variant="body2" paddingTop="4px">IF Switch:</Typography></Grid>
       <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{inputSwitch}</Typography></Grid>
 
-      <Grid item xs={2}><Typography variant="body2" paddingTop="4px">RF:</Typography></Grid>
-      <Grid item xs={3}>
+      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">RF:</Typography></Grid>
+      <Grid item xs={3} align="center">
         <Chip 
           label={rf.PLL.isLocked ? "LOCKED" : "UNLOCKED"}
           color={rf.PLL.isLocked ? "success" : "error"}
