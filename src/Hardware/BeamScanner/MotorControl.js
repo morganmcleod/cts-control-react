@@ -31,46 +31,6 @@ import {
   setNamedParam
 } from './MotorControlSlice'
 import { setMeasureActive, setMeasureDescription } from '../../Measure/Shared/MeasureSlice';
-import { listenerMiddleware } from "../../store";
-
-// We handle changes to gotoPosition via this listener attached to the Redux store:
-// This allows gotoPosition to be set from any component
-listenerMiddleware.startListening({
-  predicate: (action, currentState, previousState) => {
-    if (action.type === 'MotorControl/setGotoPosition' && action.payload !== null
-      && currentState.MotorControl.gotoPosition !== previousState.MotorControl.gotoPosition)
-    {
-      return true;
-    }
-    return false;
-  },
-  effect: async (action, listenerApi) => {
-    // Cancel all other listeners but this one:
-    listenerApi.cancelActiveListeners();
-
-    // we reset it to null now that it is being handled:
-    listenerApi.dispatch(setGotoPosition(null));
-
-    // send the next position:
-    axios.put("/beamscan/mc/next_pos", action.payload)
-      .then(res => {
-        console.log(res.data);
-        if (res.data.success) {
-          // send start move command:
-          axios.put("/beamscan/mc/start_move")
-            .then(res => {
-              console.log(res.data);
-            })
-            .catch(error => {
-              console.log(error);
-            })
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      })
-  }
-});
 
 export default function MotorController(props) {
   // Local state validates the GOTO position:

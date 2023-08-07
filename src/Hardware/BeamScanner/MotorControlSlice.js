@@ -1,5 +1,7 @@
 //This is the 'slice' of the Redux store related to the Motor Controller
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createListenerMiddleware } from '@reduxjs/toolkit';
+
+import axios from "axios";
 
 export const MotorControlSlice = createSlice({
   name: 'MotorControl',
@@ -46,6 +48,48 @@ export const MotorControlSlice = createSlice({
     setNamedParam(state, action) {
       state[action.payload.name] = action.payload.data;
     }
+  }
+});
+
+// We handle changes to gotoPosition via this listener attached to the Redux store:
+// This allows gotoPosition to be set from any component
+const positionListener = createListenerMiddleware();
+export { positionListener }
+
+positionListener.startListening({
+  predicate: (action, currentState, previousState) => {
+    if (action.type === 'MotorControl/setGotoPosition' && action.payload !== null
+      && currentState.MotorControl.gotoPosition !== previousState.MotorControl.gotoPosition)
+    {
+      return true;
+    }
+    return false;
+  },
+  effect: async (action, listenerApi) => {
+    // Cancel all other listeners but this one:
+    listenerApi.cancelActiveListeners();
+
+    // we reset it to null now that it is being handled:
+    listenerApi.dispatch(setGotoPosition(null));
+
+    // send the next position:
+    axios.put("/beamscan/mc/next_pos", action.payload)
+      .then(res => {
+        console.log(res.data);
+        if (res.data.success) {
+          // send start move command:
+          axios.put("/beamscan/mc/start_move")
+            .then(res => {
+              console.log(res.data);
+            })
+            .catch(error => {
+              console.log(error);
+            })
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      })
   }
 });
 
