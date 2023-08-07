@@ -19,7 +19,8 @@ export const MotorControlSlice = createSlice({
       polPower: false,
       xMotion: false,
       yMotion: false,
-      polMotion: false
+      polMotion: false,
+      polTorque: 0
     },
     isConnected: false
   },

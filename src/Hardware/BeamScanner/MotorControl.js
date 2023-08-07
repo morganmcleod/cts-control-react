@@ -280,13 +280,15 @@ export default function MotorController(props) {
         </Grid>
         <Grid item xs={2}><Typography variant="body2">X [mm]</Typography></Grid>
         <Grid item xs={2}><Typography variant="body2">Y [mm]</Typography></Grid>
-        <Grid item xs={5}><Typography variant="body2">Pol [deg]</Typography></Grid>
+        <Grid item xs={2}><Typography variant="body2">Pol [deg]</Typography></Grid>
+        <Grid item xs={3}><Typography variant="body2">Pol torque [%]</Typography></Grid>
       </Grid>
       <Grid container spacing={0} paddingLeft="10px">
         <Grid item xs={3}><Typography variant="body2" paddingTop="4px">Position:</Typography></Grid>        
         <Grid item xs={2}><Typography fontWeight="bold">{thisMC.position.x}</Typography></Grid>
         <Grid item xs={2}><Typography fontWeight="bold">{thisMC.position.y}</Typography></Grid>
-        <Grid item xs={5}><Typography fontWeight="bold">{thisMC.position.pol}</Typography></Grid>
+        <Grid item xs={2}><Typography fontWeight="bold">{thisMC.position.pol}</Typography></Grid>
+        <Grid item xs={2}><Typography fontWeight="bold">{thisMC.motor_status.polTorque ?? 0}</Typography></Grid>
         
         <Grid item xs={3}><Typography variant="body2" paddingTop="6px">In motion:</Typography></Grid>
         <Grid item xs={2}>
