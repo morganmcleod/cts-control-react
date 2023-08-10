@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import { Grid, Button, OutlinedInput, Typography } from '@mui/material'
+import { Grid, Chip, Button, OutlinedInput, Typography } from '@mui/material'
 import EnableButton from '../../Shared/EnableButton';
 import LockButton from './LockButton';
 import '../../components.css'
@@ -185,7 +185,6 @@ export default function PLL(props) {
     setFreqChanged(true);
   };
 
-  const unlockDetect = pll.unlockDetected;
   return (
     <Grid container paddingLeft="5px">
       <Grid item xs={12}><Typography variant="body1" fontWeight="bold">PLL</Typography></Grid>        
@@ -215,21 +214,30 @@ export default function PLL(props) {
         />
       </Grid>
       
-      <Grid item xs={6.6}><Typography variant="body2" paddingTop="6px">Unlock Detect</Typography></Grid>
-      <Grid item xs={1.4}><Typography variant="body2" paddingTop="4px">Latch:&nbsp;</Typography></Grid>
+      <Grid item xs={3.5}><Typography variant="body2" paddingTop="6px">Unlock Detect:</Typography></Grid>
+      <Grid item xs={4}>
+        <Chip
+          label={pll.unlockDetected ? "UNLOCK" : "OK"}
+          color={pll.unlockDetected ? "error" : "success"}
+          size="small"
+        />
+      </Grid>
+      <Grid item xs={0.5}/>
       <Grid item xs={2.5}>
-        <EnableButton
+        <Button
           id="clearUnlock"
-          enableColor="green"
-          disableColor="red"
-          enableText="OK"
-          disableText="CLEAR"
-          enable={!unlockDetect}
-          width="100%"
+          className="custom-btn-sm"
+          variant="contained"
+          size="small"
+          style={{
+            minWidth: '100%',
+            maxWidth: '100%' 
+          }}
+          disabled={!pll.unlockDetected}
           onClick={e => clearUnlockHandler()}
         >
           CLEAR
-        </EnableButton>
+        </Button>
       </Grid>      
 
       <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Correction:</Typography></Grid>
@@ -239,6 +247,7 @@ export default function PLL(props) {
           className="custom-btn-sm"
           variant="contained"
           size="small"
+          disabled={!isLocked}
           style={{
             minWidth: '100%',
             maxWidth: '100%' 

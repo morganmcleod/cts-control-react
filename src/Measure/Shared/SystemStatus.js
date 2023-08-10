@@ -112,7 +112,7 @@ export default function SystemStatus(props) {
         />
       </Grid>
       <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{lo.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
-      <Grid item xs={2}><Typography variant="body2" paddingTop="4px">IF Switch:</Typography></Grid>
+      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">IF Switch:</Typography></Grid>
       <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{inputSwitch}</Typography></Grid>
 
       <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">RF:</Typography></Grid>
@@ -130,7 +130,7 @@ export default function SystemStatus(props) {
         />
       </Grid>
       <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{rf.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
-      <Grid item xs={2}><Typography variant="body2" paddingTop="4px">YIG Filter:</Typography></Grid>
+      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">YIG Filter:</Typography></Grid>
       <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{yigFilter.toFixed(2)} GHz</Typography></Grid>
     </Grid>
   );
