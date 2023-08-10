@@ -12,8 +12,8 @@ import '../../components.css'
 import axios from "axios";
 import { setInputLO, loSetPLL, loSetPLLConfig } from './LOSlice'
 import { setInputRF, rfSetPLL, rfSetPLLConfig } from './RFSlice'
-import { loRefSetFreqGHz } from '../ReferenceSources/LORefSlice'
-import { rfRefSetFreqGHz } from '../ReferenceSources/RFRefSlice'
+import { loSetInputFreq, loRefSetFreqGHz } from '../ReferenceSources/LORefSlice'
+import { rfSetInputFreq, rfRefSetFreqGHz } from '../ReferenceSources/RFRefSlice'
 
 export default function PLL(props) {
   // State for the frequency input:
@@ -75,32 +75,8 @@ export default function PLL(props) {
     return () => { isMounted.current = false; };
   }, [fetch]);
 
-  // LOCK button handler
-  const lockHandler = () => {
-    // Ignore if already locking
-    if (isLocking)
-      return;
-    
-    // Update button state
-    setIsLocked(false);
-    setIsLocking(true);
-    setLockFailed(false);
-
-    // Optionally set the reference synth frequency
-    if (controlRefSynth) {
-      // lockSB 0=lock below ref, 1=lock above ref, CTS floog is 10 MHz:
-      const refFreq = ((inputFreq / pllConfig.coldMult) + ((pllConfig.lockSB === 1) ? -0.01 : 0.01)) / pllConfig.warmMult;
-
-      dispatch(props.isRfSource ? rfRefSetFreqGHz(refFreq) : loRefSetFreqGHz(refFreq));
-      axios.put(refPrefix + "/frequency", null, {params: {value: refFreq}})
-      .then(res => {
-        console.log(res.data);
-      })
-      .catch(error => {
-        console.log(error);
-      })      
-    }
-
+  // Lock assuming that the reference synth is configured and the button state vars are already updated.
+  const lockInnerHandler = () => {
     const freqLOGHz = Number(inputFreq);
     axios.put(prefix + '/pll/lock', {freqLOGHz: freqLOGHz})
       .then(res => {
@@ -127,6 +103,39 @@ export default function PLL(props) {
       .catch(error => {
         console.log(error);
       })
+  }
+
+  // LOCK button handler
+  const lockHandler = () => {
+    // Ignore if already locking
+    if (isLocking)
+      return;
+    
+    // Update button state
+    setIsLocked(false);
+    setIsLocking(true);
+    setLockFailed(false);
+
+    // Optionally set the reference synth frequency
+    if (controlRefSynth) {
+      // lockSB 0=lock below ref, 1=lock above ref, CTS floog is 10 MHz:
+      const refFreq = ((inputFreq / pllConfig.coldMult) + ((pllConfig.lockSB === 1) ? -0.01 : 0.01)) / pllConfig.warmMult;
+
+      dispatch(props.isRfSource ? rfRefSetFreqGHz(refFreq) : loRefSetFreqGHz(refFreq));
+      dispatch(props.isRfSource ? rfSetInputFreq(refFreq) : loSetInputFreq(refFreq));
+      axios.put(refPrefix + "/frequency", null, {params: {value: refFreq}})
+      .then(res => {
+        console.log(res.data);
+        // Lock now that the ref synth is set:
+        lockInnerHandler();
+      })
+      .catch(error => {
+        console.log(error);
+      })
+    } else {
+      // Lock without setting the ref synth:
+      lockInnerHandler();
+    }    
   }
 
   // CLEAR unlock detect handler

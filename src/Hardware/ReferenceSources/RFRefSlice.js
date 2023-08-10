@@ -11,6 +11,7 @@ export const RFRefSlice = createSlice({
 });
 
 // these are for dispatch:
+export const rfSetInputFreq = RFRefSlice.actions.setInputFreq;
 export const rfRefSetFreqGHz = RFRefSlice.actions.setFreqGHz;
 export const rfRefSetAmpDBm = RFRefSlice.actions.setAmpDBm;
 export const rfRefSetEnable = RFRefSlice.actions.setEnable;

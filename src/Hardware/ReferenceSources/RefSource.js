@@ -12,34 +12,36 @@ import '../../components.css'
 
 // HTTP and store
 import axios from "axios";
-import { loRefSetFreqGHz, loRefSetAmpDBm, loRefSetEnable, loRefSetStatus} from './LORefSlice'
-import { rfRefSetFreqGHz, rfRefSetAmpDBm, rfRefSetEnable, rfRefSetStatus} from './RFRefSlice'
+import { loSetInputFreq, loRefSetFreqGHz, loRefSetAmpDBm, loRefSetEnable, loRefSetStatus} from './LORefSlice'
+import { rfSetInputFreq, rfRefSetFreqGHz, rfRefSetAmpDBm, rfRefSetEnable, rfRefSetStatus} from './RFRefSlice'
 
 export default function RefSource(props) {
   // State for user input prior to clicking one of the SET buttons
-  const [inputFreq, setInputFreq] = useState("");
   const [inputAmp, setInputAmp] = useState("");
-  
+  const [freqChanged, setFreqChanged] = useState(false);
+
   // Redux store interface
   const status = useSelector((state) => props.isRfSource ? state.RFRef : state.LORef);
+  const inputFreq = status.inputFreq;
   const dispatch = useDispatch();
 
   // URL prefix
   const prefix = props.isRfSource ? '/rfref' : '/loref'
   const title = props.isRfSource ? 'RF Reference' : 'LO Reference'
+  const setInputFreq = props.isRfSource ? rfSetInputFreq : loSetInputFreq;
 
   // Load data from REST API
   const fetch = useCallback(() => {
     axios.get(prefix + '/status')
       .then(res => {
         dispatch(props.isRfSource ? rfRefSetStatus(res.data) : loRefSetStatus(res.data));
-        setInputFreq(res.data.freqGHz);
+        dispatch(setInputFreq(res.data.freqGHz));
         setInputAmp(res.data.ampDBm);        
       })
       .catch(error => {
         console.log(error);
       })
-  }, [dispatch, prefix, props.isRfSource]);
+  }, [dispatch, prefix, setInputFreq, props.isRfSource]);
 
   // Load only on first render
   useEffect(() => {
@@ -48,6 +50,7 @@ export default function RefSource(props) {
 
   const handleSetButton = (e) => {
     if (e.target.name === "set-freq") {
+      setFreqChanged(false);
       dispatch(props.isRfSource ? rfRefSetFreqGHz(inputFreq) : loRefSetFreqGHz(inputFreq));
       axios.put(prefix + "/frequency", null, {params: {value: inputFreq}})
       .then(res => {
@@ -82,6 +85,11 @@ export default function RefSource(props) {
       })
   }
 
+  const onInputFreqChanged = (value) => {
+    setFreqChanged(true);
+    dispatch(setInputFreq(value));
+  }
+
   return (
     <Grid container>
       <Grid item xs={12}><Typography variant="body2"><b>{title}</b></Typography></Grid>
@@ -93,8 +101,8 @@ export default function RefSource(props) {
           margin="none"          
           style={{ width: '70%' }}
           className="smallinput"
-          onChange={(e) => setInputFreq(e.target.value)}
-          value = {inputFreq}
+          onChange={(e) => onInputFreqChanged(e.target.value)}
+          value = {freqChanged ? inputFreq : status.freqGHz}
         />
         <Typography variant="body2" fontWeight="bold" display="inline">&nbsp;GHz</Typography>
       </Grid>

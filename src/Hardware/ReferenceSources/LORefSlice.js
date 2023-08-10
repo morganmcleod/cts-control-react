@@ -11,6 +11,7 @@ export const LORefSlice = createSlice({
 });
 
 // these are for dispatch:
+export const loSetInputFreq = LORefSlice.actions.setInputFreq;
 export const loRefSetFreqGHz = LORefSlice.actions.setFreqGHz;
 export const loRefSetAmpDBm = LORefSlice.actions.setAmpDBm;
 export const loRefSetEnable = LORefSlice.actions.setEnable;

@@ -4,11 +4,15 @@
 // LOSlice and RFSlice have one object for each LO subsystem
 export const RefSourceSliceConfig = {
   initialState: {
-    freqGHz: null,
-    ampDBm: null,
-    enable: null
+    inputFreq: "",
+    freqGHz: "",
+    ampDBm: "",
+    enable: false
   },
   reducers: {
+    setInputFreq(state, action) {
+      state.inputFreq = action.payload
+    },
     setFreqGHz(state, action) {
       state.freqGHz = action.payload;
     },
