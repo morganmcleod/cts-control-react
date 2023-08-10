@@ -29,25 +29,30 @@ export default function PA(props) {
   
   // Only fetch data when mounted
   const isMounted = useRef(false);
+  const timer = useRef(0);
 
   // Load data from REST API
   const fetch = useCallback(() => {
-    if (isMounted.current) {
+    if (timer.current) {
+      clearTimeout(timer.current);
+      timer.current = 0;
+    }
+    if (isMounted.current) {      
       axios.get(prefix + '/pa')
         .then(res => {
           dispatch(props.isRfSource ? rfSetPA(res.data) : loSetPA(res.data));
           if (inputVGp0 === "")
-            setInputVGp0(res.data.VGp0);
+            setInputVGp0(res.data.VGp0)
           if (inputVGp1 === "")
-            setInputVGp1(res.data.VGp1);
+            setInputVGp1(res.data.VGp1)
 
-          setTimeout(() => {fetch()}, props.interval ?? 5000);
+          timer.current = setTimeout(() => {fetch()}, props.interval ?? 5000);
         })
         .catch(error => {
           console.log(error);
         })
     }
-  }, [dispatch, prefix, inputVGp0, inputVGp1, props.isRfSource, props.interval]);
+  }, [dispatch, prefix, props.isRfSource, inputVGp0, inputVGp1, props.interval]);
   
   // Fetch on first render:
   useEffect(() => {
@@ -73,6 +78,7 @@ export default function PA(props) {
         console.log(error);
       })
   }
+
   return (
     <Grid container paddingLeft="5px">
       <Grid item xs={12}><Typography variant="body1" fontWeight="bold">PA</Typography></Grid>        

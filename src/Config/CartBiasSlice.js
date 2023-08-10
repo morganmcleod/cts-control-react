@@ -43,7 +43,7 @@ export const CartBiasSlice = createSlice({
     },
     setRefresh(state, action) {
       state.refresh += 1;
-    },    
+    },
     setMixerParams(state, action) {
       if (action.payload.sis === 1 || action.payload.sis === 2) {
         const sis = 'sis' + action.payload.sis;

@@ -19,14 +19,19 @@ export default function LNA(props) {
 
   // Only fetch data when mounted
   const isMounted = useRef(false);
+  const timer = useRef(0);
 
   // Load data from REST API
   const fetch = useCallback(() => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+      timer.current = 0;
+    }
     if (isMounted.current) {
       axios.get("/cca/lna", {params: {pol: props.pol, lna: props.lna}})
         .then(res => {
           dispatch(setLNA({pol: props.pol, lna: props.lna, data:res.data}));
-          setTimeout(() => {fetch()}, props.interval ?? 5000);
+          timer.current = setTimeout(() => {fetch()}, props.interval ?? 5000);
         })
         .catch(error => {
           console.log(error);

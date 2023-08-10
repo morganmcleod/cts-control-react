@@ -17,14 +17,19 @@ export default function CartridgeTemps(props) {
 
     // Only fetch data when mounted
     const isMounted = useRef(false);
+    const timer = useRef(0);
 
     // Load data from REST API
     const fetch = useCallback(() => {
+      if (timer.current) {
+        clearTimeout(timer.current);
+        timer.current = 0;
+      }
       if (isMounted.current) {
         axios.get(`/cca/tempsensors`)
           .then(res => {
             dispatch(setTemperatures(res.data));
-            setTimeout(() => {fetch()}, props.interval ?? 5000);
+            timer.current = setTimeout(() => {fetch()}, props.interval ?? 5000);
           })
           .catch(error => {
             console.log(error);

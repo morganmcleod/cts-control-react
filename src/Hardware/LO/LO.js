@@ -14,19 +14,19 @@ export default function LO(props) {
       <Grid item xs={6} sx={{borderRight:1}} textAlign="center"><Typography variant="h6">Local Oscillator</Typography></Grid>
       <Grid item xs={6} textAlign="center"><Typography variant="h6">RF Source</Typography></Grid>
       
-      <Grid item xs={3}><PLL isRfSource={false}/></Grid>
-      <Grid item xs={3} sx={{borderRight:1}}><YTO isRfSource={false}/></Grid>
+      <Grid item xs={3}><PLL key="LOPLL" isRfSource={false}/></Grid>
+      <Grid item xs={3} sx={{borderRight:1}}><YTO key="LOYTO" isRfSource={false}/></Grid>
       
-      <Grid item xs={3}><PLL isRfSource={true}/></Grid>      
-      <Grid item xs={3}><YTO isRfSource={true}/></Grid>
+      <Grid item xs={3}><PLL key="RFPLL" isRfSource={true}/></Grid>      
+      <Grid item xs={3}><YTO key="RFYTO" isRfSource={true}/></Grid>
       
       <Grid item xs={6} sx={{borderRight:1}}><br/></Grid>
       <Grid item xs={6}><br/></Grid>
-      <Grid item xs={3}><AMC isRfSource={false}/></Grid>
-      <Grid item xs={3} sx={{borderRight:1}}><PA isRfSource={false}/></Grid>          
+      <Grid item xs={3}><AMC key="LOAMC" isRfSource={false}/></Grid>
+      <Grid item xs={3} sx={{borderRight:1}}><PA key="LOPA" isRfSource={false}/></Grid>          
       
-      <Grid item xs={3}><AMC isRfSource={true}/></Grid>
-      <Grid item xs={3}><PA isRfSource={true}/></Grid>                
+      <Grid item xs={3}><AMC key="RFAMC" isRfSource={true}/></Grid>
+      <Grid item xs={3}><PA key="RFPA" isRfSource={true}/></Grid>                
     </Grid>
   );
 }

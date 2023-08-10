@@ -22,9 +22,14 @@ export default function SIS(props) {
   
   // Only fetch data when mounted
   const isMounted = useRef(false);
+  const timer = useRef(0);
 
   // Load data from REST API
   const fetch = useCallback(() => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+      timer.current = 0;
+    }
     if (isMounted.current) {
       let params = {
         pol: props.pol,
@@ -34,7 +39,7 @@ export default function SIS(props) {
       axios.get("/cca/sis", { params: params })
         .then(res => {
           dispatch(setSIS({pol: props.pol, sis:props.sis, data:res.data}));
-          setTimeout(() => {fetch()}, props.interval ?? 5000);
+          timer.current = setTimeout(() => {fetch()}, props.interval ?? 5000);
         })
         .catch(error => {
           console.log(error);

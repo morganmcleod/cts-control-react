@@ -1,9 +1,9 @@
 // React and Redux
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import { Grid, Chip, Button, OutlinedInput, Typography } from '@mui/material'
+import { Grid, Chip, Button, FormGroup, FormControlLabel, Switch, OutlinedInput, Typography } from '@mui/material'
 import EnableButton from '../../Shared/EnableButton';
 import LockButton from './LockButton';
 import '../../components.css'
@@ -12,10 +12,13 @@ import '../../components.css'
 import axios from "axios";
 import { setInputLO, loSetPLL, loSetPLLConfig } from './LOSlice'
 import { setInputRF, rfSetPLL, rfSetPLLConfig } from './RFSlice'
+import { loRefSetFreqGHz } from '../ReferenceSources/LORefSlice'
+import { rfRefSetFreqGHz } from '../ReferenceSources/RFRefSlice'
 
 export default function PLL(props) {
   // State for the frequency input:
   const [freqChanged, setFreqChanged] = useState(false);
+  const [controlRefSynth, setControlRefSynth] = useState(true);
 
   // Redux store interfaces
   const inputFreq = useSelector((state) => props.isRfSource ? state.RF.inputLOFreq : state.LO.inputLOFreq);
@@ -29,17 +32,25 @@ export default function PLL(props) {
   const [lockFailed, setLockFailed] = useState(false);
   
   // URL prefix
-  const prefix = props.isRfSource ? '/rfsource' : '/lo'
+  const prefix = props.isRfSource ? '/rfsource' : '/lo';
+  const refPrefix = props.isRfSource ? '/rfref' : '/loref';
+  const setPll = props.isRfSource ? rfSetPLL : loSetPLL;
+  const setPllConfig = props.isRfSource ? rfSetPLLConfig : loSetPLLConfig;
 
   // Only fetch data when mounted
   const isMounted = useRef(false);
+  const timer = useRef(0);
 
   // Load data from REST API
   const fetch = useCallback(() => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+      timer.current = 0;
+    }
     if (isMounted.current) {
       axios.get(prefix + '/pll')
         .then(res => {
-          dispatch(props.isRfSource ? rfSetPLL(res.data) : loSetPLL(res.data));
+          dispatch(setPll(res.data));
           setIsLocked(res.data.isLocked && !freqChanged);
         })
         .catch(error => {
@@ -47,15 +58,16 @@ export default function PLL(props) {
         })
       axios.get(prefix + '/pll/config')
         .then(res => {
-          dispatch(props.isRfSource ? rfSetPLLConfig(res.data) : loSetPLLConfig(res.data));        
-          setTimeout(() => {fetch()}, props.interval ?? 5000);
+          dispatch(setPllConfig(res.data));    
+
+          timer.current = setTimeout(() => {fetch()}, props.interval ?? 5000);
         })
         .catch(error => {
           console.log(error);
-        })    
-    }
-  }, [dispatch, prefix, props.isRfSource, props.interval, isMounted]);
-  
+        })
+      }
+  }, [dispatch, freqChanged, prefix, setPll, setPllConfig, props.interval]);
+
   // Fetch on first render:
   useEffect(() => {
     isMounted.current = true;
@@ -73,6 +85,21 @@ export default function PLL(props) {
     setIsLocked(false);
     setIsLocking(true);
     setLockFailed(false);
+
+    // Optionally set the reference synth frequency
+    if (controlRefSynth) {
+      // lockSB 0=lock below ref, 1=lock above ref, CTS floog is 10 MHz:
+      const refFreq = ((inputFreq / pllConfig.coldMult) + ((pllConfig.lockSB === 1) ? -0.01 : 0.01)) / pllConfig.warmMult;
+
+      dispatch(props.isRfSource ? rfRefSetFreqGHz(refFreq) : loRefSetFreqGHz(refFreq));
+      axios.put(refPrefix + "/frequency", null, {params: {value: refFreq}})
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(error => {
+        console.log(error);
+      })      
+    }
 
     const freqLOGHz = Number(inputFreq);
     axios.put(prefix + '/pll/lock', {freqLOGHz: freqLOGHz})
@@ -181,13 +208,39 @@ export default function PLL(props) {
   // Change LO handler
   const onChangeLO = (value) => {
     setIsLocked(false);
-    dispatch(props.isRfSource ? setInputRF(value) : setInputLO(value));
     setFreqChanged(true);
+    dispatch(props.isRfSource ? setInputRF(value) : setInputLO(value));
   };
 
+  // Set Reference synth hander
+  const onChangeSetRef = (value) => {
+    setControlRefSynth(value);
+  };
+  
   return (
     <Grid container paddingLeft="5px">
-      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">PLL</Typography></Grid>        
+      <Grid item xs={3}><Typography variant="body1" fontWeight="bold">PLL</Typography></Grid>
+      <Grid item xs={7}>
+        <FormGroup>
+          <FormControlLabel 
+            control={
+              <Switch 
+                checked={controlRefSynth}
+                onChange={e => onChangeSetRef(e.target.checked)}
+                size="small"                
+              />
+            } 
+            label={
+              <Typography variant="subtitle2" display="inline">
+                {props.isRfSource ? "Set RF reference" : "Set LO reference"}
+              </Typography>
+            }
+            labelPlacement="start"
+            style={{marginLeft: "0px", marginRight: "0px"}}      
+          />
+        </FormGroup>
+      </Grid>
+      <Grid item xs={2}/>
       <Grid item xs={3.5}>
         <Typography variant="body2" display="inline" paddingTop="4px">Frequency:</Typography>
       </Grid>
@@ -206,7 +259,7 @@ export default function PLL(props) {
       <Grid item xs={0.5}/>
       <Grid item xs={2.5}>
         <LockButton
-          isLocked={isLocked}
+          isLocked={isLocked && !freqChanged}
           isLocking={isLocking}
           lockFailed={lockFailed}
           className="custom-btn-sm"

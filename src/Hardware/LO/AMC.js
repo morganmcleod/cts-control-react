@@ -21,14 +21,19 @@ export default function AMC(props) {
 
   // Only fetch data when mounted
   const isMounted = useRef(false);
+  const timer = useRef(0);
 
   // Load data from REST API
   const fetch = useCallback(() => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+      timer.current = 0;
+    }
     if (isMounted.current) {
       axios.get(prefix + '/amc')
         .then(res => {
           dispatch(props.isRfSource? rfSetAMC(res.data) : loSetAMC(res.data));
-          setTimeout(() => {fetch()}, props.interval ?? 5000);
+          timer.current = setTimeout(() => {fetch()}, props.interval ?? 5000);
         })
         .catch(error => {
           console.log(error);
