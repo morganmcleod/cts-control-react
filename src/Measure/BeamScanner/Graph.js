@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { useDispatch, useSelector } from 'react-redux'
 import { setPosition } from "../../Hardware/BeamScanner/MotorControlSlice";
-import { resetRasters, addRaster } from "./BeamScannerSlice";
+import { resetRasters, addRaster, addRasters } from "./BeamScannerSlice";
 import Plot from "react-plotly.js";
 
 import axios from "axios";
@@ -11,7 +11,7 @@ import axios from "axios";
 export default function BeamScannerGraph(props) {
   // Redux store interface
   const position = useSelector((state) => state.MotorControl.position);
-  const haveRasters = useSelector((state) => state.BeamScanner.rasters);
+  const rastersInfo = useSelector((state) => state.BeamScanner.rastersInfo);
   const amplitudePlot = useSelector((state) => state.BeamScanner.amplitudePlot);
   const measSpec = useSelector((state) => state.BeamScanner.measurementSpec)
   const dispatch = useDispatch();
@@ -29,6 +29,7 @@ export default function BeamScannerGraph(props) {
   } = useWebSocket("ws://localhost:8000/beamscan/rasters_ws", options);
 
   useEffect(() => {
+    // websocket handler for position message
     if (posReady === ReadyState.OPEN) {
       if (posMessage !== null) {
         try {
@@ -42,43 +43,37 @@ export default function BeamScannerGraph(props) {
   }, [posReady, posMessage, dispatch]);
    
   useEffect(() => {
+    // websocket handler for latest raster message
     if (rasterReady === ReadyState.OPEN) {
       if (rasterMessage !== null) {
         // The websocket only sends the latest raster
         try {
-          const rasters = JSON.parse(rasterMessage.data);
+          const raster = JSON.parse(rasterMessage.data);
           // If the result is empty or is the first raster, reset our copy:
-          if (rasters.startIndex === 0)
+          if (raster.key === 0 || raster.index === 0) {
             dispatch(resetRasters());
-            
-          // If we are missing some of the previous ones,
-          if (haveRasters.length < rasters.startIndex) {
-            // Request raters from index 0:
-            axios.get('/beamscan/rasters', { params: { first: 0, last: rasters.startIndex - 1 }})
-            .then(res => {
-              // Clear our copy:
-              dispatch(resetRasters());
-              // Add the result of the request:
-              for (const raster of res.data.rasters)
-                dispatch(addRaster(raster));
-              // Add the latest from the websocket:
-              for (const raster of rasters.rasters)
-                dispatch(addRaster(raster));
-            })
-            .catch(error => {
-              console.log(error);
-            });
-          } else {
-            // We're up to date so just add the new one:
-            for (const raster of rasters.rasters)
-              dispatch(addRaster(raster));        
           }
+          dispatch(addRaster(raster));
         } catch (err) {
           console.log(err);
         }
       }
     }
-  }, [rasterReady, rasterMessage, dispatch, haveRasters.length]);
+  }, [rasterReady, rasterMessage, dispatch]);
+
+  useEffect(() => {
+    // fetch missing rasters
+    if (rastersInfo.key && rastersInfo.startIndex > 0) {
+      // Request rasters from index 0:
+      axios.get('/beamscan/rasters', { params: { first: 0, last: rastersInfo.startIndex - 1 }})
+      .then(res => {
+        dispatch(addRasters(res.data))
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    }
+  }, [dispatch, rastersInfo.key, rastersInfo.startIndex]);
 
   return (
     <Plot 
