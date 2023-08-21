@@ -53,7 +53,9 @@ export default function BeamScannerGraph(props) {
           if (raster.key === 0 || raster.index === 0) {
             dispatch(resetRasters());
           }
-          dispatch(addRaster(raster));
+          else if (raster.key != rastersInfo.key || raster.index != rastersInfo.lastIndex) {
+            dispatch(addRaster(raster));
+          }
         } catch (err) {
           console.log(err);
         }

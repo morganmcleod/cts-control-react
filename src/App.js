@@ -82,8 +82,9 @@ class App extends React.Component {
                 title="Beam Patterns" 
                 showCartSelect={true}
                 showMeasControl={true}
-                startUrl="/beamscan/start"
-                stopUrl="/beamscan/stop"
+                startUrl="/measure/start"
+                measureType={2}
+                stopUrl="/measure/stop"                
               />
               <Divider variant="fullWidth" color="blue"/>
               <BeamScannerMain/>

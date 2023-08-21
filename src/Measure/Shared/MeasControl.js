@@ -37,7 +37,8 @@ export default function MeasControl(props) {
       serialNum: cartSerialNum,
       configId: cartConfigId,
       operator: measOperator,
-      description: measNotes
+      description: measNotes,
+      fkTestType: props.measureType
     };
     dispatch(setMeasureActive(true));
     axios.put(props.startUrl, params)
