@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -55,15 +55,34 @@ export default function MeasControl(props) {
     };
   }, [loading, dispatch]);
 
-  useEffect(() =>{
+  const getConfigKeys = useCallback((configId) => {
+    axios.get("/database/config/keys/", {params: {configId: configId, pol: 0}})
+    .then(res => {
+      dispatch(setConfigKeys({...res.data, pol: 0}));
+    })
+    .catch(error => {
+      console.log(error);
+    })
+    axios.get("/database/config/keys/", {params: {configId: configId, pol: 1}})
+    .then(res => {
+      dispatch(setConfigKeys({...res.data, pol: 1}));
+      dispatch(setRefresh());
+    })
+    .catch(error => {
+      console.log(error);
+    })
+  }, [dispatch]);
+
+  useEffect(() => {
     axios.get("/database/config/current")
       .then(res => {
         dispatch(setCartConfig(res.data))
+        getConfigKeys(res.data.id);
       })
       .catch(error => {
         console.log(error);
       })
-  }, [dispatch]);
+  }, [dispatch, getConfigKeys]);
 
   const onCartSelect = (newValue) => {
     if (newValue) {
@@ -74,21 +93,8 @@ export default function MeasControl(props) {
       })
 
       dispatch(setCartConfig(newValue));
-      axios.get("/database/config/keys/", {params: {configId: configId, pol: 0}})
-      .then(res => {
-        dispatch(setConfigKeys({...res.data, pol: 0}));
-      })
-      .catch(error => {
-        console.log(error);
-      })
-      axios.get("/database/config/keys/", {params: {configId: configId, pol: 1}})
-      .then(res => {
-        dispatch(setConfigKeys({...res.data, pol: 1}));
-        dispatch(setRefresh());
-      })
-      .catch(error => {
-        console.log(error);
-      })      
+      getConfigKeys(configId);
+     
     } else {
       dispatch(reset())
       dispatch(setCartConfig(null));
