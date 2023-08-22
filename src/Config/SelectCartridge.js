@@ -1,5 +1,5 @@
 // React and Redux
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -30,7 +30,7 @@ export default function MeasControl(props) {
   // CartTest state
   const loading = open && cartConfigOptions.length === 0;
 
-  React.useEffect(() => {
+  useEffect(() => {
     let active = true;
 
     if (!loading) {
@@ -54,6 +54,16 @@ export default function MeasControl(props) {
       active = false;
     };
   }, [loading, dispatch]);
+
+  useEffect(() =>{
+    axios.get("/database/config/current")
+      .then(res => {
+        dispatch(setCartConfig(res.data))
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }, [dispatch]);
 
   const onCartSelect = (newValue) => {
     if (newValue) {

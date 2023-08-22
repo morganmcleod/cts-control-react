@@ -11,7 +11,7 @@ import '../../components.css';
 // HTTP and store
 import axios from "axios";
 import { setScanStatus } from './BeamScannerSlice';
-import { setMeasureActive, setMeasureDescription } from '../Shared/MeasureSlice';
+import { setMeasureDescription } from '../Shared/MeasureSlice';
 
 export default function ScanStatus(props) {
   // Redux store interfaces
@@ -24,10 +24,8 @@ export default function ScanStatus(props) {
     .then(res => {
       dispatch(setScanStatus(res.data));
       if (res.data.activeScan !== null && !res.data.measurementComplete) {
-        dispatch(setMeasureActive(true));
         dispatch(setMeasureDescription("Beam patterns"));
       } else {
-        dispatch(setMeasureActive(false));
         dispatch(setMeasureDescription(null));
       }
     })

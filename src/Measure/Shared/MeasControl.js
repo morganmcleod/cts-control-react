@@ -1,5 +1,5 @@
 // React and Redux
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -32,6 +32,26 @@ export default function MeasControl(props) {
   const cartSerialNum = cartConfig ? cartConfig.serialNum : null;
   const dispatch = useDispatch();
 
+  // Load current test status from REST API
+  const fetch = useCallback(() => {
+    axios.get('/measure/status')
+    .then(res => {
+      if (res.data) {
+        dispatch(setMeasureActive(true));
+        dispatch(setMeasureNotes(res.data.description));
+        dispatch(setMeasureOperator(res.data.operator));
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    })
+  }, [dispatch]);
+
+  // Load only on first render
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
+  
   const handleClickStart = () => {
     const params = {
       serialNum: cartSerialNum,
