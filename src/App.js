@@ -1,17 +1,18 @@
 import './App.css'
 import React from 'react';
 import { ThemeProvider } from "@mui/material/styles";
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
+import { Box, Divider, Grid } from '@mui/material';
 
 import { ThemeContext, loadTheme, mapTheme } from "./themes";
 import CCA from './Hardware/Cartridge/CCA';
 import Presets from './Hardware/Cartridge/Presets';
+import FEMC from './Hardware/FEMC/FEMC';
 import CartBias from './Config/CartBias';
 import LO from './Hardware/LO/LO';
 import CTSAppBar from './Shared/AppBar';
 import TabPanel from './Shared/TabPanel';
 import PageHeader from './Measure/Shared/PageHeader';
+import RefSources from './Hardware/ReferenceSources/RefSources';
 import BeamScannerMain from './Measure/BeamScanner/Main';
 
 import axios from "axios";
@@ -59,14 +60,22 @@ class App extends React.Component {
                 showCartSelect={true}
               />
               <CCA/>
-              <Presets/>
+              <Grid container>
+                <Grid item xs={6}>
+                  <Presets/>
+                </Grid>
+                <Grid item xs={6}>
+                  <FEMC/>
+                </Grid>
+              </Grid>              
             </TabPanel>
             <TabPanel index={1} visibleTab={this.state.visibleTab}>
               <PageHeader 
                 title="LO & RF Source" 
                 showLORef={true}
               />
-              <LO/>              
+              <LO/>
+              <RefSources/>
             </TabPanel>
             
             <TabPanel index={2} visibleTab={this.state.visibleTab}>

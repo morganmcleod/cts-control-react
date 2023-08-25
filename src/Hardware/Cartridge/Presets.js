@@ -229,112 +229,108 @@ export default function Presets(props) {
   }
 
   return (
-      <Grid container>
-        <Grid item xs={6}>
-          <Grid container>
-            <Grid item xs={3}>
-              <Typography variant="h6">Presets</Typography>
-            </Grid>
-            <Grid item container xs={9} direction="column" sx={{display: "flex", justifyContent: "flex-end"}}>
-              <Typography variant="body2"><b>Description</b></Typography>
-            </Grid>
-            <Grid item xs={1.5}>
-              <Button
-                name="load1"
-                className="custom-btn-sm"
-                variant="contained"
-                onClick={e => handleLoad(e)}
-              >
-                LOAD 1
-              </Button>
-            </Grid>
-            <Grid item xs={1.5}>
-              <Button
-                name="save1"
-                className="custom-btn-sm"
-                variant="contained"
-                onClick={e => handleSave(e)}
-              >
-                SAVE 1
-              </Button>
-            </Grid>
-            <Grid item xs={9}>
-              <OutlinedInput
-                name="description1"
-                size="small"
-                margin="none"                
-                style={{width: "95%"}}
-                onChange={e => setInputDescription(e)}
-                value={inputD1}
-                className="smallinput"
-                />
-            </Grid>
-            
-            <Grid item xs={1.5}>
-              <Button
-                name="load2"
-                className="custom-btn-sm"
-                variant="contained"
-                onClick={e => handleLoad(e)}
-              >
-                LOAD 2
-              </Button>
-            </Grid>
-            <Grid item xs={1.5}>
-              <Button
-                name="save2"
-                className="custom-btn-sm"
-                variant="contained"
-                onClick={e => handleSave(e)}
-              >
-                SAVE 2
-              </Button>
-            </Grid>
-            <Grid item xs={9}>
-              <OutlinedInput
-                name="description2"
-                size="small"
-                margin="none"                
-                style={{width: "95%"}}
-                onChange={e => setInputDescription(e)}
-                value={inputD2}
-                className="smallinput"
-              />
-            </Grid>
-
-            <Grid item xs={1.5}>
-              <Button
-                name="load3"
-                className="custom-btn-sm"
-                variant="contained"
-                onClick={e => handleLoad(e)}
-              >
-                LOAD 3
-              </Button>
-            </Grid>
-            <Grid item xs={1.5}>
-              <Button
-                name="save3"
-                className="custom-btn-sm"
-                variant="contained"
-                onClick={e => handleSave(e)}
-              >
-                SAVE 3
-              </Button>
-            </Grid>
-            <Grid item xs={9}>
-              <OutlinedInput
-                name="description3"
-                size="small"
-                margin="none"                
-                style={{width: "95%"}}
-                onChange={e => setInputDescription(e)}
-                value={inputD3}
-                className="smallinput"
-              />
-            </Grid>
-          </Grid>
-        </Grid>
+    <Grid container paddingLeft="5px" paddingBottom="15px" border={1} borderTop={0}>
+      <Grid item xs={3}>
+        <Typography variant="body1" fontWeight="bold">Presets</Typography>
       </Grid>
+      <Grid item container xs={9} direction="column" sx={{display: "flex", justifyContent: "flex-end"}}>
+        <Typography variant="body2"><b>Description</b></Typography>
+      </Grid>
+      <Grid item xs={1.5}>
+        <Button
+          name="load1"
+          className="custom-btn-sm"
+          variant="contained"
+          onClick={e => handleLoad(e)}
+        >
+          LOAD 1
+        </Button>
+      </Grid>
+      <Grid item xs={1.5}>
+        <Button
+          name="save1"
+          className="custom-btn-sm"
+          variant="contained"
+          onClick={e => handleSave(e)}
+        >
+          SAVE 1
+        </Button>
+      </Grid>
+      <Grid item xs={9}>
+        <OutlinedInput
+          name="description1"
+          size="small"
+          margin="none"                
+          style={{width: "95%"}}
+          onChange={e => setInputDescription(e)}
+          value={inputD1}
+          className="smallinput"
+          />
+      </Grid>
+      
+      <Grid item xs={1.5}>
+        <Button
+          name="load2"
+          className="custom-btn-sm"
+          variant="contained"
+          onClick={e => handleLoad(e)}
+        >
+          LOAD 2
+        </Button>
+      </Grid>
+      <Grid item xs={1.5}>
+        <Button
+          name="save2"
+          className="custom-btn-sm"
+          variant="contained"
+          onClick={e => handleSave(e)}
+        >
+          SAVE 2
+        </Button>
+      </Grid>
+      <Grid item xs={9}>
+        <OutlinedInput
+          name="description2"
+          size="small"
+          margin="none"                
+          style={{width: "95%"}}
+          onChange={e => setInputDescription(e)}
+          value={inputD2}
+          className="smallinput"
+        />
+      </Grid>
+
+      <Grid item xs={1.5}>
+        <Button
+          name="load3"
+          className="custom-btn-sm"
+          variant="contained"
+          onClick={e => handleLoad(e)}
+        >
+          LOAD 3
+        </Button>
+      </Grid>
+      <Grid item xs={1.5}>
+        <Button
+          name="save3"
+          className="custom-btn-sm"
+          variant="contained"
+          onClick={e => handleSave(e)}
+        >
+          SAVE 3
+        </Button>
+      </Grid>
+      <Grid item xs={9}>
+        <OutlinedInput
+          name="description3"
+          size="small"
+          margin="none"                
+          style={{width: "95%"}}
+          onChange={e => setInputDescription(e)}
+          value={inputD3}
+          className="smallinput"
+        />
+      </Grid>
+    </Grid>
   );
 }

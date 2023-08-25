@@ -91,11 +91,11 @@ export default function RefSource(props) {
   }
 
   return (
-    <Grid container>
-      <Grid item xs={12}><Typography variant="body2"><b>{title}</b></Typography></Grid>
+    <Grid container paddingLeft="5px" paddingBottom="5px">
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">{title}</Typography></Grid>
 
       <Grid item xs={3} paddingTop="4px"><Typography variant="body2">Frequency:</Typography></Grid>
-      <Grid item xs={5.5}>
+      <Grid item xs={5}>
         <OutlinedInput
           size="small"
           margin="none"          
@@ -106,20 +106,21 @@ export default function RefSource(props) {
         />
         <Typography variant="body2" fontWeight="bold" display="inline">&nbsp;GHz</Typography>
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={4}>
         <Button
           name="set-freq"
           className="custom-btn-sm"
           variant="contained"
           size="small"
-          onClick={(e) => handleSetButton(e)}
+          style={{ minWidth: '70%', maxWidth: "70%"}}
+          onClick={(e) => handleSetButton(e)}          
         >
           SET FRQ.
         </Button>
       </Grid>      
 
       <Grid item xs={3} paddingTop="4px"><Typography variant="body2">Amplitude:</Typography></Grid>
-      <Grid item xs={5.5}>
+      <Grid item xs={5}>
         <OutlinedInput
           size="small"
           margin="none"          
@@ -130,25 +131,27 @@ export default function RefSource(props) {
         />
         <Typography variant="body2" fontWeight="bold" display="inline">&nbsp;dBm</Typography>
       </Grid>
-      <Grid item xs={3}>
+      <Grid item xs={4}>
         <Button
           name="set-amp"
           className="custom-btn-sm"
           variant="contained"
-          size="small"          
+          size="small"
+          style={{ minWidth: '70%', maxWidth: "70%"}}
           onClick={(e) => handleSetButton(e)}
         >
           SET AMP.
         </Button>
       </Grid>      
 
-      <Grid item xs={6.5}/>
+      <Grid item xs={6}/>
       <Grid item xs={2} paddingTop="6px"><Typography variant="body2">Output:</Typography></Grid>
-      <Grid item xs={3}>
+      <Grid item xs={4}>
         <EnableButton
           enableColor="green"
           disableColor="red"
           enable={status.enable}
+          width='70%'
           onClick={(e) => onClickEnable(e)}
         ></EnableButton>
       </Grid>

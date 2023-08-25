@@ -7,7 +7,6 @@ import MeasControl from './MeasControl';
 import SelectCartridge from '../../Config/SelectCartridge'
 import SystemStatus from './SystemStatus';
 import Typography from '@mui/material/Typography';
-import RefSource from '../../Hardware/ReferenceSources/RefSource';
 
 export default function PageHeader(props) {
   return (
@@ -44,14 +43,6 @@ export default function PageHeader(props) {
                 stopUrl={props.stopUrl}                
               />
             </Grid>
-          )}
-
-          {/* show LO reference */}
-          {props.showLORef && (
-            <>
-              <Grid item xs={6}><RefSource isRfSource={false}/></Grid>
-              <Grid item xs={6}><RefSource isRfSource={true}/></Grid>
-            </>
           )}
         </Grid>
       </Grid>
