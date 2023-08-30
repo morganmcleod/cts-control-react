@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 
 import { saveTheme, ThemeContext } from "../themes";
+import JIRAIssueCollector from "./JIRAIssueCollector";
 
 class MainMenu extends React.Component {
   constructor(props) {
@@ -94,7 +95,9 @@ class MainMenu extends React.Component {
                   saveTheme(2);
                 }}
               >
-                Dark Theme</MenuItem>
+                Dark Theme
+              </MenuItem>
+              <JIRAIssueCollector/>
             </Menu>
           </React.Fragment>
         )

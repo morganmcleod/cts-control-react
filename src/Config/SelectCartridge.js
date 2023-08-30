@@ -77,7 +77,8 @@ export default function MeasControl(props) {
     axios.get("/database/config/current")
       .then(res => {
         dispatch(setCartConfig(res.data))
-        getConfigKeys(res.data.id);
+        if (res.data)
+          getConfigKeys(res.data.id);
       })
       .catch(error => {
         console.log(error);

@@ -7,8 +7,9 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MainMenu from './MainMenu';
 
-const pages = ['Cold Cart', 'LO & RF', 'Bias', 'Beam Patterns']
-  
+const pages = ['Cold Cart', 'LO & RF', 'Bias', 'Noise Temp', 'Beam Patterns'];
+const colors = ['white', 'silver', 'yellow', 'maroon', 'indigo'];
+
 export default function CTSAppBar(props) {
 
   const handleClick = (index) => {
@@ -18,7 +19,7 @@ export default function CTSAppBar(props) {
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar disableGutters variant='dense' style={{maxHeight: '48px'}}>
           <Typography
             variant="h6"
             noWrap
@@ -30,7 +31,7 @@ export default function CTSAppBar(props) {
               fontFamily: 'monospace',
               fontWeight: 700,
               letterSpacing: '.3rem',
-              color: 'inherit',
+              color: 'black',
               textDecoration: 'none',
             }}
           >
@@ -42,7 +43,7 @@ export default function CTSAppBar(props) {
               <Button
                 key={page}
                 onClick={e => {handleClick(index)}}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{ my: 2, color: colors[index], display: 'block' }}
               >
                 {page}
               </Button>

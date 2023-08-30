@@ -86,7 +86,7 @@ class App extends React.Component {
               <CartBias/>
             </TabPanel>
             
-            <TabPanel index={3} visibleTab={this.state.visibleTab}>
+            <TabPanel index={4} visibleTab={this.state.visibleTab}>
               <PageHeader 
                 title="Beam Patterns" 
                 showCartSelect={true}
