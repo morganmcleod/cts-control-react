@@ -97,7 +97,11 @@ class MainMenu extends React.Component {
               >
                 Dark Theme
               </MenuItem>
-              <JIRAIssueCollector/>
+              <MenuItem>
+                <JIRAIssueCollector>              
+                  Bug Report
+                </JIRAIssueCollector>          
+              </MenuItem>
             </Menu>
           </React.Fragment>
         )

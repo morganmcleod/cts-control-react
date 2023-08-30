@@ -1,6 +1,5 @@
 import React from 'react';
 import jQuery from 'jquery';
-import MenuItem from '@mui/material/MenuItem';
 
 const ELEMENT_ID = 'jira-feedback-button';
 const WINDOW_VAR_NAME = 'jiraIssueCollector';
@@ -20,7 +19,7 @@ window['ATL_JQ_PAGE_PROPS'] = {
   }
 };
 
-export default function JIRAIssueCollector() {
+export default function JIRAIssueCollector(props) {
   const setCollector = () => {
     window.jQuery = jQuery;
     const appElement = document.querySelector('body');
@@ -39,8 +38,8 @@ export default function JIRAIssueCollector() {
   }
 
   return (
-    <MenuItem id={ELEMENT_ID}>
-      Bug Report
-    </MenuItem>
+    <div id={ELEMENT_ID}>
+      {props.children}
+    </div>
   );
 };
