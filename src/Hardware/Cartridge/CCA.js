@@ -5,6 +5,7 @@ import Polarization from './Polarization';
 import CartridgeTemps from './CartridgeTemps';
 import LED from './LED';
 import Heater from './Heater';
+import CryostatTemps from '../Cryostat/CryostatTemps';
 import '../../components.css'
 
 export default function CCA() {
@@ -16,7 +17,7 @@ export default function CCA() {
         <Grid item xs={3}><CartridgeTemps/></Grid>
         <Grid item xs={2}><Heater pol="0"/></Grid>
         <Grid item xs={1} sx={{borderRight:1}}><LED pol="0"/></Grid>
-        <Grid item xs={3}/>
+        <Grid item xs={3}><CryostatTemps/></Grid>
         <Grid item xs={2}><Heater pol="1"/></Grid>
         <Grid item xs={1}><LED pol="1"/></Grid>
       </Grid>
