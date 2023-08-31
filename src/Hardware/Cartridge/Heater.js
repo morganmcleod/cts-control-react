@@ -61,8 +61,8 @@ export default function Heater(props) {
           onClick={(e) => onClickEnable(e)}
         ></EnableButton>
       </Grid>
-      <Grid item xs={3}><Typography variant="body2" paddingTop="4px">current:</Typography></Grid>
-      <Grid item xs={9}><Typography fontWeight="bold" paddingTop="2px">{heaters[props.pol].current} mA</Typography></Grid>
+      <Grid item xs={4.5}><Typography variant="body2" paddingTop="4px">current:</Typography></Grid>
+      <Grid item xs={7}><Typography fontWeight="bold" paddingTop="2px">{heaters[props.pol].current} mA</Typography></Grid>
     </Grid>
   )
 }
