@@ -46,7 +46,7 @@ export default function CartridgeTemps(props) {
 
   return (
     <Grid container paddingLeft="5px">
-      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">Temperatures</Typography></Grid>
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">Cartridge Temperatures</Typography></Grid>
       
       <Grid item xs={3}><Typography variant="body2" paddingTop="4px">mixer pol0:</Typography></Grid>
       <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{temps.temp2.toFixed(2)} K</Typography></Grid>

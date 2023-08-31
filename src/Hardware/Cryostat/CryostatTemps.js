@@ -46,7 +46,7 @@ export default function CryostatTemps(props) {
 
   return (
     <Grid container paddingLeft="5px">
-      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">Cryostat</Typography></Grid>
+      <Grid item xs={12}><Typography variant="body1" fontWeight="bold">Cryostat Temperatures</Typography></Grid>
       
       <Grid item xs={3}><Typography variant="body2" paddingTop="4px">sensor 1</Typography></Grid>
       <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{tempSensors.temps[0].toFixed(2)} K</Typography></Grid>
