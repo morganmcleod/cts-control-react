@@ -18,6 +18,7 @@ export default function SIS(props) {
   // Redux store interfaces
   const SIS = useSelector((state) => state.Cartridge.SIS[props.pol][props.sis - 1]);
   const inputs = useSelector((state) => state.Cartridge.inputs.SIS[props.pol][props.sis - 1]);
+  const cartConfig = useSelector((state) => state.CartBias.cartConfig);
   const dispatch = useDispatch();
   
   // Only fetch data when mounted
@@ -86,6 +87,15 @@ export default function SIS(props) {
             console.log(error);
           })
         }
+        break;
+      case "autoIj":
+          axios.put("/cartassy/auto_lo")
+            .then(res => {
+              console.log(res.data);
+            })
+            .catch(error => {
+              console.log(error);
+            })
         break;
       default:
         break;
@@ -157,7 +167,19 @@ export default function SIS(props) {
       </Grid>
 
       <Grid item xs={3}><Typography variant="body2">Ij [uA]:</Typography></Grid>
-      <Grid item xs={9}><Typography fontWeight="bold">{SIS.Ij.toFixed(2)}</Typography></Grid>
+      <Grid item xs={5.5}><Typography fontWeight="bold">{SIS.Ij.toFixed(2)}</Typography></Grid>
+      <Grid item xs={3.5}>
+        <Button 
+          name="autoIj"
+          variant="contained"
+          size="small"
+          onClick={(e) => setButtonHandler(e.target.name)}
+          style={{paddingTop: "0%", paddingBottom: "0%"}}
+          disabled={!cartConfig}
+        >
+          AUTO
+        </Button>
+      </Grid>
 
       <Grid item xs={12}><Typography variant="body1" fontWeight="bold">Magnet {props.sis}</Typography></Grid>
 
