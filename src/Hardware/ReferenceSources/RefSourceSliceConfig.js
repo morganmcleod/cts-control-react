@@ -6,6 +6,7 @@ export const RefSourceSliceConfig = {
   initialState: {
     inputFreq: "",
     freqGHz: "",
+    inputAmp: "",
     ampDBm: "",
     enable: false
   },
@@ -15,6 +16,9 @@ export const RefSourceSliceConfig = {
     },
     setFreqGHz(state, action) {
       state.freqGHz = action.payload;
+    },
+    setInputAmp(state, action) {
+      state.inputAmp = action.payload;
     },
     setAmpDBm(state, action) {
       state.ampDBm = action.payload;

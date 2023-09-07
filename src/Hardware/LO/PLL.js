@@ -12,13 +12,25 @@ import '../../components.css'
 import axios from "axios";
 import { setInputLO, loSetPLL, loSetPLLConfig } from './LOSlice'
 import { setInputRF, rfSetPLL, rfSetPLLConfig } from './RFSlice'
-import { loSetInputFreq, loRefSetFreqGHz } from '../ReferenceSources/LORefSlice'
-import { rfSetInputFreq, rfRefSetFreqGHz } from '../ReferenceSources/RFRefSlice'
+import { 
+  loSetInputFreq, 
+  loRefSetFreqGHz,
+  loRefSetInputAmp,
+  loRefSetAmpDBm, 
+  loRefSetEnable 
+} from '../ReferenceSources/LORefSlice'
+import { 
+  rfSetInputFreq, 
+  rfRefSetFreqGHz,
+  rfRefSetInputAmp,
+  rfRefSetAmpDBm, 
+  rfRefSetEnable 
+} from '../ReferenceSources/RFRefSlice'
 
 export default function PLL(props) {
   // State for the frequency input:
   const [freqChanged, setFreqChanged] = useState(false);
-  const [controlRefSynth, setControlRefSynth] = useState(true);
+  const [controlRefSynth, setControlRefSynth] = useState(!props.isRfSource);
 
   // Redux store interfaces
   const inputFreq = useSelector((state) => props.isRfSource ? state.RF.inputLOFreq : state.LO.inputLOFreq);
@@ -51,6 +63,7 @@ export default function PLL(props) {
       axios.get(prefix + '/pll')
         .then(res => {
           dispatch(setPll(res.data));
+          dispatch(props.isRfSource ? setInputRF(res.data.loFreqGHz) : setInputLO(res.data.loFreqGHz));
           setIsLocked(res.data.isLocked && !freqChanged);
         })
         .catch(error => {
@@ -123,6 +136,9 @@ export default function PLL(props) {
 
       dispatch(props.isRfSource ? rfRefSetFreqGHz(refFreq) : loRefSetFreqGHz(refFreq));
       dispatch(props.isRfSource ? rfSetInputFreq(refFreq) : loSetInputFreq(refFreq));
+      dispatch(props.isRfSource ? rfRefSetInputAmp(12.0) : loRefSetInputAmp(12.0));
+      dispatch(props.isRfSource ? rfRefSetAmpDBm(12.0) : loRefSetAmpDBm(12.0));
+      dispatch(props.isRfSource ? rfRefSetEnable(true) : loRefSetEnable(true));
       axios.put(refPrefix + "/frequency", null, {params: {value: refFreq}})
       .then(res => {
         console.log(res.data);
