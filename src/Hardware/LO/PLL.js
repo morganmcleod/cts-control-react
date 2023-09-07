@@ -63,8 +63,7 @@ export default function PLL(props) {
       axios.get(prefix + '/pll')
         .then(res => {
           dispatch(setPll(res.data));
-          dispatch(props.isRfSource ? setInputRF(res.data.loFreqGHz) : setInputLO(res.data.loFreqGHz));
-          setIsLocked(res.data.isLocked && !freqChanged);
+          setIsLocked(res.data.isLocked);
         })
         .catch(error => {
           console.log(error);
@@ -232,7 +231,6 @@ export default function PLL(props) {
 
   // Change LO handler
   const onChangeLO = (value) => {
-    setIsLocked(false);
     setFreqChanged(true);
     dispatch(props.isRfSource ? setInputRF(value) : setInputLO(value));
   };
@@ -284,7 +282,7 @@ export default function PLL(props) {
       <Grid item xs={0.5}/>
       <Grid item xs={2.5}>
         <LockButton
-          isLocked={isLocked && !freqChanged}
+          isLocked={isLocked}
           isLocking={isLocking}
           lockFailed={lockFailed}
           className="custom-btn-sm"
