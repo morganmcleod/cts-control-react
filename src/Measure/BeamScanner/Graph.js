@@ -49,12 +49,17 @@ export default function BeamScannerGraph(props) {
         // The websocket only sends the latest raster
         try {
           const raster = JSON.parse(rasterMessage.data);
-          // If the result is empty or is the first raster, reset our copy:
-          if (raster.key === 0 || raster.index === 0) {
+          // If the result is empty, reset our copy:
+          if (raster.key === 0) {
             dispatch(resetRasters());
-          }
-          else if (raster.key !== rastersInfo.key || raster.index !== rastersInfo.lastIndex) {
-            dispatch(addRaster(raster));
+          } else {
+            // If this is the first raster, reset our copy:
+            if (raster.index === 0) {
+              dispatch(resetRasters());
+              dispatch(addRaster(raster));
+            } else if (raster.index !== rastersInfo.lastIndex) {
+              dispatch(addRaster(raster));
+            }
           }
         } catch (err) {
           console.log(err);
