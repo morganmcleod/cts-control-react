@@ -79,7 +79,7 @@ export default function PLL(props) {
           console.log(error);
         })
       }
-  }, [dispatch, freqChanged, prefix, setPll, setPllConfig, props.interval]);
+  }, [dispatch, freqChanged, prefix, setPll, setPllConfig, props.isRfSource, props.interval]);
 
   // Fetch on first render:
   useEffect(() => {

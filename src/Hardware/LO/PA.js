@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -57,7 +57,7 @@ export default function PA(props) {
           console.log(error);
         })
     }
-  }, [dispatch, prefix, props.isRfSource, paInputs.VGp0, paInputs.VGp1, props.interval]);
+  }, [dispatch, prefix, props.isRfSource, props.interval]);
   
   // Fetch on first render:
   useEffect(() => {

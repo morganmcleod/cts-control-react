@@ -6,8 +6,8 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 // UI components and style
 import {
   Accordion, AccordionSummary, AccordionDetails,
-  Button, Chip, Grid, IconButton, OutlinedInput,
-  Tooltip, Typography
+  Button, Chip, Fade, Grid, IconButton, OutlinedInput,
+  Snackbar, Tooltip, Typography
 } from '@mui/material';
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -38,6 +38,8 @@ export default function MotorController(props) {
   const [gotoChanged, setGotoChanged] = useState(false);
   const [accExpanded, setAccExpanded] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastText, setToastText] = useState("")
 
   // Redux store interfaces
   const thisMC = useSelector((state) => state.MotorControl);
@@ -198,6 +200,10 @@ export default function MotorController(props) {
     axios.put("/beamscan/mc/servo_here")
       .then(res => {
         console.log(res.data);
+        if (!res.data.success) {
+          setToastText(res.data.message);
+          setToastOpen(true);
+        }
       })
       .catch(error => {
         console.log(error);
@@ -208,12 +214,18 @@ export default function MotorController(props) {
     axios.get("/beamscan/mc/get_errorcode")
       .then(res => {
         console.log(res.data);
+        setToastText(res.data.message);
+        setToastOpen(true);
       })
       .catch(error => {
         console.log(error);
       })
   }
   
+  const handleCloseToast = () => {
+    setToastOpen(false);
+  }
+
   let gotoValid = {x:true, y:true, pol:true};
   if (gotoChanged) {
     if (goto.x < 0 || isNaN(goto.x))
@@ -226,6 +238,14 @@ export default function MotorController(props) {
 
   return (
     <>
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        open={toastOpen}
+        autoHideDuration={3000}
+        message={toastText}
+        onClose={handleCloseToast}
+        TransitionComponent={Fade}
+      />
       <Grid container>
         <Grid item xs={4.5} display="flex" alignItems="center">
           <Typography variant="h6">Motor Controller</Typography>
