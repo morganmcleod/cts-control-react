@@ -19,6 +19,7 @@ export default function RefSource(props) {
   // State for user input prior to clicking one of the SET buttons
   const [inputAmp, setInputAmp] = useState("");
   const [freqChanged, setFreqChanged] = useState(false);
+  const [ampChanged, setAmpChanged] = useState(false);
 
   // Redux store interface
   const status = useSelector((state) => props.isRfSource ? state.RFRef : state.LORef);
@@ -90,6 +91,11 @@ export default function RefSource(props) {
     dispatch(setInputFreq(value));
   }
 
+  const onInputAmpChanged = (value) => {
+    setAmpChanged(true);
+    dispatch(setInputAmp(value));
+  }
+
   return (
     <Grid container paddingLeft="5px" paddingBottom="5px">
       <Grid item xs={12}><Typography variant="body1" fontWeight="bold">{title}</Typography></Grid>
@@ -126,8 +132,8 @@ export default function RefSource(props) {
           margin="none"          
           style={{ width: '70%' }}
           className="smallinput"
-          onChange={(e) => setInputAmp(e.target.value)}
-          value = {inputAmp}
+          onChange={(e) => onInputAmpChanged(e.target.value)}
+          value = {ampChanged ? inputAmp : status.ampDBm}
         />
         <Typography variant="body2" fontWeight="bold" display="inline">&nbsp;dBm</Typography>
       </Grid>

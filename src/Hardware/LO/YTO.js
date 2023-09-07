@@ -91,8 +91,8 @@ export default function YTO(props) {
           className="smallinput"
         />
       </Grid>
-      <Grid item xs={0.5}/>
-      <Grid item xs={3.5}>
+      <Grid item xs={1}/>
+      <Grid item xs={3}>
         <Button
           className="custom-btn-sm"
           variant="contained"

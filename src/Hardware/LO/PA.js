@@ -10,19 +10,29 @@ import '../../components.css'
 
 // HTTP and store
 import axios from "axios";
-import { loSetPA } from './LOSlice'
-import { rfSetPA } from './RFSlice'
+import { loSetPA, loSetPAInputs } from './LOSlice'
+import { rfSetPA, rfSetPAInputs } from './RFSlice'
 
 export default function PA(props) {
-  // State for user input prior to clicking one of the SET buttons
-  const [inputVDp0, setInputVDp0] = useState("");
-  const [inputVDp1, setInputVDp1] = useState("");
-  const [inputVGp0, setInputVGp0] = useState("");
-  const [inputVGp1, setInputVGp1] = useState("");
-  
   // Redux store interfaces
   const pa = useSelector((state) => props.isRfSource ? state.RF.PA : state.LO.PA);
+  const paInputs = useSelector((state) => props.isRfSource ? state.RF.PAInputs : state.LO.PAInputs);
   const dispatch = useDispatch();
+  const setPAInputs = (val) => {
+    dispatch(props.isRfSource ? rfSetPAInputs(val) : loSetPAInputs(val));
+  }
+  const setInputVDp0 = (val) => {
+    setPAInputs({...paInputs, VDp0: val});
+  }
+  const setInputVDp1 = (val) => {
+    setPAInputs({...paInputs, VDp1: val});
+  } 
+  const setInputVGp0 = (val) => {
+    setPAInputs({...paInputs, VGp0: val});
+  }
+  const setInputVGp1 = (val) => {
+    setPAInputs({...paInputs, VGp1: val});
+  }
 
   // URL prefix
   const prefix = props.isRfSource ? '/rfsource' : '/lo'
@@ -41,18 +51,13 @@ export default function PA(props) {
       axios.get(prefix + '/pa')
         .then(res => {
           dispatch(props.isRfSource ? rfSetPA(res.data) : loSetPA(res.data));
-          if (inputVGp0 === "")
-            setInputVGp0(res.data.VGp0)
-          if (inputVGp1 === "")
-            setInputVGp1(res.data.VGp1)
-
           timer.current = setTimeout(() => {fetch()}, props.interval ?? 5000);
         })
         .catch(error => {
           console.log(error);
         })
     }
-  }, [dispatch, prefix, props.isRfSource, inputVGp0, inputVGp1, props.interval]);
+  }, [dispatch, prefix, props.isRfSource, paInputs.VGp0, paInputs.VGp1, props.interval]);
   
   // Fetch on first render:
   useEffect(() => {
@@ -65,8 +70,8 @@ export default function PA(props) {
   const setPAHandler = (pol) => {
     const params = {
       pol: pol,
-      VDControl: Number((pol === 0) ? inputVDp0 : inputVDp1),
-      VG: Number((pol === 0) ? inputVGp0 : inputVGp1)
+      VDControl: Number((pol === 0) ? paInputs.VDp0 : paInputs.VDp1),
+      VG: Number((pol === 0) ? paInputs.VGp0 : paInputs.VGp1)
     }
     axios.put(prefix + '/pa/bias', params)
       .then(res => {
@@ -109,7 +114,7 @@ export default function PA(props) {
           style={{ "width": "90%" }}
           className="smallinput"
           onChange={(e) => setInputVDp0(e.target.value)}
-          value = {inputVDp0}
+          value = {paInputs.VDp0}
         />
       </Grid>
       <Grid item xs={3}>
@@ -120,7 +125,7 @@ export default function PA(props) {
           style={{ "width": "90%" }}
           className="smallinput"
           onChange={(e) => setInputVGp0(e.target.value)}
-          value = {inputVGp0}
+          value = {paInputs.VGp0}
         />
       </Grid>
       <Grid item xs={3}>
@@ -143,7 +148,7 @@ export default function PA(props) {
           style={{ "width": "90%" }}
           className="smallinput"
           onChange={(e) => setInputVDp1(e.target.value)}
-          value = {inputVDp1}
+          value = {paInputs.VDp1}
         />
       </Grid>
       <Grid item xs={3}>
@@ -154,7 +159,7 @@ export default function PA(props) {
           style={{ "width": "90%" }}
           className="smallinput"
           onChange={(e) => setInputVGp1(e.target.value)}
-          value = {inputVGp1}
+          value = {paInputs.VGp1}
         />
       </Grid>
       <Grid item xs={3}>

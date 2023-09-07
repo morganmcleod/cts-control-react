@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import MainMenu from './MainMenu';
 
 const pages = ['Cold Cart', 'LO & RF', 'Bias', 'Noise Temp', 'Beam Patterns'];
-const colors = ['white', 'silver', 'yellow', 'maroon', 'indigo'];
+const colors = ['white', 'lightgreen', 'yellow', 'indigo', 'maroon'];
 
 export default function CTSAppBar(props) {
 

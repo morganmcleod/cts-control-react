@@ -7,6 +7,7 @@ import AMC from './AMC'
 import YTO from './YTO'
 import PLL from './PLL'
 import PA from './PA'
+import RFSourceAutoLevel from "./RFSourceAutoLevel";
 
 export default function LO(props) {
   return (
@@ -18,7 +19,11 @@ export default function LO(props) {
       <Grid item xs={3} sx={{borderRight:1}}><YTO key="LOYTO" isRfSource={false}/></Grid>
       
       <Grid item xs={3}><PLL key="RFPLL" isRfSource={true}/></Grid>      
-      <Grid item xs={3}><YTO key="RFYTO" isRfSource={true}/></Grid>
+      <Grid item xs={3}>
+        <YTO key="RFYTO" isRfSource={true}/>
+        <Grid item xs={3}><br/></Grid>
+        <RFSourceAutoLevel/>
+      </Grid>
       
       <Grid item xs={6} sx={{borderRight:1}}><br/></Grid>
       <Grid item xs={6}><br/></Grid>
@@ -26,7 +31,8 @@ export default function LO(props) {
       <Grid item xs={3} sx={{borderRight:1}}><PA key="LOPA" isRfSource={false}/></Grid>          
       
       <Grid item xs={3}><AMC key="RFAMC" isRfSource={true}/></Grid>
-      <Grid item xs={3}><PA key="RFPA" isRfSource={true}/></Grid>                
+      <Grid item xs={3}><PA key="RFPA" isRfSource={true}/></Grid>
+      <Grid item xs={3}></Grid>
     </Grid>
   );
 }

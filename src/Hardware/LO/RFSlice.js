@@ -13,6 +13,7 @@ export const RFSlice = createSlice({
 // these are for dispatch:
 export const rfSetAMC = RFSlice.actions.setAMC;
 export const rfSetPA = RFSlice.actions.setPA;
+export const rfSetPAInputs = RFSlice.actions.setPAInputs;
 export const setInputRF = RFSlice.actions.setInputLOFreq;
 export const rfSetPLL = RFSlice.actions.setPLL;
 export const rfSetLockInfo = RFSlice.actions.setLockInfo
