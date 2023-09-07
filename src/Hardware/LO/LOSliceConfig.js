@@ -36,6 +36,12 @@ export const LOSliceConfig = {
       supply3V: 0.0, 
       supply5V: 0.0
     },
+    PAInputs: {
+      VDp0: 0.0,
+      VDp1: 0.0,
+      VGp0: -0.1,
+      VGp1: -0.1
+    },
     inputLOFreq: "",
     PLL: {
       lockDetectBit: false,
@@ -70,6 +76,9 @@ export const LOSliceConfig = {
     },
     setPA(state, action) {
       state.PA = action.payload;
+    },
+    setPAInputs(state, action) {
+      state.PAInputs = action.payload;
     },
     setInputLOFreq(state, action) {
       state.inputLOFreq = action.payload;

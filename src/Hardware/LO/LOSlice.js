@@ -13,6 +13,7 @@ export const LOSlice = createSlice({
 // these are for dispatch:
 export const loSetAMC = LOSlice.actions.setAMC;
 export const loSetPA = LOSlice.actions.setPA;
+export const loSetPAInputs = LOSlice.actions.setPAInputs;
 export const loSetPLL = LOSlice.actions.setPLL;
 export const setInputLO = LOSlice.actions.setInputLOFreq;
 export const loSetLockInfo = LOSlice.actions.setLockInfo
