@@ -203,6 +203,16 @@ export default function MotorController(props) {
         console.log(error);
       })
   }
+
+  const handleGetErrorCode = () => {
+    axios.get("/beamscan/mc/get_errorcode")
+      .then(res => {
+        console.log(res.data);
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }
   
   let gotoValid = {x:true, y:true, pol:true};
   if (gotoChanged) {
@@ -579,6 +589,23 @@ export default function MotorController(props) {
                 For use after any motor power failure.<br/>You must next <b>Home</b> all affected axes.
               </AlertDialog>
             </Grid>           
+            <Grid item xs={2}>
+              <Tooltip title={<Typography fontSize={13}>Get the latest error code from the motor controller.</Typography>}>
+                <Button
+                  variant="contained"
+                  size="small"                
+                  onClick={() => handleGetErrorCode()}
+                  style={{
+                    paddingTop: "0%", 
+                    paddingBottom: "0%",
+                    minWidth: '55%',
+                    maxWidth: '55%'
+                  }}
+                  >
+                  TC1
+                </Button>
+              </Tooltip>
+            </Grid> 
           </Grid>
         </AccordionDetails>
       </Accordion>
