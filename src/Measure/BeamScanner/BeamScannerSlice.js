@@ -1,17 +1,6 @@
 //This is the 'slice' of the Redux store related to the Motor Controller
 import { createSlice } from '@reduxjs/toolkit';
 
-// class Raster(BaseModel):
-//     key: int = 0                    # keyBeamPattern
-//     index: int = 0
-//     startPos:Position = Position()
-//     xStep: float = 0
-//     amplitude:List[float] = []
-//     phase:List[float] = []
-
-// class Rasters(BaseModel):
-//     items: List[Raster] = []
-
 const implResetPlots = (state) => {
   // clear plots at start of scan
   state.rastersInfo = {key: 0, startIndex: 0, lastIndex: 0};
@@ -64,6 +53,7 @@ export const BeamScannerSlice = createSlice({
       targetLevel: 0,
       resolution: 0,
       centersInterval: 0,
+      scanBidirectional: false
     },
     scanList: [],
     rastersInfo: {key: 0, startIndex: 0, lastIndex: 0},

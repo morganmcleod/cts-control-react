@@ -3,7 +3,16 @@ import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import { Grid, Chip, Button, FormGroup, FormControlLabel, Switch, OutlinedInput, Typography } from '@mui/material'
+import { 
+  Grid, 
+  Chip, 
+  Button, 
+  FormGroup, 
+  FormControlLabel, 
+  Checkbox, 
+  OutlinedInput, 
+  Typography 
+} from '@mui/material'
 import EnableButton from '../../Shared/EnableButton';
 import LockButton from './LockButton';
 import '../../components.css'
@@ -78,7 +87,7 @@ export default function PLL(props) {
           console.log(error);
         })
       }
-  }, [dispatch, freqChanged, prefix, setPll, setPllConfig, props.isRfSource, props.interval]);
+  }, [dispatch, prefix, setPll, setPllConfig, props.interval]);
 
   // Fetch on first render:
   useEffect(() => {
@@ -132,13 +141,16 @@ export default function PLL(props) {
     if (controlRefSynth) {
       // lockSB 0=lock below ref, 1=lock above ref, CTS floog is 10 MHz:
       const refFreq = ((inputFreq / pllConfig.coldMult) + ((pllConfig.lockSB === 1) ? -0.01 : 0.01)) / pllConfig.warmMult;
+      const refAmp = 12.0
 
       dispatch(props.isRfSource ? rfRefSetFreqGHz(refFreq) : loRefSetFreqGHz(refFreq));
       dispatch(props.isRfSource ? rfSetInputFreq(refFreq) : loSetInputFreq(refFreq));
-      dispatch(props.isRfSource ? rfRefSetInputAmp(12.0) : loRefSetInputAmp(12.0));
-      dispatch(props.isRfSource ? rfRefSetAmpDBm(12.0) : loRefSetAmpDBm(12.0));
+      dispatch(props.isRfSource ? rfRefSetInputAmp(refAmp) : loRefSetInputAmp(refAmp));
+      dispatch(props.isRfSource ? rfRefSetAmpDBm(refAmp) : loRefSetAmpDBm(refAmp));
       dispatch(props.isRfSource ? rfRefSetEnable(true) : loRefSetEnable(true));
       axios.put(refPrefix + "/frequency", null, {params: {value: refFreq}})
+      axios.put(refPrefix + "/amplitude", null, {params: {value: refAmp}})
+      axios.put(refPrefix + "/output", null, {params: {enable: true}})
       .then(res => {
         console.log(res.data);
         // Lock now that the ref synth is set:
@@ -247,7 +259,7 @@ export default function PLL(props) {
         <FormGroup>
           <FormControlLabel 
             control={
-              <Switch 
+              <Checkbox 
                 checked={controlRefSynth}
                 onChange={e => onChangeSetRef(e.target.checked)}
                 size="small"                

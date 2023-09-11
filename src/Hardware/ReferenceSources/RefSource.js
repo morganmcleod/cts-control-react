@@ -12,12 +12,11 @@ import '../../components.css'
 
 // HTTP and store
 import axios from "axios";
-import { loSetInputFreq, loRefSetFreqGHz, loRefSetAmpDBm, loRefSetEnable, loRefSetStatus} from './LORefSlice'
-import { rfSetInputFreq, rfRefSetFreqGHz, rfRefSetAmpDBm, rfRefSetEnable, rfRefSetStatus} from './RFRefSlice'
+import { loSetInputFreq, loRefSetInputAmp, loRefSetFreqGHz, loRefSetAmpDBm, loRefSetEnable, loRefSetStatus} from './LORefSlice'
+import { rfSetInputFreq, rfRefSetInputAmp, rfRefSetFreqGHz, rfRefSetAmpDBm, rfRefSetEnable, rfRefSetStatus} from './RFRefSlice'
 
 export default function RefSource(props) {
   // State for user input prior to clicking one of the SET buttons
-  const [inputAmp, setInputAmp] = useState("");
   const [freqChanged, setFreqChanged] = useState(false);
   const [ampChanged, setAmpChanged] = useState(false);
 
@@ -30,6 +29,7 @@ export default function RefSource(props) {
   const prefix = props.isRfSource ? '/rfref' : '/loref'
   const title = props.isRfSource ? 'RF Reference' : 'LO Reference'
   const setInputFreq = props.isRfSource ? rfSetInputFreq : loSetInputFreq;
+  const setInputAmp = props.isRfSource ? rfRefSetInputAmp : loRefSetInputAmp;
 
   // Load data from REST API
   const fetch = useCallback(() => {
@@ -37,7 +37,7 @@ export default function RefSource(props) {
       .then(res => {
         dispatch(props.isRfSource ? rfRefSetStatus(res.data) : loRefSetStatus(res.data));
         dispatch(setInputFreq(res.data.freqGHz));
-        setInputAmp(res.data.ampDBm);        
+        dispatch(setInputAmp(res.data.ampDBm))        
       })
       .catch(error => {
         console.log(error);
@@ -61,8 +61,8 @@ export default function RefSource(props) {
         console.log(error);
       })
     } else if (e.target.name === "set-amp") {
-      dispatch(props.isRfSource ? rfRefSetAmpDBm(inputAmp) : loRefSetAmpDBm(inputAmp));
-      axios.put(prefix + "/amplitude", null, {params: {value: inputAmp}})
+      dispatch(props.isRfSource ? rfRefSetAmpDBm(status.inputAmp) : loRefSetAmpDBm(status.inputAmp));
+      axios.put(prefix + "/amplitude", null, {params: {value: status.inputAmp}})
       .then(res => {
         console.log(res.data);
       })
@@ -133,7 +133,7 @@ export default function RefSource(props) {
           style={{ width: '70%' }}
           className="smallinput"
           onChange={(e) => onInputAmpChanged(e.target.value)}
-          value = {ampChanged ? inputAmp : status.ampDBm}
+          value = {ampChanged ? status.inputAmp : status.ampDBm}
         />
         <Typography variant="body2" fontWeight="bold" display="inline">&nbsp;dBm</Typography>
       </Grid>

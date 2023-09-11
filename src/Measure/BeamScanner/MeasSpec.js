@@ -7,7 +7,8 @@ import {
   Grid,
   Button,
   OutlinedInput,
-  Typography
+  Typography,
+  Checkbox
 } from '@mui/material';
 import '../../components.css'
 
@@ -110,6 +111,9 @@ export default function MeasSpec(props) {
       case "centers-interval":
         spec = {...measSpec, centersInterval: e.target.value};
         break;
+      case "scanBidirectional":
+        spec = {...measSpec, scanBidirectional: e.target.checked};
+        break;
       default:
         return;
     }
@@ -192,7 +196,7 @@ export default function MeasSpec(props) {
         break;
     }
   }
-
+    
   return (
     <Grid container paddingLeft="5px">
       <Grid item xs={12}><Typography variant="h6">Measurement Setup</Typography></Grid>
@@ -473,6 +477,18 @@ export default function MeasSpec(props) {
         /><Typography variant="body2" display="inline" paddingTop="4px">&nbsp;sec</Typography>
       </Grid>
       <Grid item xs={2}/>
+      
+      <Grid item xs={4}>
+        <Typography variant="body2" paddingTop="9px">Scan Bidirectional:</Typography>
+      </Grid>
+      <Grid item xs={8}>
+        <Checkbox 
+          name="scanBidirectional"
+          checked={measSpec.scanBidirectional}
+          onChange={e => handleChangeSetting(e)}
+          size="small"
+        />
+      </Grid>
     </Grid>
   );
 }
