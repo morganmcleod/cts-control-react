@@ -38,7 +38,7 @@ export default function MeasControl(props) {
     }
 
     (async () => {
-      axios.get("/database/config/")
+      axios.get("/database/config")
       .then(res => {
         if (res.data.success) {
           if (active) 
@@ -56,14 +56,14 @@ export default function MeasControl(props) {
   }, [loading, dispatch]);
 
   const getConfigKeys = useCallback((configId) => {
-    axios.get("/database/config/keys/", {params: {configId: configId, pol: 0}})
+    axios.get("/database/config/keys", {params: {configId: configId, pol: 0}})
     .then(res => {
       dispatch(setConfigKeys({...res.data, pol: 0}));
     })
     .catch(error => {
       console.log(error);
     })
-    axios.get("/database/config/keys/", {params: {configId: configId, pol: 1}})
+    axios.get("/database/config/keys", {params: {configId: configId, pol: 1}})
     .then(res => {
       dispatch(setConfigKeys({...res.data, pol: 1}));
       dispatch(setRefresh());
