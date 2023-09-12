@@ -1,9 +1,10 @@
 // React and Redux
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
 import { Grid, Button, OutlinedInput, Typography} from '@mui/material';
+import ActionDialog from '../../Shared/ActionDialog';
 import '../../components.css'
 
 // HTTP and store
@@ -15,6 +16,9 @@ import {
 } from './CartridgeSlice'
 
 export default function SIS(props) {
+  // Local state
+  const [actionOpen, setActionOpen] = useState(false);
+
   // Redux store interfaces
   const SIS = useSelector((state) => state.Cartridge.SIS[props.pol][props.sis - 1]);
   const inputs = useSelector((state) => state.Cartridge.inputs.SIS[props.pol][props.sis - 1]);
@@ -89,12 +93,14 @@ export default function SIS(props) {
         }
         break;
       case "autoIj":
+          setActionOpen(true);
           axios.put("/cartassy/auto_lo")
             .then(res => {
               console.log(res.data);
+              setTimeout(() => {setActionOpen(false)}, 2000);      
             })
             .catch(error => {
-              console.log(error);
+              console.log(error);              
             })
         break;
       default:
@@ -179,6 +185,13 @@ export default function SIS(props) {
         >
           AUTO
         </Button>
+        <ActionDialog
+          open={actionOpen}
+          title="Setting SIS Current"
+          onClose={() => {setActionOpen(false)}}
+        >
+          Setting SIS Current...
+        </ActionDialog>
       </Grid>
 
       <Grid item xs={12}><Typography variant="body1" fontWeight="bold">Magnet {props.sis}</Typography></Grid>
