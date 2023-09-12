@@ -42,7 +42,7 @@ export default function RefSource(props) {
       .catch(error => {
         console.log(error);
       })
-  }, [dispatch, prefix, setInputFreq, props.isRfSource]);
+  }, [dispatch, prefix, setInputFreq, setInputAmp, props.isRfSource]);
 
   // Load only on first render
   useEffect(() => {
