@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 // UI components and style
 import { Grid, Button, OutlinedInput, Typography} from '@mui/material';
 import ActionDialog from '../../Shared/ActionDialog';
+import SISCurrent from "../Dialogs/SISCurrent";
 import '../../components.css'
 
 // HTTP and store
@@ -190,7 +191,7 @@ export default function SIS(props) {
           title="Setting SIS Current"
           onClose={() => {setActionOpen(false)}}
         >
-          Setting SIS Current...
+          <SISCurrent/>
         </ActionDialog>
       </Grid>
 

@@ -13,6 +13,7 @@ import CartBiasSlice from './Config/CartBiasSlice';
 import WarmIFPlateSlice from './Hardware/WarmIFPlate/WarmIFPlateSlice';
 import FEMCSlice from './Hardware/FEMC/FEMCSlice';
 import CryostatSlice from './Hardware/Cryostat/CryostatSlice';
+import XYPlotSlice from './Hardware/Dialogs/XYPlotSlice';
 
 //configureStore takes a list of 'reducers'.   
 //A reducer is like a state-machine transition: given the current store state and an action, return the new state.
@@ -29,7 +30,8 @@ export default configureStore({
     CartBias: CartBiasSlice,
     WarmIFPlate: WarmIFPlateSlice,
     FEMC: FEMCSlice,
-    Cryostat: CryostatSlice
+    Cryostat: CryostatSlice,
+    XYPlot: XYPlotSlice
   },
 
   // Add the positionListener middleware to the store.

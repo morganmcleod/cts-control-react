@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import React from 'react';
 import { 
   Button,
   Dialog,
@@ -12,32 +11,8 @@ import {
 export default function ActionDialog(props) {
   const {open, title, children, onClose } = props;
 
-  const [actionData, setActionData] = useState([])
-    
-  const options = {retryOnError: true, shouldReconnect: (closeEvent) => true};
-
-  const { 
-    readyState: actionReady,
-    lastMessage: actionMessage 
-  } = useWebSocket("ws://localhost:8000/action/action_ws", options);
-
-  useEffect(() => {
-    // websocket handler for action message
-    if (actionReady === ReadyState.OPEN) {
-      if (actionMessage !== null) {
-        try {
-          const action = JSON.parse(actionMessage.data);
-          setActionData(actionData + [action.paOutput, action.sisCurrent]);
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    }
-  }, [actionReady, actionMessage, actionData]);
-
   const handleClose = () => {
     onClose();
-    setActionData([])
   };
   
   return (
@@ -51,8 +26,7 @@ export default function ActionDialog(props) {
         {title}
       </DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description" variant="h6" color="contrastText">
-          {actionData}
+        <DialogContentText id="alert-dialog-description" component={'span'} variant="h6" color="contrastText">
           {children}
         </DialogContentText>
       </DialogContent>
