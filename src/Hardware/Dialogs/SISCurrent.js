@@ -8,37 +8,34 @@ export default function SISCurrent(props) {
   const plot = useSelector((state) => state.XYPlot.plot);
   const dispatch = useDispatch();
   const [actionWs, ready] = useContext(ActionWSContext);  
+  const onComplete = props.onComplete;
 
   useEffect(() => {
-    let oldOnMessage = null;
-    if (actionWs) {      
-      if (ready) {
-        oldOnMessage = actionWs.onmessage;
-        actionWs.onmessage = (event) => {
-          oldOnMessage(event);
-          try {
-            const msg = JSON.parse(event.data);
-            if (msg.complete) {
-              props.onComplete();
-              if (oldOnMessage)
-                actionWs.onmessage = oldOnMessage;
-            } else {
-              dispatch(addPoint({x: msg.index, y: msg.sisCurrent}));              
-            }
-          } catch(err) {
-            console.log(err);
-          }
+    const handleMessage = (event) => {
+      try {            
+        const msg = JSON.parse(event.data);
+        if (msg.complete) {
+          onComplete();
+        } else {
+          console.log("addPoint pol" + props.pol);
+          dispatch(addPoint({x: msg.index, y: msg.sisCurrent}));              
         }
-      } else {
-        if (oldOnMessage)
-          actionWs.onmessage = oldOnMessage;
-      }      
+      } catch(err) {
+        console.log(err);
+      }
+    }
+    if (actionWs && ready) {      
+      actionWs.addEventListener("message", handleMessage);          
+    }
+    return () => {
+      actionWs.removeEventListener("message", handleMessage);
     }   
-  }, [actionWs, ready, dispatch, props]);
+  }, [actionWs, ready, dispatch, onComplete, props.pol]);
   
   // Fetch on first render:
   useEffect(() => {
-    dispatch(resetPlot());
+    console.log("resetPlot pol" + props.pol)
+    dispatch(resetPlot());    
   }, [dispatch, props.pol]);
 
   return (
@@ -66,13 +63,13 @@ export default function SISCurrent(props) {
         },
         yaxis: {
           title: 'SIS current [uA]',
-          range: [0.0, 15.0],
+          range: [0, 70],
           nticks: 10
         },
         margin: {
           t: 0,
-          b: 0,
-          l: 0,
+          b: 40,
+          l: 40,
           r: 0
         }
       }}
