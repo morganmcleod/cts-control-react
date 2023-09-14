@@ -4,6 +4,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { Box, Divider, Grid } from '@mui/material';
 
 import { ThemeContext, loadTheme, mapTheme } from "./themes";
+import ActionWSContext from './Shared/ActionWSContext';
 import CCA from './Hardware/Cartridge/CCA';
 import Presets from './Hardware/Cartridge/Presets';
 import FEMC from './Hardware/FEMC/FEMC';
@@ -17,22 +18,62 @@ import BeamScannerMain from './Measure/BeamScanner/Main';
 
 import axios from "axios";
 axios.defaults.baseURL = 'http://localhost:8000';
+const baseWsURL = 'ws://localhost:8000';
 
 class App extends React.Component {
+
   constructor(props) {
     super(props);
 
     this.setTheme = (themeId) => {
-      this.setState({theme: mapTheme(themeId)});      
+      this.setState({theme: mapTheme(themeId)});
     };
-
     this.state = {
       theme: loadTheme(),
       setTheme: this.setTheme,
-      visibleTab: 0
+      visibleTab: 0,
+      wsReady: false
     }
+    this.connect = this.connect.bind(this);
   }
 
+  componentDidMount() {
+    this.interval = setInterval(this.connect, 1000);
+  }
+
+  componentWillUnmount() {
+    if (this.actionWs) this.actionWs.close();
+    if (this.interval) clearInterval(this.interval);
+  }
+
+  connect() {
+    if (this.actionWs === undefined || (this.actionWs && this.actionWs.readyState === 3)) {
+      this.actionWs = new WebSocket(baseWsURL + '/app/action_ws');
+
+      this.actionWs.onopen = () => {
+        console.log("actionWs opened");
+        this.setState({wsReady: true});
+      };
+
+      this.actionWs.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        console.log("actionWs:", msg);
+        if (msg.type === 'app' && msg.action === 'reload') {
+          window.location.reload(false);
+        }
+      };
+
+      this.actionWs.onclose = (event) => {
+        console.log("actionWs closed:", event);
+        this.setState({wsReady: false});
+      };
+      
+      this.actionWs.onerror = (event) => {
+        console.log("actionWs error: ", event);
+      };
+    }
+  }
+  
   setVisibleTab = (index) => {
     this.setState({visibleTab: index});
   }
@@ -47,60 +88,62 @@ class App extends React.Component {
 
     return (
       <ThemeContext.Provider value={this.state}>
-        <CTSAppBar setVisibleTab={this.setVisibleTab}/>
-        <ThemeProvider theme={theme}>
-          <Box
-            minHeight={"100vh"}
-            padding={"5px"}
-            style={containerStyle}
-          >            
-            <TabPanel index={0} visibleTab={this.state.visibleTab}>
-              <PageHeader
-                title="Cold Cartridge"
-                showCartSelect={true}
-              />
-              <CCA/>
-              <Grid container>
-                <Grid item xs={6}>
-                  <Presets/>
-                </Grid>
-                <Grid item xs={6}>
-                  <FEMC/>
-                </Grid>
-              </Grid>              
-            </TabPanel>
-            <TabPanel index={1} visibleTab={this.state.visibleTab}>
-              <PageHeader 
-                title="LO & RF Source" 
-                showLORef={true}
-              />
-              <LO/>
-              <RefSources/>
-            </TabPanel>
-            
-            <TabPanel index={2} visibleTab={this.state.visibleTab}>
-              <PageHeader 
-                title="Cartridge Bias"
-                showCartSelect={true}
-              />
-              <CartBias/>
-            </TabPanel>
-            
-            <TabPanel index={4} visibleTab={this.state.visibleTab}>
-              <PageHeader 
-                title="Beam Patterns" 
-                showCartSelect={true}
-                showMeasControl={true}
-                startUrl="/measure/start"
-                measureType={2}
-                stopUrl="/measure/stop"                
-              />
-              <Divider variant="fullWidth" color="blue"/>
-              <BeamScannerMain/>
-            </TabPanel>
-            <Box flex={1} overflow="auto"/>
-          </Box>
-        </ThemeProvider>
+        <ActionWSContext.Provider value={[this.actionWs, this.state.wsReady]}>
+          <CTSAppBar setVisibleTab={this.setVisibleTab}/>
+          <ThemeProvider theme={theme}>
+            <Box
+              minHeight={"100vh"}
+              padding={"5px"}
+              style={containerStyle}
+            >            
+              <TabPanel index={0} visibleTab={this.state.visibleTab}>
+                <PageHeader
+                  title="Cold Cartridge"
+                  showCartSelect={true}
+                />
+                <CCA/>
+                <Grid container>
+                  <Grid item xs={6}>
+                    <Presets/>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <FEMC/>
+                  </Grid>
+                </Grid>              
+              </TabPanel>
+              <TabPanel index={1} visibleTab={this.state.visibleTab}>
+                <PageHeader 
+                  title="LO & RF Source" 
+                  showLORef={true}
+                />
+                <LO/>
+                <RefSources/>
+              </TabPanel>
+              
+              <TabPanel index={2} visibleTab={this.state.visibleTab}>
+                <PageHeader 
+                  title="Cartridge Bias"
+                  showCartSelect={true}
+                />
+                <CartBias/>
+              </TabPanel>
+              
+              <TabPanel index={4} visibleTab={this.state.visibleTab}>
+                <PageHeader 
+                  title="Beam Patterns" 
+                  showCartSelect={true}
+                  showMeasControl={true}
+                  startUrl="/measure/start"
+                  measureType={2}
+                  stopUrl="/measure/stop"                
+                />
+                <Divider variant="fullWidth" color="blue"/>
+                <BeamScannerMain/>
+              </TabPanel>
+              <Box flex={1} overflow="auto"/>
+            </Box>
+          </ThemeProvider>
+        </ActionWSContext.Provider>
       </ThemeContext.Provider>
     );
   }

@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, Fragment } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -94,15 +94,15 @@ export default function SIS(props) {
         }
         break;
       case "autoIj":
-          setActionOpen(true);
-          axios.put("/cartassy/auto_lo")
-            .then(res => {
-              console.log(res.data);
-              setTimeout(() => {setActionOpen(false)}, 2000);      
-            })
-            .catch(error => {
-              console.log(error);              
-            })
+        setActionOpen(true);
+        axios.put("/cartassy/auto_lo", null, {params: {pol: props.pol}})
+          .then(res => {
+            console.log(res.data);
+          })
+          .catch(error => {
+            console.log(error);              
+          })
+        setTimeout(() => {setActionOpen(false)}, 10000);
         break;
       default:
         break;
@@ -176,23 +176,30 @@ export default function SIS(props) {
       <Grid item xs={3}><Typography variant="body2">Ij [uA]:</Typography></Grid>
       <Grid item xs={5.5}><Typography fontWeight="bold">{SIS.Ij.toFixed(2)}</Typography></Grid>
       <Grid item xs={3.5}>
-        <Button 
-          name="autoIj"
-          variant="contained"
-          size="small"
-          onClick={(e) => setButtonHandler(e.target.name)}
-          style={{paddingTop: "0%", paddingBottom: "0%"}}
-          disabled={!cartConfig}
-        >
-          AUTO
-        </Button>
-        <ActionDialog
-          open={actionOpen}
-          title="Setting SIS Current"
-          onClose={() => {setActionOpen(false)}}
-        >
-          <SISCurrent/>
-        </ActionDialog>
+        {props.sis === "1" &&
+          <Fragment>
+            <Button 
+              name="autoIj"
+              variant="contained"
+              size="small"
+              onClick={(e) => setButtonHandler(e.target.name)}
+              style={{paddingTop: "0%", paddingBottom: "0%"}}
+              disabled={!cartConfig}
+            >
+              AUTO
+            </Button>
+            <ActionDialog
+              open={actionOpen}
+              title="Setting SIS Current"
+              onClose={() => {setActionOpen(false)}}              
+            >
+              <SISCurrent 
+                pol={props.pol} 
+                onComplete={() => {setActionOpen(false)}}
+              />
+            </ActionDialog>
+          </Fragment>
+        }
       </Grid>
 
       <Grid item xs={12}><Typography variant="body1" fontWeight="bold">Magnet {props.sis}</Typography></Grid>

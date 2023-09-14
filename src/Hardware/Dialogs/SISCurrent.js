@@ -1,37 +1,45 @@
-import React, { useEffect } from "react";
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import React, { useEffect, useContext } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { resetPlot, addPoint } from "./XYPlotSlice";
+import ActionWSContext from "../../Shared/ActionWSContext";
 import Plot from "react-plotly.js";
 
 export default function SISCurrent(props) {
   const plot = useSelector((state) => state.XYPlot.plot);
   const dispatch = useDispatch();
-
-  const options = {retryOnError: true, shouldReconnect: (closeEvent) => true};
-  const { 
-    readyState: actionReady,
-    lastMessage: actionMessage 
-  } = useWebSocket("ws://localhost:8000/action/action_ws", options);
+  const [actionWs, ready] = useContext(ActionWSContext);  
 
   useEffect(() => {
-    // websocket handler for action message
-    if (actionReady === ReadyState.OPEN) {
-      if (actionMessage !== null) {
-        try {
-          const sisCurrent = JSON.parse(actionMessage.data);
-          dispatch(addPoint({x: sisCurrent.index, y: sisCurrent.sisCurrent}));
-        } catch (err) {
-          console.log(err);
+    let oldOnMessage = null;
+    if (actionWs) {      
+      if (ready) {
+        oldOnMessage = actionWs.onmessage;
+        actionWs.onmessage = (event) => {
+          oldOnMessage(event);
+          try {
+            const msg = JSON.parse(event.data);
+            if (msg.complete) {
+              props.onComplete();
+              if (oldOnMessage)
+                actionWs.onmessage = oldOnMessage;
+            } else {
+              dispatch(addPoint({x: msg.index, y: msg.sisCurrent}));              
+            }
+          } catch(err) {
+            console.log(err);
+          }
         }
-      }
-    }
-  }, [actionReady, actionMessage, dispatch]);
-
+      } else {
+        if (oldOnMessage)
+          actionWs.onmessage = oldOnMessage;
+      }      
+    }   
+  }, [actionWs, ready, dispatch, props]);
+  
   // Fetch on first render:
   useEffect(() => {
     dispatch(resetPlot());
-  }, [dispatch]);
+  }, [dispatch, props.pol]);
 
   return (
     <Plot      
@@ -71,7 +79,7 @@ export default function SISCurrent(props) {
       config = {{
         displayModeBar: false, 
         responsive: true,
-        staticPlot: true      
+        staticPlot: false      
       }}
     />
   );

@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 
 export default function ActionDialog(props) {
-  const {open, title, children, onClose } = props;
+  const { open, title, children, onClose } = props;
 
   const handleClose = () => {
     onClose();
