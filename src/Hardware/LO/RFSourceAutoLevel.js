@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { Grid, Button, OutlinedInput, Typography } from '@mui/material'
 import '../../components.css'
 import EnableButton from "../../Shared/EnableButton";
-import ActionDialog from '../../Shared/ActionDialog';
+import AppEventDialog from '../../Shared/AppEventDialog';
 import RFPower from "../Dialogs/RFPower";
 
 // HTTP and store
@@ -73,7 +73,7 @@ export default function RFSourceAutoLevel(props) {
         >
           RUN
         </Button>
-        <ActionDialog
+        <AppEventDialog
           open={actionOpen}
           title="Setting RF Power"
           onClose={() => {setActionOpen(false)}}              
@@ -81,7 +81,7 @@ export default function RFSourceAutoLevel(props) {
           <RFPower 
             onComplete={() => {setActionOpen(false)}}
           />
-        </ActionDialog>
+        </AppEventDialog>
       </Grid>
       
       <Grid item xs={3}>

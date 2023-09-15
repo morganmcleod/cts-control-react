@@ -8,7 +8,7 @@ import {
   DialogTitle
 } from '@mui/material';
 
-export default function ActionDialog(props) {
+export default function AppEventDialog(props) {
   const { open, title, children, onClose } = props;
 
   const handleClose = () => {

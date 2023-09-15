@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
 import { Grid, Button, OutlinedInput, Typography} from '@mui/material';
-import ActionDialog from '../../Shared/ActionDialog';
+import AppEventDialog from '../../Shared/AppEventDialog';
 import SISCurrent from "../Dialogs/SISCurrent";
 import '../../components.css'
 
@@ -18,7 +18,7 @@ import {
 
 export default function SIS(props) {
   // Local state
-  const [actionOpen, setActionOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   // Redux store interfaces
   const SIS = useSelector((state) => state.Cartridge.SIS[props.pol][props.sis - 1]);
@@ -94,7 +94,7 @@ export default function SIS(props) {
         }
         break;
       case "autoIj":
-        setActionOpen(true);
+        setDialogOpen(true);
         axios.put("/cartassy/auto_lo", null, {params: {pol: props.pol}})
           .then(res => {
             console.log(res.data);
@@ -102,7 +102,7 @@ export default function SIS(props) {
           .catch(error => {
             console.log(error);              
           })
-        setTimeout(() => {setActionOpen(false)}, 10000);
+        setTimeout(() => {setDialogOpen(false)}, 10000);
         break;
       default:
         break;
@@ -188,16 +188,16 @@ export default function SIS(props) {
             >
               AUTO
             </Button>
-            <ActionDialog
-              open={actionOpen}
+            <AppEventDialog
+              open={dialogOpen}
               title="Setting SIS Current"
-              onClose={() => {setActionOpen(false)}}              
+              onClose={() => {setDialogOpen(false)}}              
             >
               <SISCurrent 
                 pol={props.pol} 
-                onComplete={() => {setActionOpen(false)}}
+                onComplete={() => {setDialogOpen(false)}}
               />
-            </ActionDialog>
+            </AppEventDialog>
           </Fragment>
         }
       </Grid>

@@ -1,45 +1,29 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { resetPlot, addPoint } from "./XYPlotSlice";
-import ActionWSContext from "../../Shared/ActionWSContext";
+import { startSequence } from '../../Shared/AppEventSlice';
 import Plot from "react-plotly.js";
 
 export default function RFPower(props) {
-  const plot = useSelector((state) => state.XYPlot.plot);
+  const rfPower = useSelector((state) => state.AppEvent.rfPower);
   const dispatch = useDispatch();
-  const [actionWs, ready] = useContext(ActionWSContext);  
+  const [x, setX] = useState([]);
+  const [y, setY] = useState([])
 
   useEffect(() => {
-    let oldOnMessage = null;
-    if (actionWs) {      
-      if (ready) {
-        oldOnMessage = actionWs.onmessage;
-        actionWs.onmessage = (event) => {
-          oldOnMessage(event);
-          try {
-            const msg = JSON.parse(event.data);
-            if (msg.complete) {
-              props.onComplete();
-              if (oldOnMessage)
-                actionWs.onmessage = oldOnMessage;
-            } else {
-              dispatch(addPoint({x: msg.index, y: msg.power}));              
-            }
-          } catch(err) {
-            console.log(err);
-          }
-        }
+    let xx = [];
+    let yy = [];
+    for (var o in rfPower) {
+      if (o.iter === "complete") {
+        dispatch(startSequence("rfPower"))
+        props.onComplete();
       } else {
-        if (oldOnMessage)
-          actionWs.onmessage = oldOnMessage;
-      }      
-    }   
-  }, [actionWs, ready, dispatch, props]);
-  
-  // Fetch on first render:
-  useEffect(() => {
-    dispatch(resetPlot());
-  }, [dispatch, props.pol]);
+        xx.push(Number(o.iter));
+        yy.push(Number(o.y));  
+      }
+    }
+    setX(xx);
+    setY(yy);
+  }, [rfPower, dispatch, props]);
 
   return (
     <Plot      
@@ -49,8 +33,8 @@ export default function RFPower(props) {
       useResizeHandler
       data = {[{
         name: 'rfPower',
-        x: plot.x,
-        y: plot.y,
+        x: x,
+        y: y,
         type: 'scatter',
         mode: 'lines',
         showscale: false,
