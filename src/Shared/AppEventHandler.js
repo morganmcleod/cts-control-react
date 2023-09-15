@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useDispatch } from 'react-redux'
 import { addToSequence } from './AppEventSlice';
 
 const baseWsURL = 'ws://localhost:8000';
@@ -7,20 +7,15 @@ const baseWsURL = 'ws://localhost:8000';
 export default function AppEventHandler(props) {
   const [ws, setWs] = useState(null);
   const timer = useRef(0);
-  const eventState = useSelector((state) => state.AppEvent);
+  const isMounted = useRef(false);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-
-    if (timer.current) {
-      clearInterval(timer.current);
-      timer.current = 0;
-    }
-
-    timer.current = setInterval(() => {
+  const connect = useCallback(() => {    
+    if (isMounted.current) {
       // connect if needed:
       if (ws === null || (ws && ws.readyState === 3)) {
-        const newWs = new WebSocket(baseWsURL + '/event/event_ws')
+        console.log("appEventWs opening");
+        const newWs = new WebSocket(baseWsURL + '/event/event_ws');
         
         newWs.onopen = () => {
           console.log("appEventWs opened");
@@ -28,7 +23,7 @@ export default function AppEventHandler(props) {
   
         newWs.onmessage = (event) => {
           const msg = JSON.parse(event.data);
-          console.log("appEventWs:", msg);
+          // console.log("appEventWs:", msg);
           if (msg.type === 'app' && msg.iter === 'reload') {
             window.location.reload(false);
           } else {
@@ -46,13 +41,20 @@ export default function AppEventHandler(props) {
 
         setWs(newWs);
       }
-    }, 1000);
-
-    return () => { 
-      clearInterval(timer.current);
-      if (ws) ws.close();
     }
-  }, [dispatch, eventState, ws]);
+  }, [dispatch, ws]);
+
+  useEffect(() => {
+    isMounted.current = true;
+    timer.current = setInterval(connect, 1000);
+    return () => {
+      isMounted.current = false;
+      clearInterval(timer.current);
+      timer.current = 0;
+      if (ws)
+        ws.close();
+    }
+  }, [connect, ws]);
 
   return (
     <React.Fragment/>

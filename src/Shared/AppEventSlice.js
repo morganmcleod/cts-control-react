@@ -1,24 +1,37 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initState = {
+  iter: [],
+  x: [],
+  y: [],
+  complete: false
+}
+
 export const AppEventSlice = createSlice({
   name: 'AppEvent',
   initialState: {
-    sisCurrent: [],
-    rfPower: []
+    sisCurrent: initState,
+    rfPower: initState
   },
   reducers: {
-    startSequence(state, action) {
-      state[action.payload] = []
+    resetSequence(state, action) {
+      state[action.payload] = initState;
     },
     addToSequence(state, action) {
-      state[action.payload.type].push(action.payload);
+      if (action.payload.iter === "complete") {
+        state[action.payload.type].complete = true;
+      } else {
+        state[action.payload.type].iter.push(action.payload.iter);
+        state[action.payload.type].x.push(action.payload.x);
+        state[action.payload.type].y.push(action.payload.y);
+      }
     }
   }
 });
 
 // this is for dispatch:
 export const { 
-  startSequence,
+  resetSequence,
   addToSequence
  } = AppEventSlice.actions
 

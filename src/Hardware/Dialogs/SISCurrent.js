@@ -1,28 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { startSequence } from '../../Shared/AppEventSlice';
+import { resetSequence } from '../../Shared/AppEventSlice';
 import Plot from "react-plotly.js";
 
 export default function SISCurrent(props) {
   const sisCurrent = useSelector((state) => state.AppEvent.sisCurrent);
   const dispatch = useDispatch();
-  const [x, setX] = useState([]);
-  const [y, setY] = useState([])
 
   useEffect(() => {
-    let xx = [];
-    let yy = [];
-    for (var o in sisCurrent) {
-      if (o.iter === "complete") {
-        dispatch(startSequence("sisCurrent"))
-        props.onComplete();
-      } else {
-        xx.push(Number(o.iter));
-        yy.push(Number(o.y));  
-      }
+    if (sisCurrent.complete) {
+      dispatch(resetSequence("sisCurrent"))
+      props.onComplete();
     }
-    setX(xx);
-    setY(yy);
   }, [sisCurrent, dispatch, props]);
 
   return (
@@ -33,8 +22,8 @@ export default function SISCurrent(props) {
       useResizeHandler
       data = {[{
         name: 'sisCurrent',
-        x: x,
-        y: y,
+        x: sisCurrent.iter,
+        y: sisCurrent.y,
         type: 'scatter',
         mode: 'lines',
         showscale: false,
@@ -50,13 +39,13 @@ export default function SISCurrent(props) {
         },
         yaxis: {
           title: 'SIS current [uA]',
-          range: [0.0, 15.0],
+          range: [0, 70],
           nticks: 10
         },
         margin: {
           t: 0,
-          b: 0,
-          l: 0,
+          b: 40,
+          l: 40,
           r: 0
         }
       }}

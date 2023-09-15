@@ -15,6 +15,7 @@ import {
   setInputVj, 
   setInputImag
 } from './CartridgeSlice'
+import { resetSequence } from "../../Shared/AppEventSlice";
 
 export default function SIS(props) {
   // Local state
@@ -94,6 +95,7 @@ export default function SIS(props) {
         }
         break;
       case "autoIj":
+        dispatch(resetSequence("sisCurrent"));
         setDialogOpen(true);
         axios.put("/cartassy/auto_lo", null, {params: {pol: props.pol}})
           .then(res => {
@@ -102,7 +104,7 @@ export default function SIS(props) {
           .catch(error => {
             console.log(error);              
           })
-        setTimeout(() => {setDialogOpen(false)}, 10000);
+        setTimeout(() => {setDialogOpen(false)}, 7000);
         break;
       default:
         break;

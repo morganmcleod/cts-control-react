@@ -1,28 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { startSequence } from '../../Shared/AppEventSlice';
+import { resetSequence } from '../../Shared/AppEventSlice';
 import Plot from "react-plotly.js";
 
 export default function RFPower(props) {
   const rfPower = useSelector((state) => state.AppEvent.rfPower);
   const dispatch = useDispatch();
-  const [x, setX] = useState([]);
-  const [y, setY] = useState([])
 
   useEffect(() => {
-    let xx = [];
-    let yy = [];
-    for (var o in rfPower) {
-      if (o.iter === "complete") {
-        dispatch(startSequence("rfPower"))
-        props.onComplete();
-      } else {
-        xx.push(Number(o.iter));
-        yy.push(Number(o.y));  
-      }
+    if (rfPower.complete) {
+      dispatch(resetSequence("sisCurrent"))
+      props.onComplete();
     }
-    setX(xx);
-    setY(yy);
   }, [rfPower, dispatch, props]);
 
   return (
@@ -33,8 +22,8 @@ export default function RFPower(props) {
       useResizeHandler
       data = {[{
         name: 'rfPower',
-        x: x,
-        y: y,
+        x: rfPower.iter,
+        y: rfPower.y,
         type: 'scatter',
         mode: 'lines',
         showscale: false,
@@ -55,8 +44,8 @@ export default function RFPower(props) {
         },
         margin: {
           t: 0,
-          b: 0,
-          l: 0,
+          b: 40,
+          l: 40,
           r: 0
         }
       }}
