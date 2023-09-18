@@ -39,8 +39,8 @@ export default function RFPower(props) {
         },
         yaxis: {
           title: 'RF Power [dB]',
-          range: [-30, 10],
-          nticks: 4
+          range: [-50, 20],
+          nticks: 5
         },
         margin: {
           t: 0,
