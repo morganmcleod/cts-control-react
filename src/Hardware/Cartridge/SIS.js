@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 // UI components and style
 import { Grid, Button, OutlinedInput, Typography} from '@mui/material';
 import AppEventDialog from '../../Shared/AppEventDialog';
-import SISCurrentGraph from "../Dialogs/SISCurrentGraph";
+import SISCurrentGraph from "./SISCurrentGraph";
 import '../../components.css'
 
 // HTTP and store

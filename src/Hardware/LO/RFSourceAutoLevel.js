@@ -1,13 +1,13 @@
 // React and Redux
 import React, { useState } from "react";
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 // UI components and style
 import { Grid, Button, OutlinedInput, Typography } from '@mui/material'
 import '../../components.css'
 import EnableButton from "../../Shared/EnableButton";
 import AppEventDialog from '../../Shared/AppEventDialog';
-import RFPowerGraph from "../Dialogs/RFPowerGraph";
+import RFPowerGraph from "./RFPowerGraph";
 import { resetSequence } from "../../Shared/AppEventSlice";
 
 // HTTP and store
