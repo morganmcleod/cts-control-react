@@ -1,42 +1,18 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { resetPlot, addPoint } from "./XYPlotSlice";
-import ActionWSContext from "../../Shared/ActionWSContext";
+import { resetSequence } from '../../Shared/AppEventSlice';
 import Plot from "react-plotly.js";
 
 export default function SISCurrent(props) {
-  const plot = useSelector((state) => state.XYPlot.plot);
+  const sisCurrent = useSelector((state) => state.AppEvent.sisCurrent);
   const dispatch = useDispatch();
-  const [actionWs, ready] = useContext(ActionWSContext);  
-  const onComplete = props.onComplete;
 
   useEffect(() => {
-    const handleMessage = (event) => {
-      try {            
-        const msg = JSON.parse(event.data);
-        if (msg.complete) {
-          onComplete();
-        } else {
-          console.log("addPoint pol" + props.pol);
-          dispatch(addPoint({x: msg.index, y: msg.sisCurrent}));              
-        }
-      } catch(err) {
-        console.log(err);
-      }
+    if (sisCurrent.complete) {
+      dispatch(resetSequence("sisCurrent"))
+      props.onComplete();
     }
-    if (actionWs && ready) {      
-      actionWs.addEventListener("message", handleMessage);          
-    }
-    return () => {
-      actionWs.removeEventListener("message", handleMessage);
-    }   
-  }, [actionWs, ready, dispatch, onComplete, props.pol]);
-  
-  // Fetch on first render:
-  useEffect(() => {
-    console.log("resetPlot pol" + props.pol)
-    dispatch(resetPlot());    
-  }, [dispatch, props.pol]);
+  }, [sisCurrent, dispatch, props]);
 
   return (
     <Plot      
@@ -46,8 +22,8 @@ export default function SISCurrent(props) {
       useResizeHandler
       data = {[{
         name: 'sisCurrent',
-        x: plot.x,
-        y: plot.y,
+        x: sisCurrent.iter,
+        y: sisCurrent.y,
         type: 'scatter',
         mode: 'lines',
         showscale: false,

@@ -1,26 +1,31 @@
 // React and Redux
 import React, { useState } from "react";
+import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
 import { Grid, Button, OutlinedInput, Typography } from '@mui/material'
 import '../../components.css'
 import EnableButton from "../../Shared/EnableButton";
-import ActionDialog from '../../Shared/ActionDialog';
+import AppEventDialog from '../../Shared/AppEventDialog';
 import RFPower from "../Dialogs/RFPower";
+import { resetSequence } from "../../Shared/AppEventSlice";
 
 // HTTP and store
 import axios from "axios";
 
 export default function RFSourceAutoLevel(props) {
+  const dispatch = useDispatch();
+
   // Local state
-  const [actionOpen, setActionOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [target, setTarget] = useState(-5);
   const [freqIF, setFreqIF] = useState(10);
   const [atten, setAtten] = useState(22);
   const [usePNA, setUsePNA] = useState(false);
 
   const onClickRun = () => {
-    setActionOpen(true);
+    dispatch(resetSequence("rfPower"));
+    setDialogOpen(true);
     const params = {
       freqIF: Number(freqIF),
       target: Number(target),
@@ -33,7 +38,7 @@ export default function RFSourceAutoLevel(props) {
       .catch(error => {
         console.log(error);
       })
-    setTimeout(() => {setActionOpen(false)}, 10000);
+    setTimeout(() => {setDialogOpen(false)}, 10000);
   }
 
   return (
@@ -73,15 +78,15 @@ export default function RFSourceAutoLevel(props) {
         >
           RUN
         </Button>
-        <ActionDialog
-          open={actionOpen}
+        <AppEventDialog
+          open={dialogOpen}
           title="Setting RF Power"
-          onClose={() => {setActionOpen(false)}}              
+          onClose={() => {setDialogOpen(false)}}              
         >
           <RFPower 
-            onComplete={() => {setActionOpen(false)}}
+            onComplete={() => {setDialogOpen(false)}}
           />
-        </ActionDialog>
+        </AppEventDialog>
       </Grid>
       
       <Grid item xs={3}>
