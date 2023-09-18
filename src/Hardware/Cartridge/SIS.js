@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 // UI components and style
 import { Grid, Button, OutlinedInput, Typography} from '@mui/material';
 import AppEventDialog from '../../Shared/AppEventDialog';
-import SISCurrent from "../Dialogs/SISCurrent";
+import SISCurrentGraph from "../Dialogs/SISCurrentGraph";
 import '../../components.css'
 
 // HTTP and store
@@ -195,7 +195,7 @@ export default function SIS(props) {
               title="Setting SIS Current"
               onClose={() => {setDialogOpen(false)}}              
             >
-              <SISCurrent 
+              <SISCurrentGraph 
                 pol={props.pol} 
                 onComplete={() => {setDialogOpen(false)}}
               />

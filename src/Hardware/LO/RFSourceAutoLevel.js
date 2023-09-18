@@ -7,7 +7,7 @@ import { Grid, Button, OutlinedInput, Typography } from '@mui/material'
 import '../../components.css'
 import EnableButton from "../../Shared/EnableButton";
 import AppEventDialog from '../../Shared/AppEventDialog';
-import RFPower from "../Dialogs/RFPower";
+import RFPowerGraph from "../Dialogs/RFPowerGraph";
 import { resetSequence } from "../../Shared/AppEventSlice";
 
 // HTTP and store
@@ -83,7 +83,7 @@ export default function RFSourceAutoLevel(props) {
           title="Setting RF Power"
           onClose={() => {setDialogOpen(false)}}              
         >
-          <RFPower 
+          <RFPowerGraph 
             onComplete={() => {setDialogOpen(false)}}
           />
         </AppEventDialog>

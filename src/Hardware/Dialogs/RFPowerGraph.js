@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { resetSequence } from '../../Shared/AppEventSlice';
 import Plot from "react-plotly.js";
 
-export default function RFPower(props) {
+export default function RFPowerGraph(props) {
   const rfPower = useSelector((state) => state.AppEvent.rfPower);
   const dispatch = useDispatch();
 
