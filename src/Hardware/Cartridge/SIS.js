@@ -195,7 +195,7 @@ export default function SIS(props) {
               title="Setting SIS Current"
               onClose={() => {setDialogOpen(false)}}              
             >
-              <Typography variant="body1" fontWeight="bold" color="secondary">
+              <Typography variant="body1" fontWeight="bold" color="secondary" align="center">
                 SIS current: {SIS.Ij.toFixed(2)} uA
               </Typography>
               <SISCurrentGraph 

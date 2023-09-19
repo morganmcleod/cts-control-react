@@ -1,6 +1,6 @@
 // React and Redux
 import React, { useState } from "react";
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 // UI components and style
 import { Grid, Button, OutlinedInput, Typography } from '@mui/material'
@@ -15,6 +15,7 @@ import axios from "axios";
 
 export default function RFSourceAutoLevel(props) {
   const dispatch = useDispatch();
+  const rfPowerState = useSelector((state) => state.AppEvent.rfPower);
 
   // Local state
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -22,6 +23,9 @@ export default function RFSourceAutoLevel(props) {
   const [freqIF, setFreqIF] = useState(10);
   const [atten, setAtten] = useState(22);
   const [usePNA, setUsePNA] = useState(false);
+
+  const rfPowerLen = rfPowerState.y.length;
+  const rfPower = rfPowerLen > 0 ? (rfPowerState.y[rfPowerLen - 1].toFixed(2)) + (usePNA ? " dB" : " dBm") : ""
 
   const onClickRun = () => {
     dispatch(resetSequence("rfPower"));
@@ -83,6 +87,9 @@ export default function RFSourceAutoLevel(props) {
           title="Setting RF Power"
           onClose={() => {setDialogOpen(false)}}              
         >
+          <Typography variant="body1" fontWeight="bold" color="secondary" align="center">
+            RF power: {rfPower} 
+          </Typography>
           <RFPowerGraph 
             onComplete={() => {setDialogOpen(false)}}
           />
