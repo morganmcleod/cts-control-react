@@ -23,6 +23,7 @@ import {
   setScanList,   
   setStartStopStepEnable,
   setStartStopStepIsUSB,
+  setStartStopStepSubScans,
   setStartStopStep 
 } from './BeamScannerSlice';
 
@@ -30,7 +31,7 @@ export default function ScanList(props) {
   // Redux store interfaces
   const scanList = useSelector((state) => state.BeamScanner.scanList);
   const disabled = useSelector((state) => state.BeamScanner.scanStatus.activeScan) !== null;
-  const startStopStep = useSelector((state) => state.BeamScanner.scanStartStopStep);
+  const startStopStep = useSelector((state) => state.BeamScanner.startStopStep);
   const dispatch = useDispatch();
 
   // Load data from REST API
@@ -48,6 +49,18 @@ export default function ScanList(props) {
   useEffect(() => {
     fetch(false);
   }, [fetch]);
+
+  useEffect(() => {
+    if (scanList && scanList.length) {
+      axios.put('/beamscan/scan_list', {items: scanList})
+        .then(res => {
+          console.log(res.data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      }
+  }, [scanList]);
 
   const checkedChildren = () => {
     return scanList.reduce((x, cv) => { 
@@ -121,6 +134,8 @@ export default function ScanList(props) {
       return {...obj, subScansOption: {...obj.subScansOption, ...what}}
     });
     dispatch(setScanList(newList));
+    const o = {...startStopStep.subScansOption, ...what};
+    dispatch(setStartStopStepSubScans(o));
   }
 
   function parentEnableCheckbox() {
@@ -134,6 +149,7 @@ export default function ScanList(props) {
         indeterminate={!kids.all && kids.some}
         style={{"paddingTop": "4px"}}
         onChange={(e) => onParentChange(!kids.some)}
+        disabled={startStopStep.enable}
       />
     );
   }
@@ -149,26 +165,60 @@ export default function ScanList(props) {
       case "rf_step":
         dispatch(setStartStopStep({ ...startStopStep, step: e.target.value }));
         break;
-      default:
+      case "rf_usb":
+        dispatch(setStartStopStepIsUSB(e.target.checked));
         break;
-    }
+      default:
+        return;        
+    }    
   }
 
-  function isValidStartStopStep() {
-    let valid = {start:true, stop:true, step:true};
-    let rfStart = parseFloat(startStopStep.start);
-    let rfStop = parseFloat(startStopStep.stop);
-    let rfStep = parseFloat(startStopStep.step);
-    if (rfStart <= 0 || isNaN(rfStart)) {
-      valid.start = false;
+  function onChangeEnableStartStopStep(value) {
+    dispatch(setStartStopStepEnable(value));
+    let newList = [];
+    const o = validateStartStopStep();
+    if (o.startValid && o.stopValid && o.stepValid) {
+      for (let index = 0; index < o.numSteps; index++) {
+        let rf = o.rfStart + (index * o.rfStep);
+        let lo = startStopStep.isUSB ? rf - 10.0 : rf + 10.0;
+        newList.push({
+          index: index,
+          enable: true,
+          RF: rf,
+          LO: lo,
+          subScansOption: startStopStep.subScansOption
+        });
+      }
     }
-    if (rfStop < rfStart || isNaN(rfStop)) {
-      valid.stop = false;
+    dispatch(setScanList(newList));
+  }
+
+  function validateStartStopStep() {
+    let o = {
+      startValid:true, 
+      stopValid:true, 
+      stepValid:true, 
+      numSteps:0,
+      rfStart:0,
+      rfStop:0,
+      rfStep:0
+    };
+    o.rfStart = parseFloat(startStopStep.start);
+    o.rfStop = parseFloat(startStopStep.stop);
+    o.rfStep = parseFloat(startStopStep.step);
+    if (o.rfStart <= 0 || isNaN(o.rfStart)) {
+      o.startValid = false;
     }
-    if (rfStep <= 0 || isNaN(rfStep)) {
-      valid.step = false;
-    }      
-    return valid;
+    if (o.rfStop < o.rfStart || isNaN(o.rfStop)) {
+      o.stopValid = false;
+    }
+    if (o.rfStep < 0 || isNaN(o.rfStep) || (o.rfStop !== o.rfStart && o.rfStep === 0)) {
+      o.stepValid = false;
+    }
+    if (o.startValid && o.stopValid && o.stepValid) {
+      o.numSteps = (o.rfStop > o.rfStart) ? ((o.rfStop - o.rfStart) / o.rfStep) + 1 : 1;
+    }
+    return o;
   }
 
   function parentSubScansCheckbox() {
@@ -246,7 +296,7 @@ export default function ScanList(props) {
               control={
                 <Checkbox 
                   checked={startStopStep.enable}
-                  onChange={e => dispatch(setStartStopStepEnable(e.target.checked))}
+                  onChange={e => onChangeEnableStartStopStep(e.target.checked)}
                   size="small"                
                 />
               } 
@@ -301,56 +351,57 @@ export default function ScanList(props) {
 
       {startStopStep.enable && 
         <Grid container textAlign="center" sx={{borderTop:1}}>
-          <Grid item xs={1.5} paddingTop="8px" paddingLeft="8px">
+          <Grid item xs={1.6} paddingTop="8px" paddingLeft="8px">
             <Typography variant="body2" fontWeight="Bold">RF start:</Typography>
           </Grid>
           <Grid item xs={1.8} paddingTop="4px">
             <OutlinedInput            
               name="rf_start"
               disabled={disabled}
-              error={!isValidStartStopStep().start}
+              error={!validateStartStopStep().startValid}
               size="small"
               margin="none"          
-              style={{width: '100%'}}
+              style={{width: '95%'}}
               className="smallinput"   
               value = {startStopStep.start}
               onChange={e => onChangeStartStopStep(e)}
             />
           </Grid>
-          <Grid item xs={1} align="left">
+          <Grid item xs={1}>
             <Checkbox 
+              name="rf_usb"
               checked={startStopStep.isUSB}
-              onChange={e => dispatch(setStartStopStepIsUSB(e.target.checked))}
+              onChange={e => onChangeStartStopStep(e)}
               size="small"
             />
           </Grid>
-          <Grid item xs={1} paddingTop="8px" paddingLeft="8px">
+          <Grid item xs={1.1} paddingTop="8px" paddingLeft="8px">
             <Typography variant="body2" fontWeight="Bold">stop:</Typography>
           </Grid>
           <Grid item xs={1.8} paddingTop="4px">
             <OutlinedInput
               name="rf_stop"
               disabled={disabled}
-              error={!isValidStartStopStep().stop}
+              error={!validateStartStopStep().stopValid}
               size="small"
               margin="none"          
-              style={{width: '100%'}}
+              style={{width: '95%'}}
               className="smallinput"
               value = {startStopStep.stop}
               onChange={e => onChangeStartStopStep(e)}
             />
           </Grid>
-          <Grid item xs={1} paddingTop="8px" paddingLeft="8px">
+          <Grid item xs={1.1} paddingTop="8px" paddingLeft="8px">
             <Typography variant="body2" fontWeight="Bold">step:</Typography>
           </Grid>
           <Grid item xs={1.8} paddingTop="4px">
             <OutlinedInput
               name="rf_step"
               disabled={disabled}
-              error={!isValidStartStopStep().stop}
+              error={!validateStartStopStep().stepValid}
               size="small"
               margin="none"          
-              style={{width: '100%'}}
+              style={{width: '95%'}}
               className="smallinput"
               value={startStopStep.step}
               onChange={e => onChangeStartStopStep(e)}
