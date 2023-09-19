@@ -12,7 +12,6 @@ import {
 import '../../components.css'
 
 // HTTP and store
-import axios from "axios";
 import { setScanListItem } from './BeamScannerSlice';
 
 export default function ScanListItem(props) {
@@ -39,7 +38,7 @@ export default function ScanListItem(props) {
       );
     } else {
       return (
-        <>
+        <React.Fragment>
           <Grid item xs={1.5}>
             <Checkbox
               color="success"
@@ -95,38 +94,23 @@ export default function ScanListItem(props) {
               onChange={(e) => { onChange({ subScansOption: {...data.subScansOption, copol180: e.target.checked}}); }}
             />
           </Grid>
-        </>
+        </React.Fragment>
       );
     }
   }
 
   function onChange(what) {
     if ('enable' in what) {
-      axios.post('/beamscan/scan_list/enable/' + props.index, null, { params: { enable: what.enable }})
-        .then(res => {
-          console.log(res.data);
-          dispatch(setScanListItem({
-            index: props.index,  
-            data: {...data, enable: what.enable}
-          }));
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      dispatch(setScanListItem({
+        index: props.index,  
+        data: {...data, enable: what.enable}
+      }));
     
     } else if ('subScansOption' in what) {
-      console.log(what.subScansOption);
-      axios.post('/beamscan/scan_list/subscans/' + props.index, what.subScansOption)
-        .then(res => {
-          console.log(res.data);
-          dispatch(setScanListItem({
-            index: props.index,  
-            data: {...data, subScansOption: what.subScansOption}
-          }));
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      dispatch(setScanListItem({
+        index: props.index,  
+        data: {...data, subScansOption: what.subScansOption}
+      }));
     }
   };
 

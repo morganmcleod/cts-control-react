@@ -56,6 +56,13 @@ export const BeamScannerSlice = createSlice({
       scanBidirectional: false
     },
     scanList: [],
+    scanStartStopStep: {
+      enable: false,
+      isUSB: false,
+      start: '',
+      stop: '',
+      step: ''
+    },
     rastersInfo: {key: 0, startIndex: 0, lastIndex: 0},
     amplitudePlot: {x: [], y: [], amp: []},
     rasterPlot: {x: [], amp: [], phase: []}
@@ -75,6 +82,17 @@ export const BeamScannerSlice = createSlice({
       if (index >= 0 && index < state.scanList.length) {
         state.scanList[index] = action.payload.data;
       }
+    },
+    setStartStopStepEnable(state, action) {
+      state.scanStartStopStep.enable = action.payload
+    },
+    setStartStopStepIsUSB(state, action) {
+      state.scanStartStopStep.isUSB = action.payload
+    },
+    setStartStopStep(state, action) {
+      state.scanStartStopStep = {
+        ...action.payload, 
+        enable: state.scanStartStopStep.enable}
     },
     resetRasters(state, action) {
       // clear the plots at start of scan
@@ -126,6 +144,9 @@ export const {
   setMeasurementSpec,
   setScanList,
   setScanListItem,
+  setStartStopStepEnable,
+  setStartStopStepIsUSB,
+  setStartStopStep,
   resetRasters,
   addRaster,
   addRasters

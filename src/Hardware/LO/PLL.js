@@ -266,7 +266,7 @@ export default function PLL(props) {
               />
             } 
             label={
-              <Typography variant="subtitle2" display="inline">
+              <Typography variant="subtitle2" display="inline" fontWeight="bold">
                 {props.isRfSource ? "Set RF reference" : "Set LO reference"}
               </Typography>
             }
