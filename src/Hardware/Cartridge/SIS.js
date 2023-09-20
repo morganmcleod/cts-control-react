@@ -25,8 +25,12 @@ export default function SIS(props) {
   const SIS = useSelector((state) => state.Cartridge.SIS[props.pol][props.sis - 1]);
   const inputs = useSelector((state) => state.Cartridge.inputs.SIS[props.pol][props.sis - 1]);
   const cartConfig = useSelector((state) => state.CartBias.cartConfig);
+  const sisCurrentState = useSelector((state) => state.AppEvent.sisCurrent);
   const dispatch = useDispatch();
   
+  const loPowerLen = sisCurrentState.y.length;
+  const paOutput = loPowerLen > 0 ? (sisCurrentState.x[loPowerLen - 1].toFixed(1)) + " %" : ""
+
   // Only fetch data when mounted
   const isMounted = useRef(false);
   const timer = useRef(0);
@@ -195,6 +199,9 @@ export default function SIS(props) {
               title="Setting SIS Current"
               onClose={() => {setDialogOpen(false)}}              
             >
+              <Typography variant="body1" fontWeight="bold" align="center">
+                LO PA output: {paOutput} 
+              </Typography>
               <Typography variant="body1" fontWeight="bold" color="secondary" align="center">
                 SIS current: {SIS.Ij.toFixed(2)} uA
               </Typography>

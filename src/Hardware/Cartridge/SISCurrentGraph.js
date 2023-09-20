@@ -31,7 +31,7 @@ export default function SISCurrentGraph(props) {
       layout = {{
         autosize: true,
         height: 170,
-        width: 170,
+        width: 200,
         xaxis: {
           title: 'iteration',
           range: [0, 20],

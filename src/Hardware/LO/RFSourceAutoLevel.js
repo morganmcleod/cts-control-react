@@ -26,6 +26,7 @@ export default function RFSourceAutoLevel(props) {
 
   const rfPowerLen = rfPowerState.y.length;
   const rfPower = rfPowerLen > 0 ? (rfPowerState.y[rfPowerLen - 1].toFixed(2)) + (usePNA ? " dB" : " dBm") : ""
+  const paOutput = rfPowerLen > 0 ? (rfPowerState.x[rfPowerLen - 1].toFixed(1)) + " %" : ""
 
   const onClickRun = () => {
     dispatch(resetSequence("rfPower"));
@@ -87,6 +88,9 @@ export default function RFSourceAutoLevel(props) {
           title="Setting RF Power"
           onClose={() => {setDialogOpen(false)}}              
         >
+          <Typography variant="body1" fontWeight="bold" align="center">
+            RF PA output: {paOutput} 
+          </Typography>
           <Typography variant="body1" fontWeight="bold" color="secondary" align="center">
             RF power: {rfPower} 
           </Typography>
