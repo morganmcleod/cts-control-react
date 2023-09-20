@@ -36,7 +36,7 @@ export default function ScanList(props) {
 
   // Load data from REST API
   const fetch = useCallback((defaults) => {
-    axios.get('/beamscan/scan_list', null, {params: {defaults: defaults}})
+    axios.get('/beamscan/scan_list', {params: {defaults: defaults}})
     .then(res => {
       dispatch(setScanList(res.data.items));
     })
@@ -318,7 +318,7 @@ export default function ScanList(props) {
         <Grid item xs={2} paddingTop="4px">
           <Button
             name="resetButton"
-            disabled={disabled || startStopStep.enable} 
+            disabled={disabled} 
             className="custom-btn-sm"
             variant="contained"
             size="small"
@@ -326,7 +326,10 @@ export default function ScanList(props) {
               minWidth: '55%',
               maxWidth: '55%' 
             }}
-            onClick={e => fetch(true)}
+            onClick={e => {
+              dispatch(setStartStopStepEnable(false));
+              fetch(true);
+            }}
           >
             RESET
           </Button>
