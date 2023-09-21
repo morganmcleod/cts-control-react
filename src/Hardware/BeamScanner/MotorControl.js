@@ -47,11 +47,11 @@ export default function MotorController(props) {
   const dispatch = useDispatch();
 
   const options = {retryOnError: true, shouldReconnect: (closeEvent) => true};
-
+  const baseURL = axios.defaults.baseURL.replace('http', 'ws');
   const { 
     readyState: statusReady,
     lastMessage: statusMessage 
-  } = useWebSocket("ws://localhost:8000/beamscan/motorstatus_ws", options);
+  } = useWebSocket(baseURL + "/beamscan/motorstatus_ws", options);
 
   useEffect(() => {
     if (statusReady === ReadyState.OPEN) {
@@ -210,6 +210,20 @@ export default function MotorController(props) {
       })
   }
 
+  const handleSetup = () => {
+    axios.put("/beamscan/mc/setup")
+      .then(res => {
+        console.log(res.data);
+        if (!res.data.success) {
+          setToastText(res.data.message);
+          setToastOpen(true);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }  
+
   const handleGetErrorCode = () => {
     axios.get("/beamscan/mc/get_errorcode")
       .then(res => {
@@ -221,7 +235,7 @@ export default function MotorController(props) {
         console.log(error);
       })
   }
-  
+
   const handleCloseToast = () => {
     setToastOpen(false);
   }
@@ -583,10 +597,10 @@ export default function MotorController(props) {
             </Grid>
 
             <Grid item xs={3}>
-              <Typography variant="body2" paddingTop="4px">Servo Here:</Typography>
+              <Typography variant="body2" paddingTop="4px">Troubleshooting:</Typography>
             </Grid>
             <Grid item xs={2}>
-              <Tooltip title={<Typography fontSize={13}>For use after motor power loss.<br/>Follow by homing the affected motor.</Typography>}>
+              <Tooltip title={<Typography fontSize={13}>Servo Here: For use after motor power loss.<br/>Follow by homing the affected motor.</Typography>}>
                 <Button
                   variant="contained"
                   size="small"                
@@ -608,7 +622,31 @@ export default function MotorController(props) {
               >
                 For use after any motor power failure.<br/>You must next <b>Home</b> all affected axes.
               </AlertDialog>
-            </Grid>           
+            </Grid>
+            <Grid item xs={2}>
+              <Tooltip title={<Typography fontSize={13}>Setup: Reinitialize the motor controller<br/>Follow by homing all axes.</Typography>}>
+                <Button
+                  variant="contained"
+                  size="small"                
+                  onClick={() => setAlertOpen(true)}
+                  style={{
+                    paddingTop: "0%", 
+                    paddingBottom: "0%",
+                    minWidth: '55%',
+                    maxWidth: '55%'
+                  }}
+                >
+                SETUP
+              </Button>
+            </Tooltip>
+              <AlertDialog
+                open={alertOpen}
+                title="Confirm SETUP?"
+                onClose={(confirm) => {setAlertOpen(false); if (confirm) handleSetup()}}
+              >
+                Reinitialize the motor controller.<br/>You must next <b>Home</b> all axes.
+              </AlertDialog>
+            </Grid>
             <Grid item xs={2}>
               <Tooltip title={<Typography fontSize={13}>Get the latest error code from the motor controller.</Typography>}>
                 <Button
@@ -625,7 +663,7 @@ export default function MotorController(props) {
                   TC1
                 </Button>
               </Tooltip>
-            </Grid> 
+            </Grid>
           </Grid>
         </AccordionDetails>
       </Accordion>

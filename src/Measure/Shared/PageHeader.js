@@ -38,9 +38,7 @@ export default function PageHeader(props) {
             <Grid item>
               <MeasControl 
                 measDescription={props.title}
-                startUrl={props.startUrl}
                 measureType={props.measureType}
-                stopUrl={props.stopUrl}                
               />
             </Grid>
           )}

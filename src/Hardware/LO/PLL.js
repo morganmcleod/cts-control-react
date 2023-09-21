@@ -254,8 +254,8 @@ export default function PLL(props) {
   
   return (
     <Grid container paddingLeft="5px">
-      <Grid item xs={3}><Typography variant="body1" fontWeight="bold">PLL</Typography></Grid>
-      <Grid item xs={7}>
+      <Grid item xs={4}><Typography variant="body1" fontWeight="bold">PLL</Typography></Grid>
+      <Grid item xs={6}>
         <FormGroup>
           <FormControlLabel 
             control={
@@ -270,12 +270,12 @@ export default function PLL(props) {
                 {props.isRfSource ? "Set RF reference" : "Set LO reference"}
               </Typography>
             }
-            labelPlacement="start"
-            style={{marginLeft: "0px", marginRight: "0px"}}      
+            labelPlacement="end"
           />
         </FormGroup>
       </Grid>
       <Grid item xs={2}/>
+
       <Grid item xs={3.5}>
         <Typography variant="body2" display="inline" paddingTop="4px">Frequency:</Typography>
       </Grid>
@@ -346,7 +346,7 @@ export default function PLL(props) {
         </Button>
       </Grid>
       
-      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Ref Tot Pwr:</Typography></Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Ref. Total Power:</Typography></Grid>
       <Grid item xs={2.8}><Typography fontWeight="bold" paddingTop="2px">{pll.refTP}&nbsp;V</Typography></Grid>
       <Grid item xs={1.2}><Typography variant="body2" paddingTop="4px">Null:&nbsp;</Typography></Grid>
       <Grid item xs={2.5}>
@@ -362,7 +362,7 @@ export default function PLL(props) {
           onClick={e => setNullHandler(!pll.nullPLL)}/>
       </Grid>
       
-      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">IF Tot Pwr:</Typography></Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">IF Total Power:</Typography></Grid>
       <Grid item xs={8}><Typography fontWeight="bold" paddingTop="2px">{pll.IFTP}&nbsp;V</Typography></Grid>
 
       <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Temperature:</Typography></Grid>

@@ -9,11 +9,14 @@ import CartridgeReducer from './Hardware/Cartridge/CartridgeSlice';
 import MotorControlReducer, { positionListener } from './Hardware/BeamScanner/MotorControlSlice';
 import MeasureReducer from './Measure/Shared/MeasureSlice';
 import BeamScannerReducer from './Measure/BeamScanner/BeamScannerSlice';
-import CartBiasSlice from './Config/CartBiasSlice';
-import WarmIFPlateSlice from './Hardware/WarmIFPlate/WarmIFPlateSlice';
-import FEMCSlice from './Hardware/FEMC/FEMCSlice';
-import CryostatSlice from './Hardware/Cryostat/CryostatSlice';
-import AppEventSlice from './Shared/AppEventSlice';
+import NoiseTempReducer from './Measure/NoiseTemp/NoiseTempSlice';
+import StabilityReducer from './Measure/Stability/StabilitySlice';
+import CartBiasReducer from './Config/CartBiasSlice';
+import WarmIFPlateReducer from './Hardware/WarmIFPlate/WarmIFPlateSlice';
+import FEMCReducer from './Hardware/FEMC/FEMCSlice';
+import TemperaturesReducer from './Hardware/TemperatureMonitor/TemperaturesSlice';
+import AppEventReducer from './Shared/AppEventSlice';
+import WCAReducer from './Config/WCASlice';
 
 //configureStore takes a list of 'reducers'.   
 //A reducer is like a state-machine transition: given the current store state and an action, return the new state.
@@ -27,11 +30,14 @@ export default configureStore({
     MotorControl: MotorControlReducer,
     Measure: MeasureReducer,
     BeamScanner: BeamScannerReducer,
-    CartBias: CartBiasSlice,
-    WarmIFPlate: WarmIFPlateSlice,
-    FEMC: FEMCSlice,
-    Cryostat: CryostatSlice,
-    AppEvent: AppEventSlice
+    NoiseTemp: NoiseTempReducer,
+    Stability: StabilityReducer,
+    CartBias: CartBiasReducer,
+    WarmIFPlate: WarmIFPlateReducer,
+    FEMC: FEMCReducer,
+    Temperatures: TemperaturesReducer,
+    AppEvent: AppEventReducer,
+    WCAs: WCAReducer
   },
 
   // Add the positionListener middleware to the store.

@@ -34,7 +34,7 @@ export default function MeasControl(props) {
 
   // Load current test status from REST API
   const fetch = useCallback(() => {
-    axios.get('/measure/status')
+    axios.get('/measure/currentTest')
     .then(res => {
       if (res.data) {
         dispatch(setMeasureActive(true));
@@ -61,7 +61,7 @@ export default function MeasControl(props) {
       fkTestType: props.measureType
     };
     dispatch(setMeasureActive(true));
-    axios.put(props.startUrl, params)
+    axios.put("/measure/start", params)
       .then(res => {
         console.log(res.data);
         if (res.data.success) {
@@ -77,7 +77,7 @@ export default function MeasControl(props) {
   }
 
   const handleClickStop = () => {
-    axios.put(props.stopUrl)
+    axios.put("/measure/stop")
       .then(res => {
         console.log(res.data);
         dispatch(setMeasureActive(false));

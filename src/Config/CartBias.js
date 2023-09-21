@@ -6,23 +6,31 @@ import PreampBias from './PreampBias';
 import '../components.css';
 
 // HTTP and store
-import { setRefresh } from './CartBiasSlice';
+import { setRefresh, setSaveConfig } from './CartBiasSlice';
 
 export default function CartBias() {
-  const mixerConfigChanged0 = useSelector((state) => state.CartBias.mixerParams[0].configChanged);
-  const mixerConfigChanged1 = useSelector((state) => state.CartBias.mixerParams[1].configChanged);
-  const preampConfigChanged0 = useSelector((state) => state.CartBias.preampParams[0].configChanged);
-  const preampConfigChanged1 = useSelector((state) => state.CartBias.preampParams[1].configChanged);
+  const mixerConfigChanged01 = useSelector((state) => state.CartBias.mixerParams[0].configChanged1);
+  const mixerConfigChanged02 = useSelector((state) => state.CartBias.mixerParams[0].configChanged2);
+  const mixerConfigChanged11 = useSelector((state) => state.CartBias.mixerParams[1].configChanged1);
+  const mixerConfigChanged12 = useSelector((state) => state.CartBias.mixerParams[1].configChanged2);
+  const preampConfigChanged01 = useSelector((state) => state.CartBias.preampParams[0].configChanged1);
+  const preampConfigChanged02 = useSelector((state) => state.CartBias.preampParams[0].configChanged2);
+  const preampConfigChanged11 = useSelector((state) => state.CartBias.preampParams[1].configChanged1);
+  const preampConfigChanged12 = useSelector((state) => state.CartBias.preampParams[1].configChanged2);
   const dispatch = useDispatch();
 
   const onSaveConfig = () => {
-
+    dispatch(setSaveConfig());
   }
+  
   const onCancelConfig = () => {
     dispatch(setRefresh());
   }
 
-  const enableSave = mixerConfigChanged0 || mixerConfigChanged1 || preampConfigChanged0 || preampConfigChanged1;
+  const enableSave = mixerConfigChanged01 || mixerConfigChanged02 || 
+                     mixerConfigChanged11 || mixerConfigChanged12 || 
+                     preampConfigChanged01 || preampConfigChanged02 ||
+                     preampConfigChanged11 || preampConfigChanged12; 
 
   return (
     <Grid container>

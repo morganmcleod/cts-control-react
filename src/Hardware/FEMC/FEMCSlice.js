@@ -9,7 +9,7 @@ export const FEMCSlice = createSlice({
   initialState: {
     femcVersion: "",
     ambsiVersion: "",
-    esnString: "",
+    esnList: [],
   },
   reducers: {
     setFemcVersion(state, action) {
@@ -18,8 +18,8 @@ export const FEMCSlice = createSlice({
     setAmbsiVersion(state, action) {
       state.ambsiVersion = action.payload;
     },
-    setEsnString(state, action) {
-      state.esnString = action.payload;
+    setEsnList(state, action) {
+      state.esnList = action.payload;
     }
   }
 });
@@ -28,7 +28,7 @@ export const FEMCSlice = createSlice({
 export const { 
   setFemcVersion,
   setAmbsiVersion,
-  setEsnString
+  setEsnList
 } = FEMCSlice.actions
 
 // this is for configureStore:

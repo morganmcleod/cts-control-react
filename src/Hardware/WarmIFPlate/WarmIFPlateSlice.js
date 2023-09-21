@@ -8,7 +8,8 @@ export const WarmIFPlateSlice = createSlice({
   name: 'WarmIFPlate',
   initialState: {
     inputSwitch: "",
-    yigFilter: 0.0
+    yigFilter: 0.0, 
+    attenuation: 0
   },
   reducers: {
     setInputSwitch(state, action) {
@@ -16,13 +17,17 @@ export const WarmIFPlateSlice = createSlice({
     },
     setYIGFilter(state, action) {
       state.yigFilter = action.payload;
+    },
+    setAttenuation(state, action) {
+      state.attenuation = action.payload;
     }
   }
 });
 // this is for dispatch:
 export const { 
   setInputSwitch,
-  setYIGFilter
+  setYIGFilter,
+  setAttenuation
 } = WarmIFPlateSlice.actions
 
 // this is for configureStore:

@@ -16,16 +16,18 @@ export default function PreampBias(props) {
   // Redux store interfaces
   const cartConfig = useSelector((state) => state.CartBias.cartConfig);
   const preampParams = useSelector((state) => state.CartBias.preampParams[props.pol]);
+  const configChanged = (props.lna === 2) ? preampParams.configChanged2 : preampParams.configChanged1;
   const configKeys = useSelector((state) => state.CartBias.configKeys[props.pol]);
   const keyPreamp = configKeys ? ((props.lna === 2) ? configKeys.keyPreamp2 : configKeys.keyPreamp1) : null;
   const snPreamp =  configKeys ? ((props.lna === 2) ? configKeys.snPreamp2 : configKeys.snPreamp1) : null;
   const refresh = useSelector((state) => state.CartBias.refresh);
+  const saveConfig = useSelector((state) => state.CartBias.saveConfig);
   const dispatch = useDispatch();
 
   // Load data from REST API
   const fetch = useCallback(() => {
     if (cartConfig && keyPreamp) {
-      axios.get('/database/config/preamp_params/', {params: {keyPreamp: keyPreamp}})
+      axios.get('/database/config/preamp_params/' + keyPreamp)
         .then(res => {
           dispatch(setPreampParams({pol: props.pol, lna: props.lna, data: res.data.items}));
         })
@@ -45,6 +47,24 @@ export default function PreampBias(props) {
   }, [fetch, refresh]);
 
   const lna = 'lna' + props.lna;
+
+  // if saveConfig is incremented, send changes to server
+  const lastSaveConfig = useRef(null);
+  useEffect(() => {
+    if (saveConfig !== lastSaveConfig.current) {
+      lastSaveConfig.current = saveConfig;
+      if (configChanged) {
+        axios.put('/database/config/preamp_params/' + keyPreamp, preampParams[lna])
+          .then(res => {
+            console.log(res.data)
+          })
+          .catch(error => {
+            console.log(error);
+          });        
+      }
+    }
+  }, [saveConfig, keyPreamp, lna, preampParams, configChanged]);
+  
   const ts1 = preampParams[lna][0] ? localDate(preampParams[lna][0].timeStamp) : "--";
   
   const colw = 12/7;

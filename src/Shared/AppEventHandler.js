@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch } from 'react-redux'
 import { addToSequence } from './AppEventSlice';
 
-const baseWsURL = 'ws://localhost:8000';
-
 export default function AppEventHandler(props) {
+  const { baseURL } = props;
+  const baseWsURL = baseURL.replace('http', 'ws');
   const [ws, setWs] = useState(null);
   const timer = useRef(0);
   const isMounted = useRef(false);
@@ -42,7 +42,7 @@ export default function AppEventHandler(props) {
         setWs(newWs);
       }
     }
-  }, [dispatch, ws]);
+  }, [dispatch, baseWsURL, ws]);
 
   useEffect(() => {
     isMounted.current = true;

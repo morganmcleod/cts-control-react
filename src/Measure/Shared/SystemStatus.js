@@ -11,6 +11,8 @@ import axios from "axios";
 import { loSetPLL } from '../../Hardware/LO/LOSlice'
 import { rfSetPLL } from '../../Hardware/LO/RFSlice'
 import { setInputSwitch, setYIGFilter} from '../../Hardware/WarmIFPlate/WarmIFPlateSlice'
+import { setMeasureDescription, setMeasureActive } from './MeasureSlice';
+import TestTypes from '../../Shared/TestTypes';
 
 export default function SystemStatus(props) {
   // Periodic refresh timer
@@ -27,6 +29,20 @@ export default function SystemStatus(props) {
 
   // Load data from REST API
   const fetch = useCallback(() => {
+    axios.get('/measure/currentTest')
+      .then(res => {
+        if (res.data) {
+          dispatch(setMeasureDescription(TestTypes.getText(res.data.fkTestType)));
+          dispatch(setMeasureActive(true));
+        } else {
+          dispatch(setMeasureDescription(null));
+          dispatch(setMeasureActive(false));
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      })
+    
     axios.get('/lo/pll')
     .then(res => {
       dispatch(loSetPLL(res.data));

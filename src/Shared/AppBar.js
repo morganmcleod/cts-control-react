@@ -1,14 +1,20 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Button from '@mui/material/Button';
+import {
+  AppBar,
+  Box,
+  Button,
+  Toolbar,
+  Tooltip, 
+  IconButton,
+  Typography,
+  Container,
+} from '@mui/material';
+import HomeIcon from '@mui/icons-material/Home';
+
 import MainMenu from './MainMenu';
 
-const pages = ['Cold Cart', 'LO & RF', 'Bias', 'Noise Temp', 'Beam Patterns'];
-const colors = ['white', 'lightgreen', 'yellow', '#eaccff', '#ff9999'];
+const pages = ['Cold Cart', 'LO & RF', 'Bias', 'Noise Temp', 'Beam Patterns', 'Stability'];
+const colors = ['white', 'lightgreen', 'yellow', '#eaccff', '#ff9999', '#ee4400'];
 
 export default function CTSAppBar(props) {
 
@@ -23,8 +29,6 @@ export default function CTSAppBar(props) {
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="/"
             sx={{
               mr: 2,
               display: { md: 'flex' },
@@ -37,6 +41,15 @@ export default function CTSAppBar(props) {
           >
             CTS
           </Typography>
+          
+          <Tooltip placement="bottom" title={<Typography fontSize={13}>Home</Typography>}>
+            <IconButton
+              component="a"
+              href="/"
+            >
+              <HomeIcon/>            
+            </IconButton>
+          </Tooltip>
 
           <Box sx={{ flexGrow: 1, display: { md: 'flex' } }}>
             {pages.map((page, index) => (

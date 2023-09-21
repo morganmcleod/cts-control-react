@@ -15,12 +15,14 @@ import TabPanel from './Shared/TabPanel';
 import PageHeader from './Measure/Shared/PageHeader';
 import RefSources from './Hardware/ReferenceSources/RefSources';
 import BeamScannerMain from './Measure/BeamScanner/Main';
+import NoiseTempMain from './Measure/NoiseTemp/Main';
+import StabilityMain from './Measure/Stability/Main';
+import AppController from './Shared/AppController';
 
 import axios from "axios";
 axios.defaults.baseURL = 'http://localhost:8000';
 
 class App extends React.Component {
-
   constructor(props) {
     super(props);
     this.setTheme = (themeId) => {
@@ -31,6 +33,11 @@ class App extends React.Component {
       setTheme: this.setTheme,
       visibleTab: 0      
     }
+  }
+
+  componentDidMount() {
+    const appVersion = process.env.REACT_APP_COMMIT_BRANCH + ":" + process.env.REACT_APP_COMMIT_HASH.slice(0, 7);
+    AppController.setupInitialState(appVersion);  
   }
 
   setVisibleTab = (index) => {
@@ -47,7 +54,7 @@ class App extends React.Component {
 
     return (
       <ThemeContext.Provider value={this.state}>
-        <AppEventHandler/>
+        <AppEventHandler baseURL={axios.defaults.baseURL}/>
         <CTSAppBar setVisibleTab={this.setVisibleTab}/>
         <ThemeProvider theme={theme}>
           <Box
@@ -86,18 +93,37 @@ class App extends React.Component {
               />
               <CartBias/>
             </TabPanel>
+
+            <TabPanel index={3} visibleTab={this.state.visibleTab}>
+              <PageHeader 
+                title="Noise Temperature" 
+                showCartSelect={true}
+                showMeasControl={true}
+                measureType={1}
+              />
+              <Divider variant="fullWidth" color="blue"/>
+              <NoiseTempMain/>
+            </TabPanel>
             
             <TabPanel index={4} visibleTab={this.state.visibleTab}>
               <PageHeader 
                 title="Beam Patterns" 
                 showCartSelect={true}
                 showMeasControl={true}
-                startUrl="/measure/start"
                 measureType={2}
-                stopUrl="/measure/stop"                
               />
               <Divider variant="fullWidth" color="blue"/>
               <BeamScannerMain/>
+            </TabPanel>
+            <TabPanel index={5} visibleTab={this.state.visibleTab}>
+              <PageHeader 
+                title="Stability" 
+                showCartSelect={true}
+                showMeasControl={true}
+                measureType={7}
+              />
+              <Divider variant="fullWidth" color="blue"/>
+              <StabilityMain/>
             </TabPanel>
             <Box flex={1} overflow="auto"/>
           </Box>

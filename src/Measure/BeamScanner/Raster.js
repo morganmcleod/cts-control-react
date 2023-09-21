@@ -1,7 +1,6 @@
 import React from "react";
 import { useSelector } from 'react-redux'
-
-import Plot from "react-plotly.js";
+import Plot from '../../Shared/Plotly';
 
 export default function RasterGraph(props) {
   const rasterPlot = useSelector((state) => state.BeamScanner.rasterPlot);

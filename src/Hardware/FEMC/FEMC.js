@@ -3,7 +3,7 @@ import React, { useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
-import { Grid, Typography } from '@mui/material'
+import { Grid, Typography, List, ListItemText } from '@mui/material'
 import '../../components.css'
 
 // HTTP and store
@@ -11,14 +11,14 @@ import axios from "axios";
 import {   
   setFemcVersion,
   setAmbsiVersion,
-  setEsnString
+  setEsnList
  } from './FEMCSlice'
 
 export default function FEMC(props) {
   // Redux store interfaces
   const femcVersion = useSelector((state) => state.FEMC.femcVersion);
   const ambsiVersion = useSelector((state) => state.FEMC.ambsiVersion);
-  const esnString = useSelector((state) => state.FEMC.esnString);
+  const esnList = useSelector((state) => state.FEMC.esnList);
   const dispatch = useDispatch();
 
   // Load data from REST API
@@ -37,9 +37,9 @@ export default function FEMC(props) {
       .catch(error => {
         console.log(error);
       })
-    axios.get(`/femc/esnstring`)
+    axios.get(`/femc/esnlist`)
       .then(res => {
-        dispatch(setEsnString(res.data.message));
+        dispatch(setEsnList(res.data));
       })
       .catch(error => {
         console.log(error);
@@ -56,8 +56,13 @@ export default function FEMC(props) {
       <Grid item xs={6}><Typography variant="body1" fontWeight="bold">ESNS</Typography></Grid>
       <Grid item xs={6}><Typography variant="body1" fontWeight="bold">FEMC Info</Typography></Grid>
       
-      <Grid item xs={6}><Typography variant="body1" paddingTop="4px">{esnString}</Typography></Grid>
-      
+      <Grid item xs={6}>
+        <List disablePadding={true}>
+          {esnList.map((item, index) => (
+            <ListItemText key={index} primary={item} primaryTypographyProps={{variant:"body2"}}/>
+          ))}
+        </List>
+      </Grid>        
       <Grid item xs={3}><Typography variant="body1" paddingTop="4px">FEMC Version: <b>{femcVersion}</b></Typography></Grid>
       <Grid item xs={3}><Typography variant="body1" paddingTop="4px">AMBSI Version: <b>{ambsiVersion}</b></Typography></Grid>
     </Grid>

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { resetSequence } from '../../Shared/AppEventSlice';
-import Plot from "react-plotly.js";
+import Plot from '../../Shared/Plotly';
 
 export default function SISCurrentGraph(props) {
   const sisCurrent = useSelector((state) => state.AppEvent.sisCurrent);

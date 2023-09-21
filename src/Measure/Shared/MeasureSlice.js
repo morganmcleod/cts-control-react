@@ -7,7 +7,16 @@ export const MeasureSlice = createSlice({
     active: false,
     description: "",
     operator: "",
-    notes: ""
+    notes: "",
+    measurementStatus: {
+      cartTest: null,
+      childKey: 0,
+      timeStamp: null,
+      stepComplete: true,
+      allComplete: true,
+      message: "",
+      error: false
+    }
   },
   reducers: {
     setMeasureActive(state, action) {
@@ -21,6 +30,9 @@ export const MeasureSlice = createSlice({
     },
     setMeasureNotes(state, action) {
       state.notes = action.payload;
+    },
+    setMeasurementStatus(state, action) {
+      state.measurementStatus = action.payload;
     }
   }
 });
@@ -31,6 +43,7 @@ export const {
   setMeasureDescription,
   setMeasureOperator,
   setMeasureNotes,
+  setMeasurementStatus
 } = MeasureSlice.actions
 
 // this is for configureStore:

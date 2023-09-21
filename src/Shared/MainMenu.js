@@ -5,16 +5,24 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
+import { Typography } from '@mui/material';
 
 import { saveTheme, ThemeContext } from "../themes";
 import JIRAIssueCollector from "./JIRAIssueCollector";
+import AppController from './AppController';
+import AlertDialog from './AlertDialog';
 
 class MainMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      showAbout: false,
       anchorEl: null
     }
+  }
+
+  setShowAbout(show) {
+    this.setState({showAbout: show});
   }
 
   render() {
@@ -31,7 +39,7 @@ class MainMenu extends React.Component {
         return (
           <React.Fragment>
             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-              <Tooltip title="Settings">
+              <Tooltip placement="bottom" title={<Typography fontSize={13}>App menu</Typography>}>
                 <IconButton
                   onClick={handleClick}
                   size="small"
@@ -81,6 +89,13 @@ class MainMenu extends React.Component {
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
+              <MenuItem
+                onClick={() => {
+                  this.setShowAbout(true);
+                }}
+              >
+                About
+              </MenuItem>
               <MenuItem 
                 onClick={ () => { 
                   setTheme(1);
@@ -98,11 +113,23 @@ class MainMenu extends React.Component {
                 Dark Theme
               </MenuItem>
               <MenuItem>
-                <JIRAIssueCollector>              
+                <JIRAIssueCollector
+                  appVersion={AppController.getAppVersion()}
+                >
                   Bug Report
                 </JIRAIssueCollector>          
               </MenuItem>
             </Menu>
+            <AlertDialog
+              open={this.state.showAbout}
+              title="About CTS Control"
+              onClose={() => this.setShowAbout(false)}
+              hideCancel={true}
+            >
+              App: {AppController.getAppVersion()}
+              <br/>
+              API: {AppController.getAPIVersion()}
+            </AlertDialog>
           </React.Fragment>
         )
       }}

@@ -3,10 +3,8 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { useDispatch, useSelector } from 'react-redux'
 import { setPosition } from "../../Hardware/BeamScanner/MotorControlSlice";
 import { resetRasters, addRaster, addRasters } from "./BeamScannerSlice";
-import Plot from "react-plotly.js";
-
+import Plot from '../../Shared/Plotly';
 import axios from "axios";
-
 
 export default function BeamScannerGraph(props) {
   // Redux store interface
@@ -17,16 +15,16 @@ export default function BeamScannerGraph(props) {
   const dispatch = useDispatch();
 
   const options = {retryOnError: true, shouldReconnect: (closeEvent) => true};
-
+  const baseURL = axios.defaults.baseURL.replace('http', 'ws');
   const { 
     readyState: posReady,
     lastMessage: posMessage 
-  } = useWebSocket("ws://localhost:8000/beamscan/position_ws", options);
+  } = useWebSocket(baseURL + "/beamscan/position_ws", options);
     
   const { 
     readyState: rasterReady,
     lastMessage: rasterMessage 
-  } = useWebSocket("ws://localhost:8000/beamscan/rasters_ws", options);
+  } = useWebSocket(baseURL + "/beamscan/rasters_ws", options);
 
   useEffect(() => {
     // websocket handler for position message

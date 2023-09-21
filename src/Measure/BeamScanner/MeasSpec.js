@@ -438,7 +438,8 @@ export default function MeasSpec(props) {
           className="smallinput"
           onChange={e => {handleChangeSetting(e)}}
           value = {measSpec.targetLevel}
-        /><Typography variant="body2" display="inline" paddingTop="4px">&nbsp;dB</Typography>
+        />
+        <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;dB</Typography>
       </Grid>
       <Grid item xs={2}/>
 
@@ -456,7 +457,8 @@ export default function MeasSpec(props) {
           style={{width: '47.5%'}}
           className="smallinput"
           value = {measSpec.resolution}
-        /><Typography variant="body2" display="inline" paddingTop="4px">&nbsp;mm</Typography>
+        />
+        <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;mm</Typography>
       </Grid>
       <Grid item xs={2}/>
 
@@ -474,7 +476,8 @@ export default function MeasSpec(props) {
           style={{width: '47.5%'}}
           className="smallinput"
           value = {measSpec.centersInterval}
-        /><Typography variant="body2" display="inline" paddingTop="4px">&nbsp;sec</Typography>
+        />
+        <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;sec</Typography>
       </Grid>
       <Grid item xs={2}/>
       
@@ -484,6 +487,7 @@ export default function MeasSpec(props) {
       <Grid item xs={8}>
         <Checkbox 
           name="scanBidirectional"
+          disabled={disabled}
           checked={measSpec.scanBidirectional}
           onChange={e => handleChangeSetting(e)}
           size="small"

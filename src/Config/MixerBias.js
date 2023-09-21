@@ -18,12 +18,13 @@ export default function MixerBias(props) {
   const mixerParams = useSelector((state) => state.CartBias.mixerParams[props.pol]);
   const configKeys = useSelector((state) => state.CartBias.configKeys[props.pol]);
   const refresh = useSelector((state) => state.CartBias.refresh);
+  const saveConfig = useSelector((state) => state.CartBias.saveConfig);
   const dispatch = useDispatch();
 
   // Load data from REST API
   const fetch = useCallback(() => {
     if (cartConfig && configKeys) {
-      axios.get('/database/config/mixer_params/', {params: {keyChip: configKeys.keyChip1}})
+      axios.get('/database/config/mixer_params/' + configKeys.keyChip1)
         .then(res => {
           dispatch(setMixerParams({pol: props.pol, sis: 1, data: res.data.items}));
         })
@@ -32,7 +33,7 @@ export default function MixerBias(props) {
         });
     }
     if (cartConfig && configKeys) {
-      axios.get('/database/config/mixer_params/', {params: {keyChip: configKeys.keyChip2}})
+      axios.get('/database/config/mixer_params/' + configKeys.keyChip2)
         .then(res => {
           dispatch(setMixerParams({pol: props.pol, sis: 2, data: res.data.items}));
         })
@@ -50,6 +51,32 @@ export default function MixerBias(props) {
       fetch();
     }
   }, [fetch, refresh]);
+
+  // if saveConfig is incremented, send changes to server
+  const lastSaveConfig = useRef(null);
+  useEffect(() => {
+    if (saveConfig !== lastSaveConfig.current) {
+      lastSaveConfig.current = saveConfig;
+      if (mixerParams.configChanged1) {
+        axios.put('/database/config/mixer_params/' + configKeys.keyChip1, mixerParams.sis1)
+          .then(res => {
+            console.log(res.data)
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+      if (mixerParams.configChanged2) {
+        axios.put('/database/config/mixer_params/' + configKeys.keyChip2, mixerParams.sis2)
+          .then(res => {
+            console.log(res.data)
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    }
+  }, [saveConfig, configKeys, mixerParams]);
 
   const ts1 = mixerParams.sis1[0] ? localDate(mixerParams.sis1[0].timeStamp) : "--";
     

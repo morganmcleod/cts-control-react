@@ -5,29 +5,25 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 // CartridgeSlice has one object for each LO subsystem
-export const CryostatSlice = createSlice({
-  name: 'Cryostat',
+export const TemperaturesSlice = createSlice({
+  name: 'Temperatures',
   initialState: {
     tempSensors: {
       temps: [0, 0, 0, 0, 0, 0, 0, 0],
-      errors: [0, 0, 0, 0, 0, 0, 0, 0]
+      errors: [0, 0, 0, 0, 0, 0, 0, 0],
+      descriptions: ['', '', '', '', '', '', '', '']
     }
   }, 
   reducers: {
     setTempSensors(state, action) {
       state.tempSensors = action.payload;
-    },
-    setTempSensor(state, action) {
-      state.tempSensors.temps[action.payload.sensor - 1] = action.payload.temps[0]
-      state.tempSensors.errors[action.payload.sensor - 1] = action.payload.errors[0]
     }
   }
 });
 // this is for dispatch:
 export const { 
-  setTempSensors,
-  setTempSensor
-} = CryostatSlice.actions
+  setTempSensors,  
+} = TemperaturesSlice.actions
 
 // this is for configureStore:
-export default CryostatSlice.reducer
+export default TemperaturesSlice.reducer

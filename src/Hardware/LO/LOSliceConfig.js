@@ -39,10 +39,15 @@ export const LOSliceConfig = {
     PAInputs: {
       VDp0: 0.0,
       VDp1: 0.0,
-      VGp0: -0.1,
-      VGp1: -0.1
+      VGp0: 0.15,
+      VGp1: 0.15
     },
     inputLOFreq: "",
+    YTOInputs: {
+      lowGHz: "",
+      highGHz: "",
+      sendNow: false
+    },
     PLL: {
       lockDetectBit: false,
       unlockDetected: false,
@@ -105,6 +110,15 @@ export const LOSliceConfig = {
       const yto = state.YTO;
       let freq = calculateYTOFreq(yto.lowGHz, yto.highGHz, yto.courseTune);
       state.YTO = { ...state.YTO, ytoFreqGHz: freq }
-    }  
+    },
+    setYTOLowInput(state, action) {
+      state.YTOInputs.lowGHz = action.payload
+    },
+    setYTOHighInput(state, action) {
+      state.YTOInputs.highGHz = action.payload
+    },
+    setYTOSendNow(state, action) {
+      state.YTOInputs.sendNow = action.payload;
+    }
   }
 };

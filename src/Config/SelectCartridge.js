@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -13,10 +13,10 @@ import {
   setCartConfigOptions, 
   setRefresh, 
   setConfigKeys, 
-  reset 
+  resetConfig 
 } from './CartBiasSlice';
 
-export default function MeasControl(props) {
+export default function SelectCartridge(props) {
   // Redux store interfaces
   const measActive = useSelector((state) => state.Measure.active);
   const cartConfig = useSelector((state) => state.CartBias.cartConfig);
@@ -24,10 +24,10 @@ export default function MeasControl(props) {
   const dispatch = useDispatch();
 
   // Dropdown state
-  const [open, setOpen] = React.useState(false);
-  const [serialNum, setSerialNum] = React.useState(cartConfig ? cartConfig.serialNum : '')
+  const [open, setOpen] = useState(false);
+  const [serialNum, setSerialNum] = useState(cartConfig ? cartConfig.serialNum : '')
   
-  // CartTest state
+  // Loading state
   const loading = open && cartConfigOptions.length === 0;
 
   useEffect(() => {
@@ -92,14 +92,22 @@ export default function MeasControl(props) {
       .then(res => {
         console.log(res.data);
       })
-
+      .catch(error => {
+        console.log(error);
+      })
       dispatch(setCartConfig(newValue));
       getConfigKeys(configId);
      
     } else {
-      dispatch(reset())
-      dispatch(setCartConfig(null));
-      dispatch(setRefresh());
+      axios.put("/database/config/0", true)
+        .then(res => {
+          console.log(res.data);
+          dispatch(resetConfig())
+          dispatch(setRefresh());
+        })
+        .catch(error => {
+          console.log(error);
+        })
     }
   }
 
