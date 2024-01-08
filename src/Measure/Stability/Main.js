@@ -78,7 +78,7 @@ export default function StabilityMain(props) {
       
       <Grid item xs={3.5}>
         <Grid container>
-          <Grid item xs={6}>
+          <Grid item xs={12}>
             <Attenuator/>
           </Grid>          
           <Grid item xs={12}>&nbsp;</Grid>

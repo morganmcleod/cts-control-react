@@ -47,8 +47,8 @@ export default function Attenuator(props) {
   return (
     <Grid container paddingLeft="8px" paddingTop="8px">
       <Grid item xs={12}><Typography variant="subtitle2" fontWeight="bold">IF Attenuator</Typography></Grid>
-      <Grid item xs={6}><Typography variant="body2" paddingTop="4px">Attenuation:</Typography></Grid>
-      <Grid item xs={6}><Typography fontWeight="bold" paddingTop="2px">{atten} dB</Typography></Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Attenuation:</Typography></Grid>
+      <Grid item xs={8}><Typography fontWeight="bold" paddingTop="2px">{atten} dB</Typography></Grid>
     </Grid>
   );
 }

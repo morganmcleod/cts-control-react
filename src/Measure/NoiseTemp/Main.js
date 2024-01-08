@@ -75,10 +75,9 @@ export default function NoiseTempMain(props) {
       
       <Grid item xs={3.5}>
         <Grid container>
-          <Grid item xs={6}>
+          <Grid item xs={9}>
             <Attenuator/>
           </Grid>
-          <Grid item xs={6}/>
           <Grid item>
             <Temperatures/>
           </Grid>
