@@ -15,50 +15,88 @@ import '../../components.css'
 
 // HTTP and store
 import axios from "axios";
-import { setAmpStabilitySettings } from './StabilitySlice';
+import { setStabilitySettings } from './StabilitySlice';
 
 export default function AmpStabilitySettings(props) {
   // Input debouncing timer
   const timer = useRef(null);
-  
   const disabled = props.disabled;
 
   // Redux store interfaces
-  const settings = useSelector((state) => state.Stability.ampStabilitySettings);
+  const settings = useSelector((state) => state.Stability.stabilitySettings);
   const dispatch = useDispatch();
 
+  const loSpan = Number(settings.loStop) - Number(settings.loStart);
+
   const fetch = useCallback(() => {
-    axios.get('/ampstability/settings')
+    const URL = (props.mode === 'phase') ? '/stability/phase/settings' : '/stability/amp/settings';
+    axios.get(URL)
       .then(res => {
-        dispatch(setAmpStabilitySettings(res.data));
+        dispatch(setStabilitySettings(res.data));        
       })
       .catch(error => {
         console.log(error);
       })
-  }, [dispatch]);
+  }, [dispatch, props.mode]);
 
   // Initial fetch of contents
   useEffect(() => {
     fetch();
   }, [fetch]);
 
+  const checkBoxError = (settings) => {
+    if ((settings.measurePol0 === 'false' || settings.measurePol0 === false) && (settings.measurePol1 === 'false' || settings.measurePol1 === false))
+      return true;
+    if ((settings.measureUSB === 'false' || settings.measureUSB === false) && (settings.measureLSB === 'false' || settings.measureLSB === false))
+      return true;
+    return false;
+  }
+
   const validateSettings = (settings) => {
+    if (checkBoxError(settings)) {
+      console.log('checkBoxError');
+      return false;
+    }
     const items = [
       settings.loStart,
       settings.loStop,
       settings.loStep,
+      settings.attenuateIF,
+      settings.sampleRate,
+      settings.sensorAmbient,
+      settings.delayAfterLock,
+      settings.measureDuration
     ]
     for (const item of items) {
-      if (isNaN(item))
+      if (isNaN(Number(item)))
+        return false;
+      if (Number(item) < 0)
         return false;
       if (item === '')
         return false;
     }
-    if (settings.loStop < settings.loStart)
+    if (Number(settings.loStart) === 0 || Number(settings.loStart) > 999)
       return false;
-    if (settings.ifStop < settings.ifStart)
+    if (Number(settings.loStop) === 0 || Number(settings.loStop) > 999)
       return false;
-    console.log("ampStabilitySettings is valid")
+    if (Number(settings.loStop) < Number(settings.loStart))
+      return false;
+    if (Number(settings.ifStop) < Number(settings.ifStart))
+      return false;
+    if (loSpan > 0 && Number(settings.loStep) > loSpan)
+      return false;
+    if (Number(settings.attenuateIF) < 0 || Number(settings.attenuateIF) > 101)
+      return false;
+    if (Number(settings.sampleRate) <= 0 || Number(settings.sampleRate) > 50)
+      return false;
+    if (Number(settings.delayAfterLock) < 0 || Number(settings.delayAfterLock) > 300)
+      return false;
+    if (Number(settings.measureDuration) < 0.5 || Number(settings.measureDuration) > 300)
+      return false;
+    if (Number(settings.targetLevel) < -99 || Number(settings.targetLevel) > 10)
+      return false;
+
+    console.log("stabilitySettings is valid")
     return true;
   }
 
@@ -75,14 +113,15 @@ export default function AmpStabilitySettings(props) {
       timer.current = null;
     }
     // Save to the redux store:
-    dispatch(setAmpStabilitySettings(newSettings));
+    dispatch(setStabilitySettings(newSettings));
     if (validateSettings(newSettings)) {
       // Set a timer to write back to the back-end
       timer.current = setTimeout(() => {        
         // Stop the timer before writing:
         clearTimeout(timer.current);
-        timer.current = null;  
-        axios.post('/ampstability/settings', newSettings)
+        timer.current = null;
+        const URL = (props.mode === 'phase') ? '/stability/phase/settings' : '/stability/amp/settings';
+        axios.post(URL, newSettings)
           .then(res => {
             console.log(res.data);
           })
@@ -99,8 +138,9 @@ export default function AmpStabilitySettings(props) {
       <Grid item xs={5}>
         <OutlinedInput
           name="loStart"
+          type="number"
           disabled={disabled}
-          error={false}
+          error={settings.loStart <= 0 || settings.loStart >= 999 || settings.loStart > settings.loStop}
           size="small"
           margin="none"          
           style={{width: '50%'}}
@@ -115,8 +155,9 @@ export default function AmpStabilitySettings(props) {
       <Grid item xs={5}>
         <OutlinedInput
           name="loStop"
+          type="number"
           disabled={disabled}
-          error={false}
+          error={settings.loStop <= 0 || settings.loStop >= 999 || settings.loStart > settings.loStop}
           size="small"
           margin="none"          
           style={{width: '50%'}}
@@ -131,8 +172,9 @@ export default function AmpStabilitySettings(props) {
       <Grid item xs={5}>
         <OutlinedInput
           name="loStep"
+          type="number"
           disabled={disabled}
-          error={false}
+          error={settings.loStep < 0 || (loSpan > 0 && settings.loStep > loSpan)}
           size="small"
           margin="none"          
           style={{width: '50%'}}
@@ -190,7 +232,13 @@ export default function AmpStabilitySettings(props) {
           />
         </FormControl>
       </Grid>
-      <Grid item xs={3}/>
+      <Grid item xs={3}>
+        { checkBoxError(settings) &&
+          <Typography variant="subtitle2" align="center" fontWeight="bold" color="error" paddingTop="14px">
+            Select at least 1
+          </Typography>
+        }
+      </Grid>
 
       <Grid item xs={3}><Typography variant="body2" paddingTop="8px">Sideband:</Typography></Grid>
       <Grid item xs={3} textAlign="right">
@@ -238,17 +286,40 @@ export default function AmpStabilitySettings(props) {
           />
         </FormControl>
       </Grid>
-      <Grid item xs={3}/>
-
+      <Grid item xs={3}>
+        { checkBoxError(settings) &&
+          <Typography variant="subtitle2" align="center" fontWeight="bold" color="error">
+            from each row.
+          </Typography>
+        }
+      </Grid>
 
       <Grid item xs={12}><br/></Grid>
+
+      <Grid item xs={5}><Typography variant="body2" paddingTop="4px">IF Attenuator:</Typography></Grid>
+      <Grid item xs={5}>
+        <OutlinedInput
+          name="attenuateIF"
+          type="number"
+          disabled={disabled}
+          error={settings.attenuateIF < 0 || settings.attenuateIF > 101 || settings.attenuateIF === ''}
+          size="small"
+          margin="none"          
+          style={{width: '50%'}}
+          className="smallinput"
+          onChange={e => {handleChangeSetting(e)}}
+          value = {settings.attenuateIF}
+        />
+        <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;dB</Typography>
+      </Grid>
 
       <Grid item xs={5}><Typography variant="body2" paddingTop="4px">Sample rate:</Typography></Grid>
       <Grid item xs={5}>
         <OutlinedInput
           name="sampleRate"
+          type="number"
           disabled={disabled}
-          error={false}
+          error={settings.sampleRate <= 0 || settings.sampleRate > 50 || settings.sampleRate === ''}
           size="small"
           margin="none"          
           style={{width: '50%'}}
@@ -256,15 +327,16 @@ export default function AmpStabilitySettings(props) {
           onChange={e => {handleChangeSetting(e)}}
           value = {settings.sampleRate}
         />
-        <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;samples/sec</Typography>
+        <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;samp/sec</Typography>
       </Grid>
 
       <Grid item xs={5}><Typography variant="body2" paddingTop="4px">Ambient sensor num.:</Typography></Grid>
       <Grid item xs={5}>
         <OutlinedInput
           name="sensorAmbient"
+          type="number"
           disabled={disabled}
-          error={false}
+          error={settings.sensorAmbient < 1 || settings.sensorAmbient > 8 || settings.sensorAmbient === ''}
           size="small"
           margin="none"          
           style={{width: '50%'}}
@@ -278,8 +350,9 @@ export default function AmpStabilitySettings(props) {
       <Grid item xs={5}>
         <OutlinedInput
           name="delayAfterLock"
+          type="number"
           disabled={disabled}
-          error={false}
+          error={settings.delayAfterLock < 0 || settings.delayAfterLock > 300 || settings.delayAfterLock === ''}
           size="small"
           margin="none"          
           style={{width: '50%'}}
@@ -294,8 +367,9 @@ export default function AmpStabilitySettings(props) {
       <Grid item xs={5}>
         <OutlinedInput
           name="measureDuration"
+          type="number"
           disabled={disabled}
-          error={false}
+          error={settings.measureDuration < 0.5 || settings.measureDuration > 300 || settings.measureDuration === ''}
           size="small"
           margin="none"          
           style={{width: '50%'}}
@@ -305,6 +379,28 @@ export default function AmpStabilitySettings(props) {
         />
         <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;minutes</Typography>
       </Grid>
+
+      { props.mode === 'phase' &&
+        <React.Fragment>
+          <Grid item xs={5}><Typography variant="body2" paddingTop="4px">Target RF level:</Typography></Grid>
+          <Grid item xs={5}>
+            <OutlinedInput
+              name="targetLevel"
+              type="number"
+              disabled={disabled}
+              error={settings.targetLevel < -99 || settings.targetLevel > 10 || settings.targetLevel === ''}
+              size="small"
+              margin="none"          
+              style={{width: '50%'}}
+              className="smallinput"
+              onChange={e => {handleChangeSetting(e)}}
+              value = {settings.targetLevel}
+            />
+            <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;dBm</Typography>
+          </Grid>          
+        </React.Fragment>
+      }
+
     </Grid>
   );
 }

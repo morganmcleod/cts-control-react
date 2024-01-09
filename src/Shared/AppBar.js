@@ -13,8 +13,8 @@ import HomeIcon from '@mui/icons-material/Home';
 
 import MainMenu from './MainMenu';
 
-const pages = ['Cold Cart', 'LO & RF', 'Bias', 'Noise Temp', 'Beam Patterns', 'Stability'];
-const colors = ['white', 'lightgreen', 'yellow', '#eaccff', '#ff9999', '#ee4400'];
+const pages = ['Cold Cart', 'LO & RF', 'Bias', 'Noise Temp', 'Stability', 'Beam Patterns'];
+const colors = ['white', 'lightgreen', 'yellow', '#eaccff', '#ee4400', '#ff9999'];
 
 export default function CTSAppBar(props) {
 

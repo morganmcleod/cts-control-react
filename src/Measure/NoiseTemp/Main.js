@@ -11,7 +11,6 @@ import WarmIFGraph from "./WarmIFGraph";
 import '../../components.css'
 
 import Temperatures from "../../Hardware/TemperatureMonitor/Temperatures"
-import Attenuator from "../../Hardware/WarmIFPlate/Attenuator";
 import MeasurementStatus from '../Shared/MeasurementStatus';
 
 export default function NoiseTempMain(props) {
@@ -51,8 +50,7 @@ export default function NoiseTempMain(props) {
             onChange={(e, val) => setDisplayTab(val)} 
             aria-label="Noise temperature display" 
             textColor="secondary"
-            indicatorColor="secondary"
-            centered
+            indicatorColor="secondary"            
           >
               <Tab label="Warm IF" value="0" />
               <Tab label="Raw NT" value="1" />
@@ -75,9 +73,6 @@ export default function NoiseTempMain(props) {
       
       <Grid item xs={3.5}>
         <Grid container>
-          <Grid item xs={9}>
-            <Attenuator/>
-          </Grid>
           <Grid item>
             <Temperatures/>
           </Grid>

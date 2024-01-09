@@ -8,6 +8,7 @@ export const MeasureSlice = createSlice({
     description: "",
     operator: "",
     notes: "",
+    testTypeId: null,   // allows the Stability tab to select either amlitude or phase
     measurementStatus: {
       cartTest: null,
       childKey: 0,
@@ -31,11 +32,30 @@ export const MeasureSlice = createSlice({
     setMeasureNotes(state, action) {
       state.notes = action.payload;
     },
+    setTestTypeId(state, action) {
+      state.testTypeId = action.payload;
+    },
     setMeasurementStatus(state, action) {
       state.measurementStatus = action.payload;
     }
   }
 });
+
+export const detectChange = (status, newStatus) => {
+  if (status.cartTest !== newStatus.cartTest)
+    return true;
+  if (status.timeStamp !== newStatus.timeStamp)
+    return true;
+  if (status.stepComplete !== newStatus.stepComplete)
+    return true;
+  if (status.allComplete !== newStatus.allComplete)
+    return true;
+  if (status.message !== newStatus.message)
+    return true;
+  if (status.error !== newStatus.error)
+    return true;
+  return false;
+}
 
 // these are for dispatch:
 export const { 
@@ -43,6 +63,7 @@ export const {
   setMeasureDescription,
   setMeasureOperator,
   setMeasureNotes,
+  setTestTypeId,
   setMeasurementStatus
 } = MeasureSlice.actions
 

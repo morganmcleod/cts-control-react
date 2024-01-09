@@ -124,7 +124,7 @@ class MainMenu extends React.Component {
               open={this.state.showAbout}
               title="About CTS Control"
               onClose={() => this.setShowAbout(false)}
-              hideCancel={true}
+              hideCancel
             >
               App: {AppController.getAppVersion()}
               <br/>

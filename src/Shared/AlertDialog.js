@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 
 export default function AlertDialog(props) {
-  const {open, title, children, onClose } = props;
+  const { open, title, children, onClose, hideCancel } = props;
   
   const handleClose = (confirm) => {
     onClose(confirm);
@@ -32,7 +32,9 @@ export default function AlertDialog(props) {
       </DialogContent>
       <DialogActions>
         <Button variant="contained" color="primary" onClick={() => handleClose(true)} autoFocus>OK</Button>
-        <Button variant="contained" color="error" onClick={() => handleClose(false)}>CANCEL</Button>
+        { !hideCancel && 
+          <Button variant="contained" color="error" onClick={() => handleClose(false)}>CANCEL</Button>
+        }
       </DialogActions>
     </Dialog>
   );

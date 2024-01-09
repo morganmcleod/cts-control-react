@@ -229,7 +229,7 @@ export default function Presets(props) {
   }
 
   return (
-    <Grid container paddingLeft="5px" paddingBottom="15px" border={1} borderTop={0}>
+    <Grid container paddingLeft="5px" paddingBottom="15px" border={1} borderTop={0} borderColor="rgba(0, 0, 255, 0.25)">
       <Grid item xs={3}>
         <Typography variant="body1" fontWeight="bold">Presets</Typography>
       </Grid>

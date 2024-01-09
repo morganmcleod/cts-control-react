@@ -1,9 +1,11 @@
 import axios from 'axios';
+import store from '../store';
+import { refreshTimeSeriesList, setDisplayTab } from '../Measure/Stability/StabilitySlice';
+
 let global_AppVersion = null;
 let global_APIVersion = null;
 
 const AppController = {
-
   setupInitialState: (appVersion) => {
     global_AppVersion = appVersion;
     console.log('App version: ' + global_AppVersion);
@@ -26,6 +28,14 @@ const AppController = {
 
   getAPIVersion: () => {
     return global_APIVersion;
+  },
+
+  onMeasureStart: () => {
+    store.dispatch(setDisplayTab("0"));
+  },
+
+  onTimeSeriesDone: () => {
+    store.dispatch(refreshTimeSeriesList());
   }
 }
 export default AppController;

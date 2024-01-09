@@ -5,6 +5,7 @@ const TestTypes = {
   IF_PLATE_NOISE: 5,
   AMP_STABILITY: 7,
   LO_WG_INTEGRITY: 14,
+  AMP_OR_PHASE_STABILITY: 99,  // the same tab handles both
   
   getText: (testTypeId) => {
     switch(testTypeId) {

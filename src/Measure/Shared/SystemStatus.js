@@ -25,6 +25,7 @@ export default function SystemStatus(props) {
   const active = useSelector((state) => state.Measure.active);
   const inputSwitch = useSelector((state) => state.WarmIFPlate.inputSwitch);
   const yigFilter = useSelector((state) => state.WarmIFPlate.yigFilter);
+  const attenuation = useSelector((state) => state.WarmIFPlate.attenuation);
   const dispatch = useDispatch();
 
   // Load data from REST API
@@ -128,8 +129,7 @@ export default function SystemStatus(props) {
         />
       </Grid>
       <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{lo.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
-      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">IF Switch:</Typography></Grid>
-      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{inputSwitch}</Typography></Grid>
+      <Grid item xs={4.5}/>
 
       <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">RF:</Typography></Grid>
       <Grid item xs={3} align="center">
@@ -148,6 +148,12 @@ export default function SystemStatus(props) {
       <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{rf.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
       <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">YIG Filter:</Typography></Grid>
       <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{yigFilter.toFixed(2)} GHz</Typography></Grid>
+    
+      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">IF:</Typography></Grid>
+      <Grid item xs={3}><Typography variant="subtitle2" paddingTop="4px" align="right">Switch:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Typography></Grid>
+      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{inputSwitch}</Typography></Grid>
+      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">Attenuator:</Typography></Grid>
+      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{attenuation} dB</Typography></Grid>
     </Grid>
   );
 }

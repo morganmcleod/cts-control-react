@@ -10,12 +10,14 @@ const defaultTimeSeries = {
   startTime: null
 };
 
-export const AmpStabilitySlice = createSlice({
+export const StabilitySlice = createSlice({
   name: 'Stability',
   initialState: {
-    ampStabilitySettings: {
+    stabilitySettings: {
       sampleRate: 0,
       sensorAmbient: 0,
+      attenuateIF: 0,
+      targetLevel: 0,
       delayAfterLock: 0,
       measureDuration: 0,
       measurePol0: false,
@@ -27,13 +29,15 @@ export const AmpStabilitySlice = createSlice({
       loStep: 0
     },
     timeSeries: {...defaultTimeSeries},
+    selectedTimeSeriesId: null,
     timeSeriesList: [],
-    selectedTimeSeries: null,
-    stabilityPlot: null
+    refreshTimeSeriesList: 0,
+    mode: 'amplitude',
+    displayTab: "0"
   },
   reducers: {
-    setAmpStabilitySettings(state, action) {
-      state.ampStabilitySettings = action.payload;
+    setStabilitySettings(state, action) {
+      state.stabilitySettings = action.payload;
     },
     resetTimeSeries(state, action) {
       state.timeSeries = {...defaultTimeSeries};
@@ -52,24 +56,32 @@ export const AmpStabilitySlice = createSlice({
     setTimeSeriesList(state, action) {
       state.timeSeriesList = action.payload;
     },
-    selectTimeSeries(state, action) {
-      state.selectedTimeSeries = action.payload;
+    refreshTimeSeriesList(state, action) {
+      state.refreshTimeSeriesList += 1;
     },
-    setStabilityPlot(state, action) {
-      state.stabilityPlot = action.payload;
+    selectTimeSeriesId(state, action) {
+      state.selectedTimeSeriesId = action.payload;
+    },
+    setMode(state, action) {
+      state.mode = action.payload;
+    },
+    setDisplayTab(state, action) {
+      state.displayTab = action.payload;
     }
   }
 });
 
 // these are for dispatch:
 export const { 
-  setAmpStabilitySettings,
+  setStabilitySettings,
   resetTimeSeries,
   addTimeSeries,
   setTimeSeriesList,
-  selectTimeSeries,
-  setStabilityPlot
-} = AmpStabilitySlice.actions
+  refreshTimeSeriesList,
+  selectTimeSeriesId,
+  setMode,
+  setDisplayTab
+} = StabilitySlice.actions
 
 // this is for configureStore:
-export default AmpStabilitySlice.reducer
+export default StabilitySlice.reducer

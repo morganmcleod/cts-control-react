@@ -1,6 +1,7 @@
 // React and Redux
 import React, { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux'
+import AppController from "../../Shared/AppController";
 
 // UI components and style
 import { 
@@ -12,7 +13,7 @@ import localDate from '../../Shared/LocalDate';
 
 // HTTP and store
 import axios from "axios";
-import { setMeasurementStatus } from './MeasureSlice';
+import { setMeasurementStatus, detectChange } from './MeasureSlice';
 
 export default function MeasurementStatus(props) {
   // Periodic refresh timer
@@ -27,11 +28,14 @@ export default function MeasurementStatus(props) {
     axios.get('/measure/status')
     .then(res => {
       dispatch(setMeasurementStatus(res.data));
+      if (detectChange(measurementStatus, res.data)) {
+        AppController.onTimeSeriesDone();
+      }
     })
     .catch(error => {
       console.log(error);
     })
-  }, [dispatch]);
+  }, [dispatch, measurementStatus]);
 
   // Periodic refresh timer
   useEffect(() => {
