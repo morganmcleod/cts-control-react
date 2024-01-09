@@ -25,6 +25,11 @@ export default function MeasSpec(props) {
   const disabled = useSelector((state) => state.Measure.active);
   const measSpec = useSelector((state) => state.BeamScanner.measurementSpec);
   const position = useSelector((state) => state.MotorControl.position);
+  let fortyFiveDegrees = "";
+    if (measSpec.scanAngles[0] !== '' && !isNaN(measSpec.scanAngles[0]) &&
+        measSpec.scanAngles[1] !== '' && !isNaN(measSpec.scanAngles[1]))
+      fortyFiveDegrees = (Number(measSpec.scanAngles[0]) + Number(measSpec.scanAngles[1])) / 2;
+
   const dispatch = useDispatch();
   
   const fetch = useCallback(() => {
@@ -53,6 +58,7 @@ export default function MeasSpec(props) {
       spec.scanAngles[0],
       spec.scanAngles[1],
       spec.targetLevel,
+      spec.ifAttenuator,
       spec.resolution,
       spec.centersInterval
     ]
@@ -65,6 +71,10 @@ export default function MeasSpec(props) {
     if (spec.targetLevel < -100)
       return false;
     if (spec.targetLevel > 15)
+      return false;
+    if (spec.ifAttenuator < 0)
+      return false;
+    if (spec.ifAttenuator > 121)
       return false;
     if (spec.resolution <= 0)
       return false;
@@ -105,6 +115,9 @@ export default function MeasSpec(props) {
       case "target-level":
         spec = {...measSpec, targetLevel: e.target.value};
         break;
+      case "ifAttenuator":
+          spec = {...measSpec, ifAttenuator: e.target.value};
+          break;
       case "resolution":
         spec = {...measSpec, resolution: e.target.value};
         break;
@@ -189,6 +202,15 @@ export default function MeasSpec(props) {
             x: position.x, 
             y: position.y, 
             pol: measSpec.scanAngles[1]
+          }));
+        }
+        break;
+      case "go45":
+        if (measSpec.scanAngles[1] >= -200 && measSpec.scanAngles[1] <= 180 ) {
+          dispatch(setGotoPosition({
+            x: position.x, 
+            y: position.y, 
+            pol: fortyFiveDegrees
           }));
         }
         break;
@@ -422,6 +444,33 @@ export default function MeasSpec(props) {
           GO
         </Button>
       </Grid>
+
+      <Grid item xs={5}/>
+      <Grid item xs={2}>
+        <Typography variant="body2" paddingTop="4px" align="center">45°:</Typography>
+      </Grid>
+      <Grid item xs={3}>
+        <Typography variant="body2" fontWeight="bold" paddingTop="4px">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{fortyFiveDegrees}
+        </Typography>
+      </Grid>
+      <Grid item xs={2} align="center">
+        <Button
+          name="go45"
+          disabled={disabled || measSpec.scanAngles[1] === '' || isNaN(measSpec.scanAngles[1])} 
+          className="custom-btn-sm"
+          variant="contained"
+          size="small"
+          style={{
+            minWidth: '55%',
+            maxWidth: '55%' 
+          }}
+          onClick={e => handleGoto(e)}
+        >
+          GO
+        </Button>
+      </Grid>
+
       <Grid item xs={12}>&nbsp;</Grid>
 
       <Grid item xs={4}>
@@ -438,6 +487,26 @@ export default function MeasSpec(props) {
           className="smallinput"
           onChange={e => {handleChangeSetting(e)}}
           value = {measSpec.targetLevel}
+        />
+        <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;dB</Typography>
+      </Grid>
+      <Grid item xs={2}/>
+
+
+      <Grid item xs={4}>
+        <Typography variant="body2" paddingTop="4px">IF attenuator:</Typography>
+      </Grid>
+      <Grid item xs={6}>
+        <OutlinedInput
+          name="ifAttenuator"
+          disabled={disabled}
+          error={measSpec.ifAttenuator < 0 || measSpec.ifAttenuator > 121 || measSpec.ifAttenuator === '' || isNaN(measSpec.ifAttenuator)}
+          size="small"
+          margin="none"          
+          style={{width: '47.5%'}}
+          className="smallinput"
+          onChange={e => {handleChangeSetting(e)}}
+          value = {measSpec.ifAttenuator}
         />
         <Typography variant="body2" display="inline" paddingTop="4px">&nbsp;dB</Typography>
       </Grid>

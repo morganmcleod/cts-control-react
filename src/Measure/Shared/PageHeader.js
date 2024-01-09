@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 
 export default function PageHeader(props) {
   return (
-    <Grid container paddingBottom="5px">
+    <Grid container paddingBottom="5px" paddingTop="5px">
 
       {/* Title */}
       <Grid item xs={2} paddingTop="20px" paddingLeft="25px">

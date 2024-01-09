@@ -16,6 +16,8 @@ import {
   resetConfig 
 } from './CartBiasSlice';
 
+import AppController from "../Shared/AppController";
+
 export default function SelectCartridge(props) {
   // Redux store interfaces
   const measActive = useSelector((state) => state.Measure.active);
@@ -87,8 +89,7 @@ export default function SelectCartridge(props) {
 
   const onCartSelect = (newValue) => {
     if (newValue) {
-      let configId = newValue.id
-      axios.put("/database/config/" + configId, true)
+      axios.put("/database/config/" + newValue.id, true)
       .then(res => {
         console.log(res.data);
       })
@@ -96,7 +97,9 @@ export default function SelectCartridge(props) {
         console.log(error);
       })
       dispatch(setCartConfig(newValue));
-      getConfigKeys(configId);
+      getConfigKeys(newValue.id);
+
+      AppController.onCartConfigChange(newValue.id);
      
     } else {
       axios.put("/database/config/0", true)
@@ -108,6 +111,8 @@ export default function SelectCartridge(props) {
         .catch(error => {
           console.log(error);
         })
+
+      AppController.onCartConfigChange(null);
     }
   }
 
@@ -135,7 +140,7 @@ export default function SelectCartridge(props) {
               autoHighlight
               disabled={measActive}
               isOptionEqualToValue={(option, value) => option.id === value.id}
-              getOptionLabel={(option) => option.serialNum}
+              getOptionLabel={(option) => option && option.serialNum ? option.serialNum : ""}
               options={cartConfigOptions}
               loading={loading}
               renderInput={(params) => (

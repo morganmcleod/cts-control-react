@@ -17,7 +17,8 @@ const lightTheme = createTheme({
     },
     text: {
       primary: 'rgba(0,0,0,0.88)',
-    },
+      error: 'rgba(255,0,0,1)',
+    }
   },
   typography: {
     fontSize: 12,
@@ -39,7 +40,8 @@ const darkTheme = createTheme({
       paper: "#404040",
     },
     text: {
-      primary: "#f1f1f1ff",
+      primary: "#f8f8f8ff",
+      error: 'rgba(255,0,0,1)',
     },
   },
   typography: {

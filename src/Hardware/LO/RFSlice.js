@@ -3,11 +3,30 @@
 //Reducers are state transitions on a part of the store:  given the current state and an action, return the new state.
 //Selectors are how components get items out of the store.
 import { createSlice } from '@reduxjs/toolkit';
-import { LOSliceConfig } from './LOSliceConfig'
+import { LOSliceInitialState, LOSliceReducers } from './LOSliceConfig'
+
 
 export const RFSlice = createSlice({
-  ...LOSliceConfig,
-  name: 'RF'
+  name: 'RF',
+  initialState: {
+    ...LOSliceInitialState,
+    rfPowerGraph: {
+      x: [],
+      y: []
+    }  
+  },
+  reducers: {
+    ...LOSliceReducers,
+    resetRfPowerGraph(state, action) {
+      state.rfPowerGraph = {x: [], y: [], updated: null};
+    },
+    appendRfPowerGraph(state, action) {
+      const len = state.rfPowerGraph.x.length;
+      const iter = (len > 0 ? state.rfPowerGraph.x[len - 1] : 0) + 1;
+      state.rfPowerGraph.x.push(iter);
+      state.rfPowerGraph.y.push(action.payload);
+    }
+  }
 });
 
 // these are for dispatch:
@@ -23,6 +42,8 @@ export const rfSetLockInfo = RFSlice.actions.setLockInfo
 export const rfSetPLLConfig = RFSlice.actions.setPLLConfig;
 export const rfSetYTO = RFSlice.actions.setYTO;
 export const rfSetYTOCourseTune = RFSlice.actions.setYTOCourseTune;
+export const resetRfPowerGraph = RFSlice.actions.resetRfPowerGraph;
+export const appendRfPowerGraph = RFSlice.actions.appendRfPowerGraph;
 
 // this is for configureStore:
 export default RFSlice.reducer

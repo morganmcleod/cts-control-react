@@ -4,7 +4,6 @@ import { ThemeProvider } from "@mui/material/styles";
 import { Box, Divider, Grid } from '@mui/material';
 
 import { ThemeContext, loadTheme, mapTheme } from "./themes";
-import AppEventHandler from './Shared/AppEventHandler';
 import CCA from './Hardware/Cartridge/CCA';
 import Presets from './Hardware/Cartridge/Presets';
 import FEMC from './Hardware/FEMC/FEMC';
@@ -18,6 +17,7 @@ import BeamScannerMain from './Measure/BeamScanner/Main';
 import NoiseTempMain from './Measure/NoiseTemp/Main';
 import StabilityMain from './Measure/Stability/Main';
 import AppController from './Shared/AppController';
+import TestTypes from './Shared/TestTypes';
 
 import axios from "axios";
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -54,14 +54,13 @@ class App extends React.Component {
 
     return (
       <ThemeContext.Provider value={this.state}>
-        <AppEventHandler baseURL={axios.defaults.baseURL}/>
-        <CTSAppBar setVisibleTab={this.setVisibleTab}/>
         <ThemeProvider theme={theme}>
           <Box
             minHeight={"100vh"}
             padding={"5px"}
             style={containerStyle}
           >            
+            <CTSAppBar setVisibleTab={this.setVisibleTab}/>
             <TabPanel index={0} visibleTab={this.state.visibleTab}>
               <PageHeader
                 title="Cold Cartridge"
@@ -91,6 +90,7 @@ class App extends React.Component {
                 title="Cartridge Bias"
                 showCartSelect={true}
               />
+              <Divider variant="fullWidth" color="blue"/>
               <CartBias/>
             </TabPanel>
 
@@ -99,7 +99,7 @@ class App extends React.Component {
                 title="Noise Temperature" 
                 showCartSelect={true}
                 showMeasControl={true}
-                measureType={1}
+                measureType={TestTypes.NOISE_TEMP}
               />
               <Divider variant="fullWidth" color="blue"/>
               <NoiseTempMain/>
@@ -107,24 +107,26 @@ class App extends React.Component {
             
             <TabPanel index={4} visibleTab={this.state.visibleTab}>
               <PageHeader 
-                title="Beam Patterns" 
-                showCartSelect={true}
-                showMeasControl={true}
-                measureType={2}
-              />
-              <Divider variant="fullWidth" color="blue"/>
-              <BeamScannerMain/>
-            </TabPanel>
-            <TabPanel index={5} visibleTab={this.state.visibleTab}>
-              <PageHeader 
                 title="Stability" 
                 showCartSelect={true}
                 showMeasControl={true}
-                measureType={7}
+                measureType={TestTypes.AMP_OR_PHASE_STABILITY}
               />
               <Divider variant="fullWidth" color="blue"/>
               <StabilityMain/>
             </TabPanel>
+            
+            <TabPanel index={5} visibleTab={this.state.visibleTab}>
+              <PageHeader 
+                title="Beam Patterns" 
+                showCartSelect={true}
+                showMeasControl={true}
+                measureType={TestTypes.BEAM_PATTERN}
+              />
+              <Divider variant="fullWidth" color="blue"/>
+              <BeamScannerMain/>
+            </TabPanel>
+            
             <Box flex={1} overflow="auto"/>
           </Box>
         </ThemeProvider>

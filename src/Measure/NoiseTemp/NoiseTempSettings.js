@@ -25,7 +25,6 @@ export default function NoiseTempSettings(props) {
 
   // Redux store interfaces
   const settings = useSelector((state) => props.isLoWg ? state.NoiseTemp.loWgSettings : state.NoiseTemp.noiseTempSettings);
-  const enableStep = useSelector((state) => props.isLoWg ? state.NoiseTemp.testSteps.loWGIntegrity : state.NoiseTemp.testSteps.noiseTemp);
   const testSteps = useSelector((state) => state.NoiseTemp.testSteps);
   const dispatch = useDispatch();
 
@@ -117,9 +116,17 @@ export default function NoiseTempSettings(props) {
   const handleChangeTestStep = (e) => {
     let newTestSteps = Object.assign({}, testSteps);
     switch (e.target.name) {
-      case "warmIF":
       case "noiseTemp":
+        newTestSteps[e.target.name] = e.target.checked;
+        if (!e.target.checked)
+          newTestSteps["imageReject"] = false;
+        break;
       case "imageReject":
+        newTestSteps[e.target.name] = e.target.checked;
+        if (e.target.checked)
+          newTestSteps["noiseTemp"] = true;
+        break;
+      case "warmIF":
       case "loWGIntegrity":
         newTestSteps[e.target.name] = e.target.checked;
         break;
@@ -145,7 +152,7 @@ export default function NoiseTempSettings(props) {
             control={
               <Checkbox
                 name = {props.isLoWg ? "loWGIntegrity" : "noiseTemp"}
-                checked={enableStep}
+                checked={props.isLoWg ? testSteps.loWGIntegrity : testSteps.noiseTemp}
                 disabled={disabled}
                 style={{"paddingTop": "1"}}
                 onChange={e => handleChangeTestStep(e)}
@@ -154,17 +161,37 @@ export default function NoiseTempSettings(props) {
             } 
             label={
               <Typography variant="subtitle2" display="inline" fontWeight="bold">
-                Enable
+                {props.isLoWg ? "LO WG Integrity" : "Noise Temperature"}
               </Typography>
             }
             labelPlacement="end"
-          />
+          />          
+          {!props.isLoWg && 
+            <FormControlLabel 
+              control={
+                <Checkbox
+                  name = "imageReject"
+                  checked={testSteps.imageReject}
+                  disabled={disabled}
+                  style={{"paddingTop": "1"}}
+                  onChange={e => handleChangeTestStep(e)}
+                  size="small"                
+                />
+              } 
+              label={
+                <Typography variant="subtitle2" display="inline" fontWeight="bold">
+                  Image Rejection
+                </Typography>
+              }
+              labelPlacement="end"
+            />          
+          }
           <FormControlLabel 
             control={
               <Checkbox
                 name = "warmIF"
-                checked={testSteps.warmIF && enableStep}
-                disabled={disabled || !enableStep}
+                checked={testSteps.warmIF}
+                disabled={disabled}
                 style={{"paddingTop": "1"}}
                 onChange={e => handleChangeTestStep(e)}
                 size="small"                
@@ -177,26 +204,6 @@ export default function NoiseTempSettings(props) {
             }
             labelPlacement="end"
           />
-          {!props.isLoWg && 
-            <FormControlLabel 
-            control={
-              <Checkbox
-                name = "imageReject"
-                checked={testSteps.imageReject && enableStep}
-                disabled={disabled || !enableStep}
-                style={{"paddingTop": "1"}}
-                onChange={e => handleChangeTestStep(e)}
-                size="small"                
-              />
-            } 
-            label={
-              <Typography variant="subtitle2" display="inline" fontWeight="bold">
-                Image Rejection
-              </Typography>
-            }
-            labelPlacement="end"
-          />
-        }
         </FormGroup>
       </Grid>
       <Grid item xs={12}>&nbsp;</Grid>

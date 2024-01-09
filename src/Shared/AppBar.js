@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import {
   AppBar,
   Box,
@@ -13,12 +13,13 @@ import HomeIcon from '@mui/icons-material/Home';
 
 import MainMenu from './MainMenu';
 
-const pages = ['Cold Cart', 'LO & RF', 'Bias', 'Noise Temp', 'Beam Patterns', 'Stability'];
-const colors = ['white', 'lightgreen', 'yellow', '#eaccff', '#ff9999', '#ee4400'];
+const pages = ['Cold Cart', 'LO & RF', 'Bias', 'Noise Temp', 'Stability', 'Beam Patterns'];
+const colors = ['white', 'lightgreen', 'yellow', '#eaccff', '#ee4400', '#ff9999'];
 
 export default function CTSAppBar(props) {
-
+  const [selected, setSelected] = useState(0);
   const handleClick = (index) => {
+    setSelected(index);
     props.setVisibleTab(index);
   };
   
@@ -56,7 +57,13 @@ export default function CTSAppBar(props) {
               <Button
                 key={page}
                 onClick={e => {handleClick(index)}}
-                sx={{ my: 2, color: colors[index], display: 'block' }}
+                sx={{ 
+                  my: 2, 
+                  color: colors[index], 
+                  display: 'block',
+                  fontWeight: (index === selected ? "bold" : "normal"), 
+                  textDecoration: (index === selected ? "underline" : "none")
+                }}
               >
                 {page}
               </Button>

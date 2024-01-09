@@ -1,6 +1,7 @@
 // React and Redux
 import React, { useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from 'react-redux'
+import AppController from "../../Shared/AppController";
 
 // UI components and style
 import { 
@@ -12,7 +13,7 @@ import localDate from '../../Shared/LocalDate';
 
 // HTTP and store
 import axios from "axios";
-import { setMeasurementStatus } from './MeasureSlice';
+import { setMeasurementStatus, detectChange } from './MeasureSlice';
 
 export default function MeasurementStatus(props) {
   // Periodic refresh timer
@@ -24,14 +25,20 @@ export default function MeasurementStatus(props) {
 
   // Load current test status from REST API
   const fetch = useCallback(() => {
+    if (measurementStatus.disabled)
+      return;
+
     axios.get('/measure/status')
     .then(res => {
       dispatch(setMeasurementStatus(res.data));
+      if (detectChange(measurementStatus, res.data)) {
+        AppController.onTimeSeriesDone();
+      }
     })
     .catch(error => {
       console.log(error);
     })
-  }, [dispatch]);
+  }, [dispatch, measurementStatus]);
 
   // Periodic refresh timer
   useEffect(() => {
@@ -41,7 +48,7 @@ export default function MeasurementStatus(props) {
     }
     timer.current = setInterval(() => { 
       fetch() 
-    }, props.interval ?? 5000);
+    }, props.interval ?? 2500);
     return () => {
       clearInterval(timer.current);
       timer.current = null;
@@ -49,7 +56,7 @@ export default function MeasurementStatus(props) {
   }, [fetch, props.interval]);
     
   const timeStamp = measurementStatus.timeStamp ? localDate(measurementStatus.timeStamp) : "--";
-
+  
   return (
     <Grid container paddingLeft="8px" paddingTop="8px">
       <Grid item xs={12}>
@@ -73,15 +80,12 @@ export default function MeasurementStatus(props) {
       <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Updated:</Typography></Grid>
       <Grid item xs={8}><Typography fontWeight="bold">{timeStamp}</Typography></Grid>
 
-      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Step complete:</Typography></Grid>
-      <Grid item xs={8}><Typography fontWeight="bold">{measurementStatus.stepComplete ? "Yes" : "No"}</Typography></Grid>
-
-      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">All complete:</Typography></Grid>
-      <Grid item xs={8}><Typography fontWeight="bold">{measurementStatus.allComplete ? "Yes" : "No"}</Typography></Grid>
+      <Grid item xs={4}><Typography variant="body2" paddingTop="4px">Complete:</Typography></Grid>
+      <Grid item xs={8}><Typography fontWeight="bold">{measurementStatus.complete ? "Yes" : "No"}</Typography></Grid>
 
       <Grid item xs={12}><Typography variant="body2" paddingTop="4px">Message:</Typography></Grid>
       <Grid item xs={12}>
-        <Typography fontWeight="bold" bgcolor={measurementStatus.error ? "error" : "default"}>{measurementStatus.message}&nbsp;</Typography>
+        <Typography fontWeight="bold" color={measurementStatus.error ? "error" : "primary"}>{measurementStatus.message}&nbsp;</Typography>
       </Grid>
     </Grid>
   );

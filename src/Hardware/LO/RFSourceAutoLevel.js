@@ -6,16 +6,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Grid, Button, OutlinedInput, Typography } from '@mui/material'
 import '../../components.css'
 import EnableButton from "../../Shared/EnableButton";
-import AppEventDialog from '../../Shared/AppEventDialog';
+import ActionDialog from '../../Shared/ActionDialog';
 import RFPowerGraph from "./RFPowerGraph";
-import { resetSequence } from "../../Shared/AppEventSlice";
+import { resetRfPowerGraph } from "./RFSlice";
 
 // HTTP and store
 import axios from "axios";
 
 export default function RFSourceAutoLevel(props) {
   const dispatch = useDispatch();
-  const rfPowerState = useSelector((state) => state.AppEvent.rfPower);
+  const rfPowerGraph = useSelector((state) => state.RF.rfPowerGraph);
 
   // Local state
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -24,12 +24,11 @@ export default function RFSourceAutoLevel(props) {
   const [atten, setAtten] = useState(22);
   const [usePNA, setUsePNA] = useState(false);
 
-  const rfPowerLen = rfPowerState.y.length;
-  const rfPower = rfPowerLen > 0 ? (rfPowerState.y[rfPowerLen - 1].toFixed(2)) + (usePNA ? " dB" : " dBm") : ""
-  const paOutput = rfPowerLen > 0 ? (rfPowerState.x[rfPowerLen - 1].toFixed(1)) + " %" : ""
+  const len = rfPowerGraph.y.length;
+  const rfPower = len > 0 ? (rfPowerGraph.y[len - 1].toFixed(2)) + (usePNA ? " dB" : " dBm") : ""
 
   const onClickRun = () => {
-    dispatch(resetSequence("rfPower"));
+    dispatch(resetRfPowerGraph());
     setDialogOpen(true);
     const params = {
       freqIF: Number(freqIF),
@@ -38,12 +37,11 @@ export default function RFSourceAutoLevel(props) {
     }
     axios.put('/rfsource/auto_rf' + (usePNA ? '/pna' : '/meter'), null, {params: params})
       .then(res => {
-        console.log(res.data);
+        console.log(res.data);        
       })
       .catch(error => {
         console.log(error);
       })
-    setTimeout(() => {setDialogOpen(false)}, 10000);
   }
 
   return (
@@ -83,21 +81,18 @@ export default function RFSourceAutoLevel(props) {
         >
           RUN
         </Button>
-        <AppEventDialog
+        <ActionDialog
           open={dialogOpen}
           title="Setting RF Power"
-          onClose={() => {setDialogOpen(false)}}              
+          onClose={() => {setDialogOpen(false)}}           
         >
-          <Typography variant="body1" fontWeight="bold" align="center">
-            RF PA output: {paOutput} 
-          </Typography>
           <Typography variant="body1" fontWeight="bold" color="secondary" align="center">
             RF power: {rfPower} 
           </Typography>
           <RFPowerGraph 
             onComplete={() => {setDialogOpen(false)}}
           />
-        </AppEventDialog>
+        </ActionDialog>
       </Grid>
       
       <Grid item xs={3}>

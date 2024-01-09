@@ -9,12 +9,16 @@ export default function WarmIFGraph(props) {
   const warmIFData = useSelector((state) => state.NoiseTemp.warmIFPlot);
   const dispatch = useDispatch();
 
-  const options = {retryOnError: true, shouldReconnect: (closeEvent) => true};
-  const baseURL = axios.defaults.baseURL.replace('http', 'ws');
+  const options = {
+    retryOnError: true, 
+    shouldReconnect: (closeEvent) => true,
+    ignoreExtensions: true
+  };
+  const URL = axios.defaults.baseURL.replace('http', 'ws') + "/noisetemp/warmif_ws";
   const { 
     readyState: ready,
     lastMessage: message 
-  } = useWebSocket(baseURL + "/noisetemp/warmif_ws", options);
+  } = useWebSocket(URL, options);
 
   useEffect(() => {
     // websocket handler for position message
@@ -56,12 +60,12 @@ export default function WarmIFGraph(props) {
         height: 250,
         xaxis: {
           title: 'IF [GHz]',
-          range: [0, 20],
+          range: [4, 12],
           nticks: 5
         },
         yaxis: {
           title: 'Power [dBm]',
-          range: [-50, 0],
+          range: [-55, -25],
           nticks: 10
         },
         margin: {

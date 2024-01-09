@@ -191,8 +191,12 @@ export const CartridgeSlice = createSlice({
           },
         ]
       ]
+    },
+    sisCurrentGraph: {
+      x: [],
+      y: []
     }
-  },
+},
 
   // Most reducers here just set the whole subsystem object, as retured from a REST API call:
   reducers: {
@@ -236,6 +240,15 @@ export const CartridgeSlice = createSlice({
     },
     setApplyLNA(state, action) {
       state.inputs.LNA[action.payload.pol][action.payload.lna - 1].apply += 1;
+    },
+    resetSisCurrentGraph(state, action) {
+      state.sisCurrentGraph = {x: [], y: []};
+    },
+    appendSisCurrentGraph(state, action) {
+      const len = state.sisCurrentGraph.x.length;
+      const iter = (len > 0 ? state.sisCurrentGraph.x[len - 1] : 0) + 1;
+      state.sisCurrentGraph.x.push(iter);
+      state.sisCurrentGraph.y.push(action.payload.Ij);
     }
   }
 });
@@ -253,7 +266,9 @@ export const {
   setInputVj,
   setInputImag,
   setApplySIS,
-  setApplyLNA
+  setApplyLNA,
+  resetSisCurrentGraph,
+  appendSisCurrentGraph
 } = CartridgeSlice.actions
 
 // this is for configureStore:

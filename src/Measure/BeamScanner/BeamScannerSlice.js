@@ -51,6 +51,7 @@ export const BeamScannerSlice = createSlice({
       scanEnd: {x:0, y:0},
       scanAngles: [0, 0],
       targetLevel: 0,
+      ifAttenuator: 0,
       resolution: 0,
       centersInterval: 0,
       scanBidirectional: false

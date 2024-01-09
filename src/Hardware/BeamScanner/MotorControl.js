@@ -177,7 +177,7 @@ export default function MotorController(props) {
   // STOP button handler
   const handleStop = () => {
     // stop any beam scan in progress:
-    axios.put("/beamscan/stop")
+    axios.put("/measure/stop")
       .then(res => {
         console.log(res.data);
         dispatch(setMeasureActive(false));
@@ -187,7 +187,7 @@ export default function MotorController(props) {
         console.log(error);
       })
     // and stop the motor controller:
-    axios.put("/beamscan/mc/stop_move/")
+    axios.put("/beamscan/mc/stop_move")
       .then(res => {
         console.log(res.data);
       })

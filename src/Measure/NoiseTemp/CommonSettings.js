@@ -1,9 +1,10 @@
 // React and Redux
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useRef, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
 import { 
+  Checkbox,
   Grid,
   OutlinedInput,
   Typography,
@@ -13,6 +14,18 @@ import '../../components.css'
 // HTTP and store
 import axios from "axios";
 import { setCommonSettings } from './NoiseTempSlice';
+import store from '../../store';
+
+const fetchCommonSettings = () => {
+  axios.get('/noisetemp/settings')
+  .then(res => {
+    store.dispatch(setCommonSettings(res.data));        
+  })
+  .catch(error => {
+    console.log(error);
+  })
+}
+export { fetchCommonSettings }
 
 export default function CommonSettings(props) {
   // Input debouncing timer
@@ -24,20 +37,10 @@ export default function CommonSettings(props) {
   const settings = useSelector((state) => state.NoiseTemp.commonSettings);
   const dispatch = useDispatch();
 
-  const fetch = useCallback(() => {
-    axios.get('/noisetemp/settings')
-      .then(res => {
-        dispatch(setCommonSettings(res.data));        
-      })
-      .catch(error => {
-        console.log(error);
-      })
-  }, [dispatch]);
-
   // Initial fetch of contents
   useEffect(() => {
-    fetch();
-  }, [fetch]);
+    fetchCommonSettings();
+  }, []);
 
   const validateSettings = (settings) => {
     const items = [
@@ -68,7 +71,7 @@ export default function CommonSettings(props) {
       return false;
     if (settings.powerMeterConfig.stdErr <= 0)
       return false;
-    if (settings.powerMeterConfig.timeout <= 0)
+    if (settings.powerMeterConfig.timeout < 0)
       return false; 
     console.log("commonSettings is valid")
     return true;
@@ -82,6 +85,8 @@ export default function CommonSettings(props) {
       const name = e.target.name.split('.')[1];
       newConfig[name] = e.target.value;
       newSettings.powerMeterConfig = newConfig;
+    } else if (e.target.name === "pauseForColdLoad") {
+      newSettings[e.target.name] = e.target.checked;    
     } else {
       newSettings[e.target.name] = e.target.value;
     }
@@ -187,6 +192,17 @@ export default function CommonSettings(props) {
           className="smallinput"
           onChange={e => {handleChangeSetting(e)}}
           value = {settings.sensorAmbient}
+        />
+      </Grid>
+
+      <Grid item xs={6}><Typography variant="body2" paddingTop="9px">Pause for cold load fill:</Typography></Grid>
+      <Grid item xs={6}>
+        <Checkbox 
+          name="pauseForColdLoad"
+          disabled={disabled}
+          checked={settings.pauseForColdLoad}
+          onChange={e => handleChangeSetting(e)}
+          size="small"
         />
       </Grid>
 

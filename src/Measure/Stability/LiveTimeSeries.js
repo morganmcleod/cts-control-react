@@ -1,16 +1,16 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
-import { appendSisCurrentGraph } from './CartridgeSlice';
+import { resetTimeSeries, addTimeSeries } from './StabilitySlice';
 import Plot from '../../Shared/Plotly';
 import axios from "axios";
 
-export default function SISCurrentGraph(props) {
-  const {onComplete} = props;
-  const sisCurrentGraph = useSelector((state) => state.Cartridge.sisCurrentGraph);
-  const updatedTimer = useRef(0);
-  const updated = useRef(new Date());
+export default function LiveTimeSeries(props) {
+  const timeSeries = useSelector((state) => state.Stability.timeSeries);
+  const prevTimeSeriesId = useRef(null);
   const dispatch = useDispatch();
+  
+  const yTitle = (props.mode === 'phase') ? 'degrees phase' : 'detector Volts';
 
   const options = {
     retryOnError: true, 
@@ -18,7 +18,7 @@ export default function SISCurrentGraph(props) {
     ignoreExtensions: true
   };
   const baseURL = axios.defaults.baseURL.replace('http', 'ws');
-  const URL = '/cartassy/auto_lo/current_ws';
+  const URL = (props.mode === 'phase') ? '/stability/phase/timeseries_ws' : '/stability/amp/timeseries_ws';
   const { 
     readyState: ready,
     lastMessage: message 
@@ -30,8 +30,11 @@ export default function SISCurrentGraph(props) {
       if (message !== null) {
         try {
           const data = JSON.parse(message.data);
-          updated.current = new Date();
-          dispatch(appendSisCurrentGraph(data));
+          if (data.tsId && data.tsId !== prevTimeSeriesId.current) {
+            prevTimeSeriesId.current = data.tsId;
+            dispatch(resetTimeSeries());            
+          }
+          dispatch(addTimeSeries(data));
         } catch (err) {
           console.log(err);
         }
@@ -39,57 +42,55 @@ export default function SISCurrentGraph(props) {
     }
   }, [ready, message, dispatch]);
 
-  useEffect(() => {
-    if (updatedTimer.current)
-      return;
-    updatedTimer.current = setInterval(() => {
-      // close if no update for 3 seconds:
-      const now = new Date();
-      if (now - updated.current > 3000) {        
-        clearInterval(updatedTimer.current);
-        updatedTimer.current = 0;
-        onComplete();
-      }
-    }, 500);
-  }, [onComplete, updated])
-
   return (
     <Plot      
       style = {{
-        width: "auto"     
+        width: "auto"
       }}
       useResizeHandler
       data = {[{
-        name: 'sisCurrent',
-        x: sisCurrentGraph.x,
-        y: sisCurrentGraph.y,
+        name: yTitle,
+        x: timeSeries.timeStamps,
+        y: timeSeries.dataSeries,
         type: 'scatter',
         mode: 'lines',
-        showscale: false,
+        showscale: true,
+        yaxis: 'y1'
+      },{
+        name: 'ambient',
+        x: timeSeries.timeStamps,
+        y: timeSeries.temperatures1,
+        type: 'scatter',
+        mode: 'lines',
+        showscale: true,
+        yaxis: 'y2'
       }]}
       layout = {{
+        title: 'Time series ' + timeSeries.tsId,
         autosize: true,
-        height: 170,
-        width: 200,
+        height: 350,
         xaxis: {
-          title: 'iteration'
         },
         yaxis: {
-          title: 'SIS current [uA]',
-          range: [0, 100],
+          title: yTitle,
           nticks: 10
         },
+        yaxis2: {
+          title: 'Kelvin',
+          side: 'right',
+          overlaying: 'y'
+        },
         margin: {
-          t: 0,
+          t: 40,
           b: 40,
-          l: 40,
+          l: 80,
           r: 0
         }
       }}
       config = {{
         displayModeBar: false, 
         responsive: true,
-        staticPlot: false      
+        staticPlot: true      
       }}
     />
   );

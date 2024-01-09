@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
 import { Grid, Button, OutlinedInput, Typography} from '@mui/material';
-import AppEventDialog from '../../Shared/AppEventDialog';
+import ActionDialog from '../../Shared/ActionDialog';
 import SISCurrentGraph from "./SISCurrentGraph";
 import '../../components.css'
 
@@ -13,9 +13,9 @@ import axios from "axios";
 import { 
   setSIS, 
   setInputVj, 
-  setInputImag
+  setInputImag,
+  resetSisCurrentGraph
 } from './CartridgeSlice'
-import { resetSequence } from "../../Shared/AppEventSlice";
 
 export default function SIS(props) {
   // Local state
@@ -24,12 +24,12 @@ export default function SIS(props) {
   // Redux store interfaces
   const SIS = useSelector((state) => state.Cartridge.SIS[props.pol][props.sis - 1]);
   const inputs = useSelector((state) => state.Cartridge.inputs.SIS[props.pol][props.sis - 1]);
+  const sisCurrentGraph = useSelector((state) => state.Cartridge.sisCurrentGraph);
   const cartConfig = useSelector((state) => state.CartBias.cartConfig);
-  const sisCurrentState = useSelector((state) => state.AppEvent.sisCurrent);
   const dispatch = useDispatch();
   
-  const loPowerLen = sisCurrentState.y.length;
-  const paOutput = loPowerLen > 0 ? (sisCurrentState.x[loPowerLen - 1].toFixed(1)) + " %" : ""
+  const len = sisCurrentGraph.x.length;
+  const sisCurrent = len > 0 ? (sisCurrentGraph.y[len - 1].toFixed(1)) : ""
 
   // Only fetch data when mounted
   const isMounted = useRef(false);
@@ -99,7 +99,7 @@ export default function SIS(props) {
         }
         break;
       case "autoIj":
-        dispatch(resetSequence("sisCurrent"));
+        dispatch(resetSisCurrentGraph());
         setDialogOpen(true);
         axios.put("/cartassy/auto_lo", null, {params: {pol: props.pol}})
           .then(res => {
@@ -108,7 +108,6 @@ export default function SIS(props) {
           .catch(error => {
             console.log(error);              
           })
-        setTimeout(() => {setDialogOpen(false)}, 7000);
         break;
       default:
         break;
@@ -194,22 +193,19 @@ export default function SIS(props) {
             >
               AUTO
             </Button>
-            <AppEventDialog
+            <ActionDialog
               open={dialogOpen}
               title="Setting SIS Current"
               onClose={() => {setDialogOpen(false)}}              
             >
-              <Typography variant="body1" fontWeight="bold" align="center">
-                LO PA output: {paOutput} 
-              </Typography>
               <Typography variant="body1" fontWeight="bold" color="secondary" align="center">
-                SIS current: {SIS.Ij.toFixed(2)} uA
+                SIS current: {sisCurrent} uA
               </Typography>
               <SISCurrentGraph 
                 pol={props.pol} 
                 onComplete={() => {setDialogOpen(false)}}
               />              
-            </AppEventDialog>
+            </ActionDialog>
           </Fragment>
         }
       </Grid>

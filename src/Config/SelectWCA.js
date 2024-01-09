@@ -1,5 +1,5 @@
 // React and Redux
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 // UI components and style
@@ -12,11 +12,15 @@ import {
   setWCAs,
   setRFSources,
   setSelectedWCA,
-  setSelectedRFSource
+  setSelectedRFSource,
+  requestWCA, 
+  requestRFSource
 } from './WCASlice';
 
 import { loSetYTO, loSetYTOLowInput, loSetYTOHighInput, loSetYTOSendNow } from '../Hardware/LO/LOSlice';
 import { rfSetYTO, rfSetYTOLowInput, rfSetYTOHighInput, rfSetYTOSendNow } from "../Hardware/LO/RFSlice";
+
+import AppController from "../Shared/AppController";
 
 export default function SelectWCA(props) {
   // Redux store interfaces
@@ -30,6 +34,8 @@ export default function SelectWCA(props) {
   const setYTO = props.isRfSource ? rfSetYTO : loSetYTO;
   const setYTOLowInput = props.isRfSource ? rfSetYTOLowInput : loSetYTOLowInput;
   const setYTOHighInput = props.isRfSource ? rfSetYTOHighInput : loSetYTOHighInput;
+  const onSelectChange = props.isRfSource ? AppController.onRfSourceChange : AppController.onWCAChange;
+  const requestedConfigId = props.isRfSource ? WCAs.requestedRFSource : WCAs.requestedWCA;
   const dispatch = useDispatch();
 
   // Dropdown state
@@ -64,17 +70,31 @@ export default function SelectWCA(props) {
     };
   }, [loading, dispatch, props.isRfSource]);
 
-  const onSelect = (newValue) => {
+  const onSelect = useCallback((newValue) => {
     if (!newValue) {
       newValue = null;
     }
     console.log(newValue);
     dispatch(props.isRfSource ? setSelectedRFSource(newValue) : setSelectedWCA(newValue));
-    dispatch(setYTO({...YTO, lowGHz: newValue.ytoLowGHz, highGHz: newValue.ytoHighGHz}));
-    dispatch(setYTOLowInput(newValue.ytoLowGHz));
-    dispatch(setYTOHighInput(newValue.ytoHighGHz));
-    dispatch(props.isRfSource ? rfSetYTOSendNow(true) : loSetYTOSendNow(true));
-  }
+    if (newValue) {
+      dispatch(setYTO({...YTO, lowGHz: newValue.ytoLowGHz, highGHz: newValue.ytoHighGHz}));
+      dispatch(setYTOLowInput(newValue.ytoLowGHz));
+      dispatch(setYTOHighInput(newValue.ytoHighGHz));
+      dispatch(props.isRfSource ? rfSetYTOSendNow(true) : loSetYTOSendNow(true));
+      onSelectChange(newValue.key);
+    } else {
+      onSelectChange(null);
+    }
+  }, [YTO, dispatch, props.isRfSource, setYTO, setYTOHighInput, setYTOLowInput, onSelectChange]);
+
+  useEffect(() => {     
+    if (requestedConfigId && options.length) {
+      const config = options.find((x) => x.key === requestedConfigId);
+      if (config)
+        onSelect(config);      
+      dispatch(props.isRfSource ? requestRFSource(null) : requestWCA(null));
+    }
+  }, [requestedConfigId, options, onSelect, props.isRfSource, dispatch]);
 
   return (
     // disable HTML5 validation:
@@ -104,7 +124,7 @@ export default function SelectWCA(props) {
               autoHighlight
               disabled={measActive}
               isOptionEqualToValue={(option, value) => option.id === value.id}
-              getOptionLabel={(option) => option.serialNum}
+              getOptionLabel={(option) => option && option.serialNum ? option.serialNum : ""}
               options={options ?? []}
               loading={loading}
               renderInput={(params) => (

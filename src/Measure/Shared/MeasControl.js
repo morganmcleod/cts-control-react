@@ -21,12 +21,17 @@ import {
   setMeasureOperator,
   setMeasureNotes
 } from './MeasureSlice';
+import TestTypes from "../../Shared/TestTypes";
+
+import AppController from "../../Shared/AppController";
 
 export default function MeasControl(props) {
   // Redux store interfaces
   const measActive = useSelector((state) => state.Measure.active);
+  const disabled = useSelector((state) => state.Measure.disabled);
   const measNotes =  useSelector((state) => state.Measure.notes);
-  const measOperator =  useSelector((state) => state.Measure.operator);
+  const measOperator = useSelector((state) => state.Measure.operator);
+  const testTypeId = useSelector((state) => state.Measure.testTypeId);
   const cartConfig = useSelector((state) => state.CartBias.cartConfig);
   const cartConfigId = cartConfig ? cartConfig.id : null;
   const cartSerialNum = cartConfig ? cartConfig.serialNum : null;
@@ -53,12 +58,17 @@ export default function MeasControl(props) {
   }, [fetch]);
   
   const handleClickStart = () => {
+    let measureType = props.measureType;
+    if (measureType === TestTypes.AMP_OR_PHASE_STABILITY) {
+      measureType = testTypeId;
+      AppController.onMeasureStart();
+    }
     const params = {
       serialNum: cartSerialNum,
       configId: cartConfigId,
       operator: measOperator,
       description: measNotes,
-      fkTestType: props.measureType
+      fkTestType: measureType
     };
     dispatch(setMeasureActive(true));
     axios.put("/measure/start", params)
@@ -117,7 +127,8 @@ export default function MeasControl(props) {
             <Grid item xs={4}>
               <Button
                 variant="contained"
-                disabled={measActive || !cartConfigId || !measOperator || !measNotes}
+                disabled={measActive || disabled || !cartConfigId || !measOperator || !measNotes}
+                style={{minWidth: "80%"}}
                 onClick={e => handleClickStart()}
               >
                 Start
@@ -126,7 +137,8 @@ export default function MeasControl(props) {
             <Grid item xs={4}>
               <Button
                 variant="contained"
-                disabled={!measActive}
+                disabled={!measActive || disabled}
+                style={{minWidth: "80%"}}
                 onClick={e => handleClickStop()}
               >
                 Stop

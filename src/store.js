@@ -15,7 +15,6 @@ import CartBiasReducer from './Config/CartBiasSlice';
 import WarmIFPlateReducer from './Hardware/WarmIFPlate/WarmIFPlateSlice';
 import FEMCReducer from './Hardware/FEMC/FEMCSlice';
 import TemperaturesReducer from './Hardware/TemperatureMonitor/TemperaturesSlice';
-import AppEventReducer from './Shared/AppEventSlice';
 import WCAReducer from './Config/WCASlice';
 
 //configureStore takes a list of 'reducers'.   
@@ -36,7 +35,6 @@ export default configureStore({
     WarmIFPlate: WarmIFPlateReducer,
     FEMC: FEMCReducer,
     Temperatures: TemperaturesReducer,
-    AppEvent: AppEventReducer,
     WCAs: WCAReducer
   },
 

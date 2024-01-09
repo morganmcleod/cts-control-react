@@ -3,11 +3,12 @@
 //Reducers are state transitions on a part of the store:  given the current state and an action, return the new state.
 //Selectors are how components get items out of the store.
 import { createSlice } from '@reduxjs/toolkit';
-import { LOSliceConfig } from './LOSliceConfig'
+import { LOSliceInitialState, LOSliceReducers } from './LOSliceConfig'
 
 export const LOSlice = createSlice({
-  ...LOSliceConfig,
-  name: 'LO'
+  name: 'LO',
+  initialState: LOSliceInitialState,
+  reducers: LOSliceReducers
 });
 
 // these are for dispatch:

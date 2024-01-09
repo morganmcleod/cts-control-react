@@ -10,7 +10,7 @@ import '../../components.css'
 import axios from "axios";
 import { loSetPLL } from '../../Hardware/LO/LOSlice'
 import { rfSetPLL } from '../../Hardware/LO/RFSlice'
-import { setInputSwitch, setYIGFilter} from '../../Hardware/WarmIFPlate/WarmIFPlateSlice'
+import { setInputSwitch, setYIGFilter, setAttenuation } from '../../Hardware/WarmIFPlate/WarmIFPlateSlice'
 import { setMeasureDescription, setMeasureActive } from './MeasureSlice';
 import TestTypes from '../../Shared/TestTypes';
 
@@ -23,25 +23,30 @@ export default function SystemStatus(props) {
   const rf = useSelector((state) => state.RF);
   const description = useSelector((state) => state.Measure.description);
   const active = useSelector((state) => state.Measure.active);
+  const measureStatusDisabled = useSelector((state) => state.Measure.disabled);
   const inputSwitch = useSelector((state) => state.WarmIFPlate.inputSwitch);
   const yigFilter = useSelector((state) => state.WarmIFPlate.yigFilter);
+  const attenuation = useSelector((state) => state.WarmIFPlate.attenuation);
   const dispatch = useDispatch();
 
   // Load data from REST API
   const fetch = useCallback(() => {
-    axios.get('/measure/currentTest')
-      .then(res => {
-        if (res.data) {
-          dispatch(setMeasureDescription(TestTypes.getText(res.data.fkTestType)));
-          dispatch(setMeasureActive(true));
-        } else {
-          dispatch(setMeasureDescription(null));
-          dispatch(setMeasureActive(false));
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      })
+    
+    if (!measureStatusDisabled) {
+      axios.get('/measure/currentTest')
+        .then(res => {
+          if (res.data) {
+            dispatch(setMeasureDescription(TestTypes.getText(res.data.fkTestType)));
+            dispatch(setMeasureActive(true));
+          } else {
+            dispatch(setMeasureDescription(null));
+            dispatch(setMeasureActive(false));
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        })
+    }
     
     axios.get('/lo/pll')
     .then(res => {
@@ -74,7 +79,15 @@ export default function SystemStatus(props) {
       .catch(error => {
         console.log(error);
       })
-  }, [dispatch]);
+
+      axios.get('/warmif/attenuation')
+      .then(res => {
+        dispatch(setAttenuation(Number(res.data.value)));
+      })
+      .catch(error => {
+        console.log(error);
+      })
+  }, [dispatch, measureStatusDisabled]);
 
   // Periodic refresh timer
   useEffect(() => {
@@ -111,7 +124,7 @@ export default function SystemStatus(props) {
           }}
         />
       </Grid>
-      <Grid item xs={7}><Typography fontWeight="bold" paddingTop="2px">{description}</Typography></Grid>
+      <Grid item xs={7}><Typography fontWeight="bold" paddingTop="2px" color="primary">{description}</Typography></Grid>
 
       <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">LO:</Typography></Grid>
       <Grid item xs={3} align="center">
@@ -127,9 +140,8 @@ export default function SystemStatus(props) {
           }}
         />
       </Grid>
-      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{lo.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
-      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">IF Switch:</Typography></Grid>
-      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{inputSwitch}</Typography></Grid>
+      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px" color="primary">{lo.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
+      <Grid item xs={4.5}/>
 
       <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">RF:</Typography></Grid>
       <Grid item xs={3} align="center">
@@ -145,9 +157,15 @@ export default function SystemStatus(props) {
           }}
         />
       </Grid>
-      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{rf.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
+      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px" color="primary">{rf.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
       <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">YIG Filter:</Typography></Grid>
-      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{yigFilter.toFixed(2)} GHz</Typography></Grid>
+      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px" color="primary">{yigFilter.toFixed(2)} GHz</Typography></Grid>
+    
+      <Grid item xs={2.75}><Typography variant="subtitle2" paddingTop="4px">IF:</Typography></Grid>
+      <Grid item xs={2.25}><Typography variant="subtitle2" paddingTop="4px">Attenuator:</Typography></Grid>
+      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px" color="primary">{attenuation} dB</Typography></Grid>
+      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">Switch:</Typography></Grid>
+      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px" color="primary">{inputSwitch}</Typography></Grid>
     </Grid>
   );
 }

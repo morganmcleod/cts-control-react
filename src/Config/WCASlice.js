@@ -6,7 +6,9 @@ export const WCASlice = createSlice({
     WCAs: [],
     RFSources: [],
     selectedWCA: null,
-    selectedRFSource: null
+    selectedRFSource: null,
+    requestedWCA: null,
+    requestedRFSource: null
   },
   reducers: { 
     setWCAs(state, action) {
@@ -20,6 +22,12 @@ export const WCASlice = createSlice({
     },
     setSelectedRFSource(state, action) {
       state.selectedRFSource = action.payload;
+    },
+    requestWCA(state, action) {
+      state.requestedWCA = action.payload;
+    },
+    requestRFSource(state, action) {
+      state.requestedRFSource = action.payload;
     }
   }
 });
@@ -29,7 +37,9 @@ export const {
   setWCAs,
   setRFSources,
   setSelectedWCA,
-  setSelectedRFSource
+  setSelectedRFSource,
+  requestWCA, 
+  requestRFSource
 } = WCASlice.actions
 
 // this is for configureStore:
