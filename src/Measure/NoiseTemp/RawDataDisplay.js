@@ -102,39 +102,45 @@ export default function RawDataDisplay(props) {
     }
   }
 
+  const FreqLO = rawDataRecords ? rawDataRecords[0].FreqLO.toFixed(2) + ' GHz' : null;
+  const CenterIF = rawDataRecords ? rawDataRecords[0].CenterIF.toFixed(2) + ' GHz' : null;
+  const TColdLoad = rawDataRecords ? rawDataRecords[0].TColdLoad.toFixed(2) + ' K' : null;
+  const TRF_Hot = rawDataRecords ? rawDataRecords[0].TRF_Hot.toFixed(2) + ' K' : null;
+  const IF_Attn = rawDataRecords ? rawDataRecords[0].IF_Attn.toFixed(2) + ' dB' : null;
+
   return (
     <Grid container paddingTop="15px">
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)"}}>
         <Typography variant="body2" paddingTop="2px">FreqLO:</Typography>
       </Grid>
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)" }}>
-        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{rawDataRecords[0].FreqLO.toFixed(2)} GHz</Typography>
+        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{FreqLO}</Typography>
       </Grid>
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)"}}>
         <Typography variant="body2" paddingTop="2px">FreqIF:</Typography>
       </Grid>
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)" }}>
-        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{rawDataRecords[0].CenterIF.toFixed(2)} GHz</Typography>
+        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{CenterIF}</Typography>
       </Grid>
           
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)"}}>
         <Typography variant="body2" paddingTop="2px">TColdLoad:</Typography>
       </Grid>
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)" }}>
-        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{rawDataRecords[0].TColdLoad.toFixed(1)} K</Typography>
+        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{TColdLoad}</Typography>
       </Grid>
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)"}}>
         <Typography variant="body2" paddingTop="2px">Ambient:</Typography>
       </Grid>
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)" }}>
-        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{rawDataRecords[0].TRF_Hot.toFixed(2)} K</Typography>
+        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{TRF_Hot}</Typography>
       </Grid>
       
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)"}}>
         <Typography variant="body2" paddingTop="2px">IF_Attn:</Typography>
       </Grid>
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)" }}>
-        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{rawDataRecords[0].IF_Attn} dB</Typography>
+        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{IF_Attn}</Typography>
       </Grid>
       <Grid item xs={6} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)"}}/>
 
