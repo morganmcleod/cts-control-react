@@ -25,7 +25,7 @@ export default function LiveTimeSeries(props) {
   } = useWebSocket(baseURL + URL, options);
 
   useEffect(() => {
-    // websocket handler for live time series
+    // websocket handler for position message
     if (ready === ReadyState.OPEN) {
       if (message !== null) {
         try {

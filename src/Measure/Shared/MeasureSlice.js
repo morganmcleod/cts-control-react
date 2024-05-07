@@ -49,7 +49,9 @@ export const detectChange = (status, newStatus) => {
     return true;
   if (status.timeStamp !== newStatus.timeStamp)
     return true;
-  if (status.complete !== newStatus.complete)
+  if (status.stepComplete !== newStatus.stepComplete)
+    return true;
+  if (status.allComplete !== newStatus.allComplete)
     return true;
   if (status.message !== newStatus.message)
     return true;

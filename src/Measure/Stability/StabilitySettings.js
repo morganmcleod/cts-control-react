@@ -85,7 +85,7 @@ export default function AmpStabilitySettings(props) {
       return false;
     if (loSpan > 0 && Number(settings.loStep) > loSpan)
       return false;
-    if (Number(settings.attenuateIF) < 0 || Number(settings.attenuateIF) > 121)
+    if (Number(settings.attenuateIF) < 0 || Number(settings.attenuateIF) > 101)
       return false;
     if (Number(settings.sampleRate) <= 0 || Number(settings.sampleRate) > 50)
       return false;
@@ -138,6 +138,7 @@ export default function AmpStabilitySettings(props) {
       <Grid item xs={5}>
         <OutlinedInput
           name="loStart"
+          type="number"
           disabled={disabled}
           error={settings.loStart <= 0 || settings.loStart >= 999 || settings.loStart > settings.loStop}
           size="small"
@@ -154,6 +155,7 @@ export default function AmpStabilitySettings(props) {
       <Grid item xs={5}>
         <OutlinedInput
           name="loStop"
+          type="number"
           disabled={disabled}
           error={settings.loStop <= 0 || settings.loStop >= 999 || settings.loStart > settings.loStop}
           size="small"
@@ -170,6 +172,7 @@ export default function AmpStabilitySettings(props) {
       <Grid item xs={5}>
         <OutlinedInput
           name="loStep"
+          type="number"
           disabled={disabled}
           error={settings.loStep < 0 || (loSpan > 0 && settings.loStep > loSpan)}
           size="small"
@@ -293,12 +296,13 @@ export default function AmpStabilitySettings(props) {
 
       <Grid item xs={12}><br/></Grid>
 
-      <Grid item xs={5}><Typography variant="body2" paddingTop="4px">IF attenuator:</Typography></Grid>
+      <Grid item xs={5}><Typography variant="body2" paddingTop="4px">IF Attenuator:</Typography></Grid>
       <Grid item xs={5}>
         <OutlinedInput
           name="attenuateIF"
+          type="number"
           disabled={disabled}
-          error={settings.attenuateIF < 0 || settings.attenuateIF > 121 || settings.attenuateIF === ''}
+          error={settings.attenuateIF < 0 || settings.attenuateIF > 101 || settings.attenuateIF === ''}
           size="small"
           margin="none"          
           style={{width: '50%'}}
@@ -313,6 +317,7 @@ export default function AmpStabilitySettings(props) {
       <Grid item xs={5}>
         <OutlinedInput
           name="sampleRate"
+          type="number"
           disabled={disabled}
           error={settings.sampleRate <= 0 || settings.sampleRate > 50 || settings.sampleRate === ''}
           size="small"
@@ -329,6 +334,7 @@ export default function AmpStabilitySettings(props) {
       <Grid item xs={5}>
         <OutlinedInput
           name="sensorAmbient"
+          type="number"
           disabled={disabled}
           error={settings.sensorAmbient < 1 || settings.sensorAmbient > 8 || settings.sensorAmbient === ''}
           size="small"
@@ -344,6 +350,7 @@ export default function AmpStabilitySettings(props) {
       <Grid item xs={5}>
         <OutlinedInput
           name="delayAfterLock"
+          type="number"
           disabled={disabled}
           error={settings.delayAfterLock < 0 || settings.delayAfterLock > 300 || settings.delayAfterLock === ''}
           size="small"
@@ -360,6 +367,7 @@ export default function AmpStabilitySettings(props) {
       <Grid item xs={5}>
         <OutlinedInput
           name="measureDuration"
+          type="number"
           disabled={disabled}
           error={settings.measureDuration < 0.5 || settings.measureDuration > 300 || settings.measureDuration === ''}
           size="small"
@@ -378,6 +386,7 @@ export default function AmpStabilitySettings(props) {
           <Grid item xs={5}>
             <OutlinedInput
               name="targetLevel"
+              type="number"
               disabled={disabled}
               error={settings.targetLevel < -99 || settings.targetLevel > 10 || settings.targetLevel === ''}
               size="small"

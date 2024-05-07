@@ -54,6 +54,7 @@ class App extends React.Component {
 
     return (
       <ThemeContext.Provider value={this.state}>
+        <AppEventHandler baseURL={axios.defaults.baseURL}/>
         <ThemeProvider theme={theme}>
           <Box
             minHeight={"100vh"}
