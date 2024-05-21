@@ -18,6 +18,7 @@ import NoiseTempMain from './Measure/NoiseTemp/Main';
 import StabilityMain from './Measure/Stability/Main';
 import AppController from './Shared/AppController';
 import TestTypes from './Shared/TestTypes';
+import DevicesInfo from './Hardware/DevicesInfo/DevicesInfo';
 
 import axios from "axios";
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -125,6 +126,14 @@ class App extends React.Component {
               />
               <Divider variant="fullWidth" color="blue"/>
               <BeamScannerMain/>
+            </TabPanel>
+
+            <TabPanel index={6} visibleTab={this.state.visibleTab}>
+              <PageHeader 
+                title="Devices Info" 
+              />
+              <Divider variant="fullWidth" color="blue"/>
+              <DevicesInfo/>
             </TabPanel>
             
             <Box flex={1} overflow="auto"/>

@@ -6,7 +6,9 @@ import { useSelector, useDispatch } from 'react-redux'
 import { 
   Checkbox,
   Grid,
+  MenuItem,
   OutlinedInput,
+  TextField,
   Typography,
 } from '@mui/material';
 import '../../components.css'
@@ -19,7 +21,7 @@ import store from '../../store';
 const fetchCommonSettings = () => {
   axios.get('/noisetemp/settings')
   .then(res => {
-    store.dispatch(setCommonSettings(res.data));        
+    store.dispatch(setCommonSettings(res.data));    
   })
   .catch(error => {
     console.log(error);
@@ -27,7 +29,7 @@ const fetchCommonSettings = () => {
 }
 export { fetchCommonSettings }
 
-export default function CommonSettings(props) {
+export default function CommonSettings(props) {  
   // Input debouncing timer
   const timer = useRef(null);
   
@@ -79,14 +81,19 @@ export default function CommonSettings(props) {
 
   // Debounced change hadler:  Won't write to back end more often than once per second.
   const handleChangeSetting = (e) => {
-    let newSettings = Object.assign({}, settings);
+    let newSettings = {...settings};
     if (e.target.name.startsWith('powerMeterConfig')) {
-      let newConfig = Object.assign({}, settings.powerMeterConfig)
+      let newConfig = {...settings.powerMeterConfig};
       const name = e.target.name.split('.')[1];
       newConfig[name] = e.target.value;
       newSettings.powerMeterConfig = newConfig;
     } else if (e.target.name === "pauseForColdLoad") {
       newSettings[e.target.name] = e.target.checked;    
+    } else if (e.target.name === "backEndMode") {
+      newSettings[e.target.name] = e.target.value;
+      if (e.target.value === "SPEC_AN") {
+        newSettings.chopperMode = "SWITCH"
+      }      
     } else {
       newSettings[e.target.name] = e.target.value;
     }
@@ -116,6 +123,42 @@ export default function CommonSettings(props) {
 
   return (
     <Grid container paddingLeft="5px">
+      <Grid item xs={6}/>
+      <Grid item xs={6} paddingTop="10px">
+        <TextField
+          id="backend-select"
+          name="backEndMode"
+          select
+          label="Back end"
+          size="small"
+          style={{width: '95%'}}
+          value={settings.backEndMode}
+          disabled={disabled}
+          onChange={e => {handleChangeSetting(e)}}
+        >
+          <MenuItem value={'IF_PLATE'}>IF Plate</MenuItem>
+          <MenuItem value={'SPEC_AN'}>Spectrum Analyzer</MenuItem>
+        </TextField>
+      </Grid>
+
+      <Grid item xs={6}/>
+      <Grid item xs={6} paddingTop="10px" paddingBottom="5px">
+        <TextField
+          id="chopper-select"
+          name="chopperMode"
+          select
+          label="Chopper mode"
+          size="small"
+          style={{width: '95%'}}
+          value={settings.chopperMode}
+          disabled={disabled || settings.backEndMode === "SPEC_AN"}
+          onChange={e => {handleChangeSetting(e)}}
+        >
+          <MenuItem value={'SPIN'}>Spin</MenuItem>
+          <MenuItem value={'SWITCH'}>Switch</MenuItem>
+        </TextField>
+      </Grid>
+
       <Grid item xs={6}><Typography variant="body2" paddingTop="4px">Target PHot:</Typography></Grid>
       <Grid item xs={6}>
         <OutlinedInput
@@ -206,7 +249,7 @@ export default function CommonSettings(props) {
         />
       </Grid>
 
-      <Grid item xs={12}><Typography variant="subtitle2" fontWeight="bold" paddingTop="8px">Power meter readings</Typography></Grid>
+      <Grid item xs={12}><Typography variant="subtitle2" fontWeight="bold" paddingTop="4px">Power meter readings</Typography></Grid>
       
       <Grid item xs={6}><Typography variant="body2" paddingTop="4px">Min samples:</Typography></Grid>
       <Grid item xs={6}>

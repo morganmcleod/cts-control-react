@@ -115,9 +115,9 @@ export default function WarmIFSettings(props) {
         </Typography>
       </Grid>
       
-      <Grid item xs={3}/>      
-      <Grid item xs={3} align="center"><Typography variant="body2">Atten [dB]</Typography></Grid>
-      <Grid item xs={3} align="center"><Typography variant="body2">IF [GHz]</Typography></Grid>
+      <Grid item xs={3}/>
+      <Grid item xs={3} align="center" paddingTop="4px"><Typography variant="body2">Atten [dB]</Typography></Grid>
+      <Grid item xs={3} align="center" paddingTop="4px"><Typography variant="body2">IF [GHz]</Typography></Grid>
       <Grid item xs={3}/>
   
       <Grid item xs={1}/>

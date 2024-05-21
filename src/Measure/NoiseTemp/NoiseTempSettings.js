@@ -8,8 +8,10 @@ import {
   FormGroup, 
   FormControlLabel, 
   Grid,
+  MenuItem,
   OutlinedInput,
-  Typography,
+  TextField,
+  Typography
 } from '@mui/material';
 import '../../components.css'
 
@@ -83,7 +85,9 @@ export default function NoiseTempSettings(props) {
       case "ifStart":
       case "ifStop":
       case "ifStep":
-        let newSettings = Object.assign({}, settings);
+      case "polarization":
+      case "sideband":
+        let newSettings = {...settings};
         newSettings[e.target.name] = e.target.value;
         // Clear any existing timer
         if (timer.current) {
@@ -116,6 +120,9 @@ export default function NoiseTempSettings(props) {
   const handleChangeTestStep = (e) => {
     let newTestSteps = Object.assign({}, testSteps);
     switch (e.target.name) {
+      case "zeroPM":
+        newTestSteps[e.target.name] = e.target.checked;
+        break;
       case "noiseTemp":
         newTestSteps[e.target.name] = e.target.checked;
         if (!e.target.checked)
@@ -148,6 +155,24 @@ export default function NoiseTempSettings(props) {
       <Grid item xs={3}/>
       <Grid item xs={9}>
         <FormGroup>
+          <FormControlLabel 
+            control={
+              <Checkbox
+                name = "zeroPM"
+                checked={testSteps.zeroPM}
+                disabled={disabled}
+                style={{"paddingTop": "1"}}
+                onChange={e => handleChangeTestStep(e)}
+                size="small"                
+              />
+            } 
+            label={
+              <Typography variant="subtitle2" display="inline" fontWeight="bold">
+                Zero Power Meter
+              </Typography>
+            }
+            labelPlacement="end"
+          />          
           <FormControlLabel 
             control={
               <Checkbox
@@ -302,6 +327,28 @@ export default function NoiseTempSettings(props) {
         />
       </Grid>
       <Grid item xs={3}/>
+      
+      <Grid item xs={12}>&nbsp;</Grid>
+
+      <Grid item xs={3}><Typography variant="body2" paddingTop="10px">Polarization:</Typography></Grid>
+      <Grid item xs={3} className="summarygrid" paddingBottom={0}>
+        <TextField
+          id="polarization-select"
+          name="polarization"
+          select
+          label="Select Pol"
+          size="small"
+          style={{width: '95%'}}
+          value={settings.polarization}
+          disabled={disabled}
+          onChange={e => {handleChangeSetting(e)}}
+        >
+          <MenuItem value={'BOTH'}>Both</MenuItem>
+          <MenuItem value={'POL0'}>Pol0</MenuItem>
+          <MenuItem value={'POL1'}>Pol1</MenuItem>
+        </TextField>
+      </Grid>      
+      <Grid item xs={6}/>
     </Grid> 
   );
 }

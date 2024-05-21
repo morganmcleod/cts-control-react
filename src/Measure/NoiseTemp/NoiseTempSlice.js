@@ -5,12 +5,15 @@ export const NoiseTempSlice = createSlice({
   name: 'NoiseTemp',
   initialState: {
     testSteps: {
+      zeroPM: false,
       warmIF: false,
       noiseTemp: false,
       imageReject: false,
       loWGIntegrity: false
     },
     commonSettings: {
+      chopperMode: "SPIN",
+      backEndMode: "IF_PLATE",
       targetPHot: 0,
       targetSidebandPower: 0,
       tColdEff: 0,
@@ -42,6 +45,8 @@ export const NoiseTempSlice = createSlice({
       ifStart: 0,
       ifStop: 0,
       ifStep: 0,
+      polarization: 'BOTH',
+      sideband: 'BOTH'
     },
     loWgSettings: {
       loStart: 0,
@@ -50,6 +55,8 @@ export const NoiseTempSlice = createSlice({
       ifStart: 0,
       ifStop: 0,
       ifStep: 0,
+      polarization: 'BOTH',
+      sideband: 'BOTH'
     },
     yFactorState: {
       atten: 22,

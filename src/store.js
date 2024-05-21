@@ -16,6 +16,7 @@ import WarmIFPlateReducer from './Hardware/WarmIFPlate/WarmIFPlateSlice';
 import FEMCReducer from './Hardware/FEMC/FEMCSlice';
 import TemperaturesReducer from './Hardware/TemperatureMonitor/TemperaturesSlice';
 import WCAReducer from './Config/WCASlice';
+import DevicesInfoReducer from './Hardware/DevicesInfo/DevicesInfoSlice';
 
 //configureStore takes a list of 'reducers'.   
 //A reducer is like a state-machine transition: given the current store state and an action, return the new state.
@@ -35,7 +36,8 @@ export default configureStore({
     WarmIFPlate: WarmIFPlateReducer,
     FEMC: FEMCReducer,
     Temperatures: TemperaturesReducer,
-    WCAs: WCAReducer
+    WCAs: WCAReducer,
+    DevicesInfo: DevicesInfoReducer
   },
 
   // Add the positionListener middleware to the store.

@@ -48,7 +48,7 @@ export const LOSliceInitialState = {
     sendNow: false
   },
   PLL: {
-    lockDetectBit: false,
+    lockVoltage: false,
     unlockDetected: false,
     refTP: 0.0,
     IFTP: 0.0,
