@@ -73,9 +73,9 @@ export default function MotorController(props) {
 
   // Load data from REST API
   const fetch = useCallback(() => {
-    axios.get('/beamscan/mc/isconnected')
+    axios.get('/beamscan/mc/device_info')
       .then(res => {
-        dispatch(setIsConnected(res.data.value))
+        dispatch(setIsConnected(res.data.is_connected))
       })
       .catch(error => {
         console.log(error);

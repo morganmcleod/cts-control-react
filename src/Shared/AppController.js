@@ -47,7 +47,7 @@ const AppController = {
       startup_ws.onmessage = (event) => {
         const msg = JSON.parse(event.data);
         console.log('startup_ws', msg);
-        window.location.reload(false);
+        window.location.reload();
       };
       
       startup_ws.onclose = (event) => {
