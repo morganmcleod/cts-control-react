@@ -160,7 +160,7 @@ export default function RawDataDisplay(props) {
         <Typography variant="body2" fontWeight="bold" paddingTop="2px">{noiseTemp00}</Typography>
       </Grid>
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)" }}>
-        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{noiseTemp01}</Typography>
+        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{noiseTemp10}</Typography>
       </Grid>
       <Grid item xs={3}/>
 
@@ -168,7 +168,7 @@ export default function RawDataDisplay(props) {
         <Typography variant="body2" paddingTop="2px">TRx LSB:</Typography>
       </Grid>
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)" }}>
-        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{noiseTemp10}</Typography>
+        <Typography variant="body2" fontWeight="bold" paddingTop="2px">{noiseTemp01}</Typography>
       </Grid>
       <Grid item xs={3} sx={{ borderBottom:1, borderColor: "rgba(0, 0, 255, 0.25)" }}>
         <Typography variant="body2" fontWeight="bold" paddingTop="2px">{noiseTemp11}</Typography>
