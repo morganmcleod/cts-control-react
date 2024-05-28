@@ -60,15 +60,24 @@ export default function SelectCartridge(props) {
   const getConfigKeys = useCallback((configId) => {
     axios.get("/database/config/keys", {params: {configId: configId, pol: 0}})
     .then(res => {
-      dispatch(setConfigKeys({...res.data, pol: 0}));
+      if (res.data) {
+        dispatch(setConfigKeys({...res.data, pol: 0}));
+        dispatch(setRefresh());
+      } else {
+        console.log("Error getting cartrdge config for pol 0");
+      }
     })
     .catch(error => {
       console.log(error);
     })
     axios.get("/database/config/keys", {params: {configId: configId, pol: 1}})
     .then(res => {
-      dispatch(setConfigKeys({...res.data, pol: 1}));
-      dispatch(setRefresh());
+      if (res.data) {
+        dispatch(setConfigKeys({...res.data, pol: 1}));
+        dispatch(setRefresh());
+      } else {
+        console.log("Error getting cartrdge config for pol 1");
+      }
     })
     .catch(error => {
       console.log(error);
