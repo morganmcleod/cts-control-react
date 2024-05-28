@@ -121,18 +121,8 @@ export default function NoiseTempSettings(props) {
     let newTestSteps = Object.assign({}, testSteps);
     switch (e.target.name) {
       case "zeroPM":
-        newTestSteps[e.target.name] = e.target.checked;
-        break;
       case "noiseTemp":
-        newTestSteps[e.target.name] = e.target.checked;
-        if (!e.target.checked)
-          newTestSteps["imageReject"] = false;
-        break;
       case "imageReject":
-        newTestSteps[e.target.name] = e.target.checked;
-        if (e.target.checked)
-          newTestSteps["noiseTemp"] = true;
-        break;
       case "warmIF":
       case "loWGIntegrity":
         newTestSteps[e.target.name] = e.target.checked;

@@ -39,7 +39,8 @@ export const LOSliceInitialState = {
     VDp0: 0.0,
     VDp1: 0.0,
     VGp0: 0.15,
-    VGp1: 0.15
+    VGp1: 0.15,
+    sendNow: false
   },
   inputLOFreq: "",
   YTOInputs: {
@@ -82,7 +83,15 @@ export const LOSliceReducers = {
     state.PA = action.payload;
   },
   setPAInputs(state, action) {
-    state.PAInputs = action.payload;
+    let PAInputs = {...state.PAInputs};
+    for (let k of ['VDp0', 'VDp1', 'VGp0', 'VGp1']) {
+      if (k in action.payload)
+        PAInputs[k] = action.payload[k];
+    }
+    state.PAInputs = PAInputs;
+  },
+  setPAInputsSendNow(state, action) {
+    state.PAInputs.sendNow = action.payload;
   },
   setInputLOFreq(state, action) {
     state.inputLOFreq = action.payload;

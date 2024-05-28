@@ -12,6 +12,7 @@ import { loSetPLL } from '../../Hardware/LO/LOSlice'
 import { rfSetPLL } from '../../Hardware/LO/RFSlice'
 import { setInputSwitch, setYIGFilter, setAttenuation } from '../../Hardware/WarmIFPlate/WarmIFPlateSlice'
 import { setMeasureDescription, setMeasureActive } from './MeasureSlice';
+import { setChopperState }  from '../NoiseTemp/NoiseTempSlice';
 import TestTypes from '../../Shared/TestTypes';
 
 export default function SystemStatus(props) {
@@ -27,7 +28,26 @@ export default function SystemStatus(props) {
   const inputSwitch = useSelector((state) => state.WarmIFPlate.inputSwitch);
   const yigFilter = useSelector((state) => state.WarmIFPlate.yigFilter);
   const attenuation = useSelector((state) => state.WarmIFPlate.attenuation);
+  const chopperState = useSelector((state) => state.NoiseTemp.chopper.state);
   const dispatch = useDispatch();
+
+  let chopperText = "--"
+  switch (chopperState) {
+    case 0:
+      chopperText = "HOT";
+      break;
+    case 1:
+      chopperText = "--";
+      break;
+    case 2:
+      chopperText = "COLD";
+      break;
+    case 3:
+      chopperText = "SPIN";
+      break;
+    default:
+      break;
+  }
 
   // Load data from REST API
   const fetch = useCallback(() => {
@@ -87,6 +107,15 @@ export default function SystemStatus(props) {
       .catch(error => {
         console.log(error);
       })
+
+      axios.get('/chopper/state')
+      .then(res => {
+        dispatch(setChopperState(Number(res.data)));
+      })
+      .catch(error => {
+        console.log(error);
+      })
+
   }, [dispatch, measureStatusDisabled]);
 
   // Periodic refresh timer
@@ -109,9 +138,10 @@ export default function SystemStatus(props) {
       <Grid item xs={12}>
         <Typography variant="body2" fontWeight="bold">System Status</Typography>
       </Grid>
-      
+
+      {/* ROW 1 */}
       <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">Measuring:</Typography></Grid>
-      <Grid item xs={3} align="center">
+      <Grid item xs={2.5} align="center">
         <Chip 
           label={active ? "RUNNING" : "STOPPED"}
           color={active ? "success" : "error"}
@@ -124,10 +154,11 @@ export default function SystemStatus(props) {
           }}
         />
       </Grid>
-      <Grid item xs={7}><Typography fontWeight="bold" paddingTop="2px" color="primary">{description}</Typography></Grid>
+      <Grid item xs={7.5}><Typography fontWeight="bold" paddingTop="2px" color="primary">{description}</Typography></Grid>
 
+      {/* ROW 2 */}
       <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">LO:</Typography></Grid>
-      <Grid item xs={3} align="center">
+      <Grid item xs={2.5} align="center">
         <Chip 
           label={lo.PLL.isLocked ? "LOCKED" : "UNLOCKED"}
           color={lo.PLL.isLocked ? "success" : "error"}
@@ -140,11 +171,9 @@ export default function SystemStatus(props) {
           }}
         />
       </Grid>
-      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{lo.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
-      <Grid item xs={4.5}/>
-
-      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">RF:</Typography></Grid>
-      <Grid item xs={3} align="center">
+      <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px">{lo.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
+      <Grid item xs={1}><Typography variant="subtitle2" paddingTop="4px" paddingLeft="12px">RF:</Typography></Grid>
+      <Grid item xs={2.5} align="center">
         <Chip 
           label={rf.PLL.isLocked ? "LOCKED" : "UNLOCKED"}
           color={rf.PLL.isLocked ? "success" : "error"}
@@ -157,15 +186,19 @@ export default function SystemStatus(props) {
           }}
         />
       </Grid>
-      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px" color="primary">{rf.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
-      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">YIG Filter:</Typography></Grid>
-      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{yigFilter.toFixed(2)} GHz</Typography></Grid>
-    
-      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">IF:</Typography></Grid>
-      <Grid item xs={3}><Typography variant="subtitle2" paddingTop="4px" align="right">Switch:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Typography></Grid>
-      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{inputSwitch}</Typography></Grid>
-      <Grid item xs={2}><Typography variant="subtitle2" paddingTop="4px">Attenuator:</Typography></Grid>
-      <Grid item xs={2.5}><Typography fontWeight="bold" paddingTop="2px">{attenuation} dB</Typography></Grid>
+      <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px" align="center">{rf.PLL.loFreqGHz.toFixed(1)} GHz</Typography></Grid>
+
+      {/* ROW 3 */}      
+      <Grid item xs={2.5}><Typography variant="subtitle2" paddingTop="4px">YIG Filter:</Typography></Grid>
+      <Grid item xs={4}><Typography fontWeight="bold" paddingTop="2px">{yigFilter.toFixed(2)} GHz</Typography></Grid>
+      <Grid item xs={3.5}><Typography variant="subtitle2" paddingTop="4px" paddingLeft="12px">IF Switch:</Typography></Grid>    
+      <Grid item xs={1.5}><Typography fontWeight="bold" paddingTop="2px" align="center">{inputSwitch}</Typography></Grid>
+
+      {/* ROW 4 */}
+      <Grid item xs={2.5}><Typography variant="subtitle2" paddingTop="4px">Attenuator:</Typography></Grid>
+      <Grid item xs={4}><Typography fontWeight="bold" paddingTop="2px">{attenuation} dB</Typography></Grid>
+      <Grid item xs={3.5}><Typography variant="subtitle2" paddingTop="4px" paddingLeft="12px">Chopper:</Typography></Grid> 
+      <Grid item xs={2}><Typography fontWeight="bold" paddingTop="2px" align="center">{chopperText}</Typography></Grid>
     </Grid>
   );
 }

@@ -10,14 +10,15 @@ import '../../components.css'
 
 // HTTP and store
 import axios from "axios";
-import { loSetPA, loSetPAInputs } from './LOSlice'
-import { rfSetPA, rfSetPAInputs } from './RFSlice'
+import { loSetPA, loSetPAInputs, loSetPAInputsSendNow } from './LOSlice'
+import { rfSetPA, rfSetPAInputs, rfSetPAInputsSendNow } from './RFSlice'
 
 export default function PA(props) {
   // Redux store interfaces
   const pa = useSelector((state) => props.isRfSource ? state.RF.PA : state.LO.PA);
   const paInputs = useSelector((state) => props.isRfSource ? state.RF.PAInputs : state.LO.PAInputs);
   const dispatch = useDispatch();
+  
   const setPAInputs = (val) => {
     dispatch(props.isRfSource ? rfSetPAInputs(val) : loSetPAInputs(val));
   }
@@ -67,7 +68,7 @@ export default function PA(props) {
   }, [fetch]);
 
   // SET buttons handler
-  const setPAHandler = (pol) => {
+  const setPAHandler = useCallback((pol) => {
     const params = {
       pol: pol,
       VDControl: Number((pol === 0) ? paInputs.VDp0 : paInputs.VDp1),
@@ -82,7 +83,16 @@ export default function PA(props) {
       .catch(error => {
         console.log(error);
       })
-  }
+  }, [fetch, prefix, paInputs.VDp0, paInputs.VDp1, paInputs.VGp0, paInputs.VGp1]);
+
+  // Other components can cause this one to send the YTO limits to the server
+  useEffect(() => {
+    if (paInputs.sendNow) {
+      dispatch(props.isRfSource ? rfSetPAInputsSendNow(false) : loSetPAInputsSendNow(false)); 
+      setPAHandler(0);
+      setPAHandler(1);
+    }
+  }, [dispatch, paInputs.sendNow, props.isRfSource, setPAHandler])
 
   return (
     <Grid container paddingLeft="5px">

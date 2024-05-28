@@ -33,6 +33,7 @@ export const RFSlice = createSlice({
 export const rfSetAMC = RFSlice.actions.setAMC;
 export const rfSetPA = RFSlice.actions.setPA;
 export const rfSetPAInputs = RFSlice.actions.setPAInputs;
+export const rfSetPAInputsSendNow = RFSlice.actions.setPAInputsSendNow;
 export const setInputRF = RFSlice.actions.setInputLOFreq;
 export const rfSetYTOLowInput = RFSlice.actions.setYTOLowInput
 export const rfSetYTOHighInput = RFSlice.actions.setYTOHighInput

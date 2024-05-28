@@ -13,7 +13,6 @@ import { setDeviceInfo } from './DevicesInfoSlice';
 const urls = [
   {name: "mc", caption: "Motor controller", url: "/beamscan/mc/device_info"},
   {name: "pna", caption: "PNA", url: "/beamscan/pna/device_info"},
-  {name: "cartassy", caption: "Cartridge assembly", url: "/cartassy/device_info"},
   {name: "cca", caption: "CCA", url: "/cca/device_info"},
   {name: "chopper", caption: "Chopper", url: "/chopper/device_info"},
   {name: "femc", caption: "FEMC", url: "/femc/device_info"},
@@ -43,31 +42,26 @@ export default function DevicesInfo(props) {
 
   // Load data from REST API
   const fetch = useCallback(() => {
-    if (timer.current) {
-      clearTimeout(timer.current);
-      timer.current = 0;
-    }
     if (isMounted.current) {
       axios.get(urls[urlIndex.current].url)
         .then(res => {
-          dispatch(setDeviceInfo({name: urls[urlIndex.current].name, info: res.data}));
-          timer.current = setTimeout(() => {fetch()}, props.interval ?? 500);
+          dispatch(setDeviceInfo(res.data));
           urlIndex.current += 1;
           if (urlIndex.current >= urls.length)
-            urlIndex.current = 0;
+            urlIndex.current = 0;          
         })
         .catch(error => {
           console.log(error);
         })
       }
-  }, [dispatch, props.interval]);
+  }, [dispatch]);
 
   // Fetch on first render:
   useEffect(() => {
     isMounted.current = true;
-    fetch();
-    return () => { isMounted.current = false; };
-  }, [fetch]);
+    timer.current = setInterval(() => {fetch()}, props.interval ?? 500);
+    return () => { isMounted.current = false; clearInterval(timer.current) };
+  }, [fetch, props.interval]);
 
   const row = (name, caption, index) => {
     const resource_name = devicesInfo[name] ? devicesInfo[name].resource_name : "--"

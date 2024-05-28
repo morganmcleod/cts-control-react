@@ -15,6 +15,7 @@ export const LOSlice = createSlice({
 export const loSetAMC = LOSlice.actions.setAMC;
 export const loSetPA = LOSlice.actions.setPA;
 export const loSetPAInputs = LOSlice.actions.setPAInputs;
+export const loSetPAInputsSendNow = LOSlice.actions.setPAInputsSendNow;
 export const loSetPLL = LOSlice.actions.setPLL;
 export const setInputLO = LOSlice.actions.setInputLOFreq;
 export const loSetYTOLowInput = LOSlice.actions.setYTOLowInput

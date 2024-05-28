@@ -71,6 +71,9 @@ export const NoiseTempSlice = createSlice({
       fillStateText: "",
       level: 0
     },
+    chopper: {
+      state: -1
+    },
     warmIFPlot: {
       x: [], 
       pHot: [],
@@ -165,6 +168,9 @@ export const NoiseTempSlice = createSlice({
       else
         state.coldLoad.level = state.coldLoad.level.toFixed(1);
     },
+    setChopperState(state, action) {
+      state.chopper.state = action.payload
+    },
     setRawDataRecords(state, action) {
       state.rawDataRecords = action.payload;
     }
@@ -189,6 +195,7 @@ export const {
   setYFactorInput,
   setYFactorStarted,
   setColdLoadState, 
+  setChopperState,
   setRawDataRecords
 } = NoiseTempSlice.actions
 

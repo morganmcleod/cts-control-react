@@ -18,7 +18,7 @@ export default function PageHeader(props) {
       </Grid>
 
       {/* Cart select */}
-      <Grid item xs={1.1}>
+      <Grid item xs={1.2}>
         <Grid container>
 
           {/* show cartridge SN select? */}
@@ -30,7 +30,7 @@ export default function PageHeader(props) {
       </Grid>
 
       {/* Measurement ctrls OR LO references */}
-      <Grid item xs={5.4}>
+      <Grid item xs={4.8}>
         <Grid container>
 
           {/* show measurment start/stop controls? */}
@@ -46,7 +46,7 @@ export default function PageHeader(props) {
       </Grid>
 
       {/* System status */}
-      <Grid item xs={3.5} paddingBottom="2px">
+      <Grid item xs={4} paddingBottom="2px">
         <SystemStatus/>
       </Grid>
     </Grid>

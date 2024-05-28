@@ -5,7 +5,6 @@ export const DevicesInfoSlice = createSlice({
   initialState: {
     mc: {resource_name: '', is_connected: false},
     pna: {resource_name: '', is_connected: false},
-    cartassy: {resource_name: '', is_connected: false},
     cca: {resource_name: '', is_connected: false},
     chopper: {resource_name: '', is_connected: false},
     femc: {resource_name: '', is_connected: false},
@@ -24,7 +23,10 @@ export const DevicesInfoSlice = createSlice({
   },
   reducers: {
     setDeviceInfo(state, action) {
-      state[action.payload.name] = action.payload.info;
+      state[action.payload.name] = {
+        resource_name: action.payload.resource_name,
+        is_connected: action.payload.is_connected
+      }
     }
   }
 });

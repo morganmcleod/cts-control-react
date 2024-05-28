@@ -17,14 +17,14 @@ import {
   requestRFSource
 } from './WCASlice';
 
-import { loSetYTO, loSetYTOLowInput, loSetYTOHighInput, loSetYTOSendNow } from '../Hardware/LO/LOSlice';
-import { rfSetYTO, rfSetYTOLowInput, rfSetYTOHighInput, rfSetYTOSendNow } from "../Hardware/LO/RFSlice";
+import { loSetYTO, loSetYTOLowInput, loSetYTOHighInput, loSetYTOSendNow, loSetPAInputs, loSetPAInputsSendNow } from '../Hardware/LO/LOSlice';
+import { rfSetYTO, rfSetYTOLowInput, rfSetYTOHighInput, rfSetYTOSendNow, rfSetPAInputs, rfSetPAInputsSendNow } from "../Hardware/LO/RFSlice";
 
 import AppController from "../Shared/AppController";
 
 export default function SelectWCA(props) {
   // Redux store interfaces
-  const WCAs = useSelector((state) => state.WCAs)
+  const WCAs = useSelector((state) => state.WCAs);
   const options = props.isRfSource ? WCAs.RFSources : WCAs.WCAs;
   const selectedItem = props.isRfSource ? WCAs.selectedRFSource : WCAs.selectedWCA;
   const measActive = useSelector((state) => state.Measure.active);
@@ -81,6 +81,8 @@ export default function SelectWCA(props) {
       dispatch(setYTOLowInput(newValue.ytoLowGHz));
       dispatch(setYTOHighInput(newValue.ytoHighGHz));
       dispatch(props.isRfSource ? rfSetYTOSendNow(true) : loSetYTOSendNow(true));
+      dispatch(props.isRfSource ? rfSetPAInputs(newValue) : loSetPAInputs(newValue));
+      dispatch(props.isRfSource ? rfSetPAInputsSendNow(true) : loSetPAInputsSendNow(true));
       onSelectChange(newValue.key);
     } else {
       onSelectChange(null);
